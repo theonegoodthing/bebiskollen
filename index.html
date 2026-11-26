@@ -109,7 +109,14 @@
       margin-bottom: 18px;
     }
 
-    .grid-4 .card, .grid-3 .card, .grid-2 .card {
+    .grid-4 .card {
+      margin-bottom: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .grid-3 .card, .grid-2 .card {
       margin-bottom: 0;
     }
 
@@ -144,7 +151,27 @@
       background: rgba(15, 23, 42, 0.6);
     }
 
-    /* Ihopfällbara block (samma stil som Ekonomikollen) */
+    .kpi-footer-progress {
+      margin-top: 12px;
+      padding-top: 9px;
+      border-top: 1px solid rgba(51, 65, 85, 0.65);
+    }
+
+    .kpi-rem-text {
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .kpi-rem-text strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
     .collapsible-header {
       display: flex;
       justify-content: space-between;
@@ -203,7 +230,6 @@
       font-size: 0.76rem;
     }
 
-    /* Snabbknappar (chips) för enhandsbruk mitt i natten */
     .quick-chips {
       display: flex;
       gap: 6px;
@@ -258,7 +284,6 @@
       gap: 5px;
     }
 
-    /* Skrollbara rullgardiner för Dag / Timme / Minut */
     .scroll-datetime-row {
       display: grid;
       grid-template-columns: 1.6fr 0.85fr 0.85fr auto;
@@ -329,7 +354,7 @@
       background: #0f172a;
       border-radius: 999px;
       overflow: hidden;
-      margin: 8px 0;
+      margin: 4px 0 0 0;
     }
 
     .progress-fill {
@@ -399,34 +424,74 @@
     </div>
   </header>
 
-  <!-- 1. NYTTIG ÖVERSIKT I TOPPEN: SENASTE & DAGENS STATUS -->
+  <!-- 1. NYTTIG ÖVERSIKT I TOPPEN MED VISUELLA LADDSTAPLAR & KVARVARANDE MÄNGD -->
   <div class="grid-4">
+    <!-- Block 1: Senaste matning -->
     <div class="card">
-      <div class="card-title">Senaste Matning & Nästa Bröst</div>
-      <div class="big-value" id="kpiLastFeedTime" style="color: var(--accent);">–</div>
-      <div class="pill-highlight" id="kpiNextBreast" style="color: var(--green);">Nästa förslag: Vänster eller Höger</div>
-      <div class="sub-value" id="kpiLastFeedDetail">Ingen matning loggad ännu</div>
+      <div>
+        <div class="card-title">Senaste Matning & Nästa Bröst</div>
+        <div class="big-value" id="kpiLastFeedTime" style="color: var(--accent);">–</div>
+        <div class="pill-highlight" id="kpiNextBreast" style="color: var(--green);">Nästa förslag: Vänster eller Höger</div>
+        <div class="sub-value" id="kpiLastFeedDetail">Ingen matning loggad ännu</div>
+      </div>
+      <div class="kpi-footer-progress">
+        <div class="kpi-rem-text">
+          <span id="kpiNextFeedLeftText">Intervall: –</span>
+          <strong id="kpiNextFeedPctText">0 %</strong>
+        </div>
+        <div class="progress-bg"><div class="progress-fill" id="kpiNextFeedBar" style="width:0%; background:var(--accent);"></div></div>
+      </div>
     </div>
 
+    <!-- Block 2: Mat idag -->
     <div class="card">
-      <div class="card-title">Mat Idag (00:00 – Nu)</div>
-      <div class="big-value" id="kpiTodayFeed" style="color: var(--green);">0 ml • 0 min</div>
-      <div class="pill-highlight" id="kpiTodayFeedCount" style="color: var(--muted);">0 matningar idag</div>
-      <div class="sub-value" id="kpiTodayBreastSplit">Vänster: 0 min • Höger: 0 min</div>
+      <div>
+        <div class="card-title">Mat Idag (00:00 – Nu)</div>
+        <div class="big-value" id="kpiTodayFeed" style="color: var(--green);">0 ml • 0 min</div>
+        <div class="pill-highlight" id="kpiTodayFeedCount" style="color: var(--muted);">0 matningar idag</div>
+        <div class="sub-value" id="kpiTodayBreastSplit">Vänster: 0 min • Höger: 0 min</div>
+      </div>
+      <div class="kpi-footer-progress">
+        <div class="kpi-rem-text">
+          <span id="kpiFeedRemText">Kvar: –</span>
+          <strong id="kpiFeedPctText">0 %</strong>
+        </div>
+        <div class="progress-bg"><div class="progress-fill" id="kpiFeedBar" style="width:0%; background:var(--green);"></div></div>
+      </div>
     </div>
 
+    <!-- Block 3: Blöjbyten idag -->
     <div class="card">
-      <div class="card-title">Blöjbyten Idag</div>
-      <div class="big-value" id="kpiTodayDiapers" style="color: var(--yellow);">0 st</div>
-      <div class="pill-highlight" id="kpiTodayDiaperSplit" style="color: var(--muted);">0 kiss • 0 bajs</div>
-      <div class="sub-value" id="kpiLastDiaperTime">Senaste byte: –</div>
+      <div>
+        <div class="card-title">Blöjbyten Idag</div>
+        <div class="big-value" id="kpiTodayDiapers" style="color: var(--yellow);">0 st</div>
+        <div class="pill-highlight" id="kpiTodayDiaperSplit" style="color: var(--muted);">0 kiss • 0 bajs</div>
+        <div class="sub-value" id="kpiLastDiaperTime">Senaste byte: –</div>
+      </div>
+      <div class="kpi-footer-progress">
+        <div class="kpi-rem-text">
+          <span id="kpiDiaperRemText">Kvar: –</span>
+          <strong id="kpiDiaperPctText">0 %</strong>
+        </div>
+        <div class="progress-bg"><div class="progress-fill" id="kpiDiaperBar" style="width:0%; background:var(--yellow);"></div></div>
+      </div>
     </div>
 
+    <!-- Block 4: Sömn senaste 24h -->
     <div class="card">
-      <div class="card-title">Sömn Senaste 24 Timmarna</div>
-      <div class="big-value" id="kpiSleep24h" style="color: var(--purple);">0,0 h</div>
-      <div class="pill-highlight" id="kpiSleepCount24h" style="color: var(--muted);">0 sömnpass senaste dygnet</div>
-      <div class="sub-value" id="kpiLongestSleep">Längsta sammanhängande: 0,0 h</div>
+      <div>
+        <div class="card-title">Sömn Senaste 24 Timmarna</div>
+        <div class="big-value" id="kpiSleep24h" style="color: var(--purple);">0,0 h</div>
+        <div class="pill-highlight" id="kpiSleepCount24h" style="color: var(--muted);">0 sömnpass senaste dygnet</div>
+        <div class="sub-value" id="kpiLongestSleep">Längsta sammanhängande: 0,0 h</div>
+      </div>
+      <div class="kpi-footer-progress">
+        <div class="kpi-rem-text">
+          <span id="kpiSleepRemText">Kvar: –</span>
+          <strong id="kpiSleepPctText">0 %</strong>
+        </div>
+        <div class="progress-bg"><div class="progress-fill" id="kpiSleepBar" style="width:0%; background:var(--purple);"></div></div>
+      </div>
     </div>
   </div>
 
@@ -442,7 +507,7 @@
           <div class="sub-value" style="margin-top:2px;">Klicka för att fälla in/ut jämförelse mot WHO / 1177 / Rikshandboken.</div>
         </div>
       </div>
-      <div style="text-align:right;" id="projHeaderRightSummary">
+      <div style="text-align:right;">
         <div style="font-size:0.88rem; font-weight:700; color:var(--accent);" id="projHeaderShort">Riktvärden per ålder</div>
       </div>
     </div>
@@ -471,7 +536,7 @@
             <span id="projFeedTarget">Riktvärde: –</span>
           </div>
           <div style="font-size:1.05rem; font-weight:700;" id="projFeedActual">Ert snitt (7d): –</div>
-          <div class="progress-bg"><div class="progress-fill" id="projFeedBar" style="width:0%; background:var(--accent);"></div></div>
+          <div class="progress-bg" style="margin:8px 0;"><div class="progress-fill" id="projFeedBar" style="width:0%; background:var(--accent);"></div></div>
           <div class="sub-value" style="font-size:0.78rem;" id="projFeedForecast">Välj födelsedatum ovan för åldersanalys och nästa steg.</div>
         </div>
 
@@ -481,7 +546,7 @@
             <span id="projDiaperTarget">Riktvärde: –</span>
           </div>
           <div style="font-size:1.05rem; font-weight:700;" id="projDiaperActual">Ert snitt (7d): –</div>
-          <div class="progress-bg"><div class="progress-fill" id="projDiaperBar" style="width:0%; background:var(--yellow);"></div></div>
+          <div class="progress-bg" style="margin:8px 0;"><div class="progress-fill" id="projDiaperBar" style="width:0%; background:var(--yellow);"></div></div>
           <div class="sub-value" style="font-size:0.78rem;" id="projDiaperForecast">Välj födelsedatum ovan för normalintervall för kiss och avföring.</div>
         </div>
 
@@ -491,7 +556,7 @@
             <span id="projSleepTarget">Riktvärde: –</span>
           </div>
           <div style="font-size:1.05rem; font-weight:700;" id="projSleepActual">Ert snitt (7d): –</div>
-          <div class="progress-bg"><div class="progress-fill" id="projSleepBar" style="width:0%; background:var(--purple);"></div></div>
+          <div class="progress-bg" style="margin:8px 0;"><div class="progress-fill" id="projSleepBar" style="width:0%; background:var(--purple);"></div></div>
           <div class="sub-value" style="font-size:0.78rem;" id="projSleepForecast">Välj födelsedatum ovan för sömnbehov och kommande sömnfaser.</div>
         </div>
       </div>
@@ -756,6 +821,7 @@
         maxMonths: 1,
         label: "0–1 månad (Nyfödd)",
         feedMlPerDay: 550,
+        feedIntervalHours: 2.5,
         feedsPerDay: "8–12 ggr/dygn",
         diapersPerDay: 7,
         poopNote: "1–5 bajsblöjor/dygn (ofta efter varje mål)",
@@ -766,6 +832,7 @@
         maxMonths: 3,
         label: "1–3 månader",
         feedMlPerDay: 750,
+        feedIntervalHours: 3.0,
         feedsPerDay: "6–8 ggr/dygn",
         diapersPerDay: 6,
         poopNote: "Från flera ggr/dag till varannan dag (helammat)",
@@ -776,6 +843,7 @@
         maxMonths: 6,
         label: "3–6 månader",
         feedMlPerDay: 850,
+        feedIntervalHours: 3.5,
         feedsPerDay: "5–7 ggr/dygn",
         diapersPerDay: 6,
         poopNote: "6+ våta kissblöjor/dygn; bajs varierar kraftigt",
@@ -786,6 +854,7 @@
         maxMonths: 9,
         label: "6–9 månader",
         feedMlPerDay: 750,
+        feedIntervalHours: 4.0,
         feedsPerDay: "4–5 mjölkmål + 2–3 smakportioner/mål",
         diapersPerDay: 6,
         poopNote: "Fastare avföring i takt med mer vanlig mat",
@@ -796,6 +865,7 @@
         maxMonths: 12,
         label: "9–12 månader",
         feedMlPerDay: 600,
+        feedIntervalHours: 4.5,
         feedsPerDay: "3–4 mjölkmål + 3 huvudmål & mellanmål",
         diapersPerDay: 5,
         poopNote: "1–2 bajsblöjor/dygn och 5–6 kissblöjor",
@@ -806,6 +876,7 @@
         maxMonths: 36,
         label: "12+ månader (Småbarn)",
         feedMlPerDay: 400,
+        feedIntervalHours: 4.5,
         feedsPerDay: "3 huvudmål + 2 mellanmål (ev. välling/amning)",
         diapersPerDay: 5,
         poopNote: "1–2 bajsblöjor/dygn",
@@ -834,7 +905,6 @@
     let feedSleepChartInst = null;
     let diaperChartInst = null;
 
-    // --- IHOPFÄLLBARA BLOCK ---
     window.toggleDrawer = function(key) {
       drawerStates[key] = !drawerStates[key];
       localStorage.setItem('bebiskollen_drawers', JSON.stringify(drawerStates));
@@ -850,7 +920,6 @@
       });
     }
 
-    // --- SNABBKNAPPAR FÖR MINUTER / ML ---
     window.setVal = function(id, val) {
       const el = document.getElementById(id);
       if (el) el.value = val;
@@ -861,7 +930,6 @@
       if (el) el.value = (Number(el.value) || 0) + delta;
     };
 
-    // --- SKROLLBARA RULLGARDINER FÖR DAG / TIMME / MINUT ---
     const MONTHS_SV = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
 
     function populateScrollPickers() {
@@ -897,7 +965,6 @@
         document.getElementById(`${prefix}MinSel`).innerHTML = minOptions.join('');
       });
 
-      // Födelsedatum-rullgardiner (År, Månad, Dag)
       const curYear = now.getFullYear();
       const years = [`<option value="">År</option>`];
       for (let y = curYear; y >= curYear - 5; y--) {
@@ -1047,8 +1114,29 @@
 
       document.getElementById('historyCountBadge').textContent = `${events.length} händelser`;
 
-      // 1. Senaste matning & nästa bröst
+      const ageInfo = getBabyAgeInfo(appData.birthDate);
+      const benchmark = ageInfo ? ageInfo.benchmark : AGE_BENCHMARKS[2]; // Default 3-6 mån riktmärke tills födelsedatum anges
+
+      // Beräkna ert 7-dygnssnitt (exklusive idag om ni har historik, annars inklusive idag)
       const feeds = events.filter(e => e.type === 'feed');
+      const diapers = events.filter(e => e.type === 'diaper');
+      const sleeps = events.filter(e => e.type === 'sleep');
+
+      const events7d = events.filter(e => new Date(e.time).getTime() >= last7dMs);
+      const activeDays = Math.max(1, Math.min(7, new Set(events7d.map(e => e.time.slice(0, 10))).size || 1));
+
+      const feeds7d = feeds.filter(e => new Date(e.time).getTime() >= last7dMs);
+      const avgMl7d = Math.round(feeds7d.reduce((s, e) => s + (Number(e.bottleMl) || 0), 0) / activeDays);
+      const avgBreastMin7d = Math.round(feeds7d.reduce((s, e) => s + (Number(e.leftMin) || 0) + (Number(e.rightMin) || 0), 0) / activeDays);
+      const avgTotalFeedEquiv7d = avgMl7d + avgBreastMin7d * 10;
+
+      const diapers7d = diapers.filter(e => new Date(e.time).getTime() >= last7dMs);
+      const avgDiapers7d = diapers7d.length / activeDays;
+
+      const sleeps7d = sleeps.filter(e => new Date(e.time).getTime() >= last7dMs);
+      const avgSleepH7d = sleeps7d.reduce((s, e) => s + (Number(e.durationMin) || 0), 0) / 60 / activeDays;
+
+      // 1. Senaste matning & nästa bröst + laddstapel för intervall
       if (feeds.length > 0) {
         const last = feeds[0];
         const diffMins = Math.max(0, Math.round((now - new Date(last.time)) / 60000));
@@ -1075,19 +1163,41 @@
           nextEl.textContent = 'Flaska senast – valfritt bröst';
           nextEl.style.color = 'var(--accent)';
         }
+
+        const intervalGoalMin = Math.round(benchmark.feedIntervalHours * 60);
+        const remMin = Math.max(0, intervalGoalMin - diffMins);
+        const intervalPct = Math.min(100, Math.round((diffMins / intervalGoalMin) * 100));
+        document.getElementById('kpiNextFeedLeftText').innerHTML = remMin > 0
+          ? `Rek. intervall (${benchmark.feedIntervalHours.toString().replace('.', ',')}h): <strong>~${formatMinutes(remMin)} kvar</strong>`
+          : `Rek. intervall (${benchmark.feedIntervalHours.toString().replace('.', ',')}h): <strong>Dags snart</strong>`;
+        document.getElementById('kpiNextFeedPctText').textContent = `${intervalPct} %`;
+        document.getElementById('kpiNextFeedBar').style.width = `${intervalPct}%`;
+      } else {
+        document.getElementById('kpiNextFeedLeftText').textContent = `Rek. intervall: ca ${benchmark.feedIntervalHours.toString().replace('.', ',')} h`;
+        document.getElementById('kpiNextFeedPctText').textContent = '0 %';
+        document.getElementById('kpiNextFeedBar').style.width = '0%';
       }
 
-      // 2. Mat idag
+      // 2. Mat idag + kvar enligt snitt & rekommendation
       const todayFeeds = feeds.filter(e => e.time.startsWith(todayStr));
       const todayMl = todayFeeds.reduce((s, e) => s + (Number(e.bottleMl) || 0), 0);
       const todayLeft = todayFeeds.reduce((s, e) => s + (Number(e.leftMin) || 0), 0);
       const todayRight = todayFeeds.reduce((s, e) => s + (Number(e.rightMin) || 0), 0);
+      const todayEquivMl = todayMl + (todayLeft + todayRight) * 10;
+
       document.getElementById('kpiTodayFeed').textContent = `${todayMl} ml • ${todayLeft + todayRight} min`;
       document.getElementById('kpiTodayFeedCount').textContent = `${todayFeeds.length} matningar idag`;
       document.getElementById('kpiTodayBreastSplit').textContent = `Vänster: ${todayLeft} min • Höger: ${todayRight} min`;
 
-      // 3. Blöjor idag
-      const diapers = events.filter(e => e.type === 'diaper');
+      const remFeedAvg = Math.max(0, avgTotalFeedEquiv7d - todayEquivMl);
+      const remFeedRec = Math.max(0, benchmark.feedMlPerDay - todayEquivMl);
+      const feedProgressPct = Math.min(100, Math.round((todayEquivMl / benchmark.feedMlPerDay) * 100));
+      document.getElementById('kpiFeedRemText').innerHTML =
+        `Kvar snitt: <strong>${remFeedAvg} ml</strong> • Rek: <strong>${remFeedRec} ml</strong>`;
+      document.getElementById('kpiFeedPctText').textContent = `${feedProgressPct} %`;
+      document.getElementById('kpiFeedBar').style.width = `${feedProgressPct}%`;
+
+      // 3. Blöjor idag + kvar enligt snitt & rekommendation
       const todayDiapers = diapers.filter(e => e.time.startsWith(todayStr));
       const kissCount = todayDiapers.filter(e => e.diaperType === 'kiss' || e.diaperType === 'bada').length;
       const bajsCount = todayDiapers.filter(e => e.diaperType === 'bajs' || e.diaperType === 'bada').length;
@@ -1100,20 +1210,35 @@
         document.getElementById('diaperHeaderMini').textContent = `Senast: ${dTime}`;
       }
 
-      // 4. Sömn senaste 24h
-      const sleeps = events.filter(e => e.type === 'sleep');
+      const remDiaperAvg = Math.max(0, Math.round(avgDiapers7d) - todayDiapers.length);
+      const remDiaperRec = Math.max(0, benchmark.diapersPerDay - todayDiapers.length);
+      const diaperProgressPct = Math.min(100, Math.round((todayDiapers.length / benchmark.diapersPerDay) * 100));
+      document.getElementById('kpiDiaperRemText').innerHTML =
+        `Kvar snitt: <strong>${remDiaperAvg} st</strong> • Rek: <strong>${remDiaperRec} st</strong>`;
+      document.getElementById('kpiDiaperPctText').textContent = `${diaperProgressPct} %`;
+      document.getElementById('kpiDiaperBar').style.width = `${diaperProgressPct}%`;
+
+      // 4. Sömn senaste 24h + kvar enligt snitt & rekommendation
       const sleeps24h = sleeps.filter(e => new Date(e.endTime || e.time).getTime() >= last24hMs);
       const sleepMins24h = sleeps24h.reduce((s, e) => s + (Number(e.durationMin) || 0), 0);
+      const sleepHours24h = sleepMins24h / 60;
       const longestMin = sleeps24h.reduce((max, e) => Math.max(max, Number(e.durationMin) || 0), 0);
-      const sleepHText = `${(sleepMins24h / 60).toFixed(1).replace('.', ',')} h`;
+      const sleepHText = `${sleepHours24h.toFixed(1).replace('.', ',')} h`;
       document.getElementById('kpiSleep24h').textContent = sleepHText;
       document.getElementById('kpiSleepCount24h').textContent = `${sleeps24h.length} sömnpass senaste 24h`;
       document.getElementById('kpiLongestSleep').textContent = `Längsta sammanhängande: ${(longestMin / 60).toFixed(1).replace('.', ',')} h`;
       document.getElementById('sleepHeaderMini').textContent = `24h: ${sleepHText}`;
 
-      // 5. Åldersprojektion
+      const remSleepAvg = Math.max(0, avgSleepH7d - sleepHours24h).toFixed(1).replace('.', ',');
+      const remSleepRec = Math.max(0, benchmark.sleepHours - sleepHours24h).toFixed(1).replace('.', ',');
+      const sleepProgressPct = Math.min(100, Math.round((sleepHours24h / benchmark.sleepHours) * 100));
+      document.getElementById('kpiSleepRemText').innerHTML =
+        `Kvar snitt: <strong>${remSleepAvg} h</strong> • Rek: <strong>${remSleepRec} h</strong>`;
+      document.getElementById('kpiSleepPctText').textContent = `${sleepProgressPct} %`;
+      document.getElementById('kpiSleepBar').style.width = `${sleepProgressPct}%`;
+
+      // 5. Åldersprojektion (ihopfällbar sektion)
       syncBirthDateDropdowns();
-      const ageInfo = getBabyAgeInfo(appData.birthDate);
       if (ageInfo) {
         document.getElementById('ageHeaderBadge').textContent = ageInfo.text;
         const b = ageInfo.benchmark;
@@ -1122,27 +1247,18 @@
         document.getElementById('projectionIntroText').innerHTML =
           `Fas: <strong>${b.label}</strong> • ${b.nextPhase}`;
 
-        const activeDays = Math.max(1, Math.min(7, new Set(events.filter(e => new Date(e.time).getTime() >= last7dMs).map(e => e.time.slice(0, 10))).size || 1));
-        const feeds7d = feeds.filter(e => new Date(e.time).getTime() >= last7dMs);
-        const avgMl7d = Math.round(feeds7d.reduce((s, e) => s + (Number(e.bottleMl) || 0), 0) / activeDays);
-        const avgBreastMin7d = Math.round(feeds7d.reduce((s, e) => s + (Number(e.leftMin) || 0) + (Number(e.rightMin) || 0), 0) / activeDays);
         const avgFeedsCount7d = (feeds7d.length / activeDays).toFixed(1).replace('.', ',');
-
         document.getElementById('projFeedTarget').textContent = `Riktvärde: ~${b.feedMlPerDay} ml (${b.feedsPerDay})`;
         document.getElementById('projFeedActual').textContent = `Snitt (7d): ${avgMl7d} ml + ${avgBreastMin7d} min bröst (${avgFeedsCount7d} ggr/dygn)`;
-        const feedPct = Math.min(100, Math.round(((avgMl7d + avgBreastMin7d * 10) / b.feedMlPerDay) * 100));
+        const feedPct = Math.min(100, Math.round((avgTotalFeedEquiv7d / b.feedMlPerDay) * 100));
         document.getElementById('projFeedBar').style.width = `${feedPct}%`;
         document.getElementById('projFeedForecast').textContent = `Riktvärdet avser total dygnsmängd (bröstmjölk + ersättning). ${b.feedsPerDay} är normalt i denna ålder.`;
 
-        const diapers7d = diapers.filter(e => new Date(e.time).getTime() >= last7dMs);
-        const avgDiapers7d = (diapers7d.length / activeDays).toFixed(1).replace('.', ',');
         document.getElementById('projDiaperTarget').textContent = `Riktvärde: ${b.diapersPerDay}+ blöjor/dygn`;
-        document.getElementById('projDiaperActual').textContent = `Snitt (7d): ${avgDiapers7d} blöjor/dygn`;
-        document.getElementById('projDiaperBar').style.width = `${Math.min(100, Math.round(((diapers7d.length / activeDays) / b.diapersPerDay) * 100))}%`;
+        document.getElementById('projDiaperActual').textContent = `Snitt (7d): ${avgDiapers7d.toFixed(1).replace('.', ',')} blöjor/dygn`;
+        document.getElementById('projDiaperBar').style.width = `${Math.min(100, Math.round((avgDiapers7d / b.diapersPerDay) * 100))}%`;
         document.getElementById('projDiaperForecast').textContent = `Normalt nu: ${b.poopNote}. Minst 6 tunga kissblöjor/dygn visar gott vätskeintag.`;
 
-        const sleeps7d = sleeps.filter(e => new Date(e.time).getTime() >= last7dMs);
-        const avgSleepH7d = (sleeps7d.reduce((s, e) => s + (Number(e.durationMin) || 0), 0) / 60 / activeDays);
         document.getElementById('projSleepTarget').textContent = `Riktvärde: ~${b.sleepHours.toFixed(1).replace('.', ',')} h/dygn`;
         document.getElementById('projSleepActual').textContent = `Snitt (7d): ${avgSleepH7d.toFixed(1).replace('.', ',')} h/dygn`;
         document.getElementById('projSleepBar').style.width = `${Math.min(100, Math.round((avgSleepH7d / b.sleepHours) * 100))}%`;
