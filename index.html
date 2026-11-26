@@ -96,7 +96,6 @@
       padding: 7px 10px;
     }
 
-    /* Snabbhopps-rad för mobil */
     .quick-nav-bar {
       display: flex;
       gap: 6px;
@@ -454,6 +453,19 @@
       margin-bottom: 12px;
     }
 
+    .vitamind-banner {
+      background: rgba(251, 146, 60, 0.12);
+      border: 1px solid rgba(251, 146, 60, 0.4);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
     .proj-box {
       background: rgba(15, 23, 42, 0.6);
       border: 1px solid var(--card-border);
@@ -556,6 +568,7 @@
     .tag-diaper { background: rgba(234, 179, 8, 0.15); color: var(--yellow); }
     .tag-sleep { background: rgba(168, 85, 247, 0.15); color: var(--purple); }
     .tag-health { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+    .tag-vitamind { background: rgba(251, 146, 60, 0.18); color: var(--orange); }
 
     .status-dot {
       height: 8px;
@@ -564,7 +577,6 @@
       display: inline-block;
     }
 
-    /* Modal för redigering av händelse i loggen */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -616,8 +628,8 @@
     <button type="button" class="nav-pill-btn" onclick="jumpToSection('feed', 'card_feed')">🍼 Logga mat</button>
     <button type="button" class="nav-pill-btn" onclick="jumpToSection('diaper', 'card_diaper')">🧷 Logga blöja</button>
     <button type="button" class="nav-pill-btn" onclick="jumpToSection('sleep', 'card_sleep')">🌙 Logga sömn</button>
+    <button type="button" class="nav-pill-btn" onclick="jumpToSection('health', 'card_health')">☀️ D-vitamin & Hälsa</button>
     <button type="button" class="nav-pill-btn" onclick="jumpToSection('growth', 'card_growth')">📏 Längd & vikt</button>
-    <button type="button" class="nav-pill-btn" onclick="jumpToSection('health', 'card_health')">🌡️ Hälsa & temp</button>
     <button type="button" class="nav-pill-btn" onclick="jumpToSection('history', 'card_history')">📋 Händelselogg</button>
   </div>
 
@@ -663,7 +675,7 @@
       </div>
     </div>
 
-    <!-- Block 3: Blöjbyten idag -->
+    <!-- Block 3: Blöjbyten idag (Totalt + Endast kiss + Bajs med kiss underförstått) -->
     <div class="card clickable-kpi" onclick="jumpToSection('diaper', 'card_diaper')" title="Tryck för att logga blöjbyte">
       <div>
         <div class="card-title">
@@ -671,7 +683,7 @@
           <span class="kpi-jump-hint">Logga ↓</span>
         </div>
         <div class="big-value" id="kpiTodayDiapers" style="color: var(--yellow);">0 st</div>
-        <div class="pill-highlight" id="kpiTodayDiaperSplit" style="color: var(--muted);">0 kiss • 0 bajs</div>
+        <div class="pill-highlight" id="kpiTodayDiaperSplit" style="color: var(--muted);">0 endast kiss • 0 bajs</div>
         <div class="sub-value" id="kpiLastDiaperTime">Senaste byte: –</div>
       </div>
       <div class="kpi-footer-progress">
@@ -1069,16 +1081,18 @@
     </div>
   </div>
 
-  <!-- 3B. BLOCK: HÄLSA, FEBER & MEDICIN-NEDRÄKNING -->
+  <!-- 3B. BLOCK: HÄLSA, D-VITAMIN, FEBER & MEDICIN-NEDRÄKNING -->
   <div class="card" id="card_health">
     <div class="collapsible-header" onclick="toggleDrawer('health')">
-      <div style="display:flex; align-items:center; gap:10px;">
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
         <span class="chevron" id="chev_health">▶</span>
         <div>
-          <div style="font-weight:700; font-size:0.95rem;">
-            🌡️ Hälsa, Feber & Medicin <span class="badge" style="background:rgba(239, 68, 68, 0.15); color:var(--red);" id="healthHeaderBadge">Inga aktiva doser</span>
+          <div style="font-weight:700; font-size:0.95rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <span>🌡️ Hälsa, D-vitamin, Feber & Medicin</span>
+            <span class="badge" style="background:rgba(251, 146, 60, 0.18); color:var(--orange);" id="vitaminDHeaderBadge">☀️ D-vitamin: Ej given idag</span>
+            <span class="badge" style="background:rgba(239, 68, 68, 0.15); color:var(--red);" id="healthHeaderBadge">Inga aktiva doser</span>
           </div>
-          <div class="sub-value" style="margin-top:2px;">Logga kroppstemperatur, Alvedon/Ipren eller D-droppar med automatisk 6h-nedräkning till nästa dos.</div>
+          <div class="sub-value" style="margin-top:2px;">Separat snabbknapp för D-droppar samt logg för kroppstemperatur & medicin med 6h-nedräkning.</div>
         </div>
       </div>
       <div style="text-align:right;">
@@ -1087,6 +1101,18 @@
     </div>
 
     <div class="drawer-body" id="body_health">
+      <!-- Separat D-vitamin-sektion -->
+      <div class="vitamind-banner">
+        <div>
+          <div style="font-size:0.86rem; font-weight:700; color:var(--orange);">☀️ D-vitamin (5 droppar dagligen)</div>
+          <div class="sub-value" style="margin-top:2px;" id="vitaminDStatusDetail">Ej registrerad idag ännu. Tryck på knappen för att logga direkt.</div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <button type="button" class="btn btn-orange" id="quickVitaminDBtn">☀️ Ge D-droppar nu (5 dr)</button>
+        </div>
+      </div>
+
+      <!-- Temperatur & Medicin -->
       <div style="display:grid; grid-template-columns: 1.5fr 0.9fr 1.2fr 1.2fr auto; gap:10px; align-items:end;">
         <label>
           Tidpunkt (Dag • Tim • Min)
@@ -1110,7 +1136,6 @@
             <option value="Alvedon (Paracetamol)">💊 Alvedon (Paracetamol)</option>
             <option value="Ipren (Ibuprofen)">💊 Ipren (Ibuprofen)</option>
             <option value="Nässpray / Koksalt">💧 Nässpray / Koksalt</option>
-            <option value="D-droppar">☀️ D-droppar</option>
           </select>
         </label>
 
@@ -1145,7 +1170,7 @@
           </div>
         </div>
         <div>
-          <div class="card-title">Blöjbyten (Kiss vs. Bajs) – Senaste 7 Dagarna</div>
+          <div class="card-title">Blöjbyten Totalt (Endast kiss + Bajs) – Senaste 7 Dagarna</div>
           <div class="chart-wrapper">
             <canvas id="diaperChart"></canvas>
           </div>
@@ -1172,6 +1197,7 @@
           <option value="feed">Endast mat & smakport.</option>
           <option value="diaper">Endast blöjbyten</option>
           <option value="sleep">Endast sömn</option>
+          <option value="vitamind">Endast D-vitamin</option>
           <option value="health">Endast hälsa & temp</option>
         </select>
         <button class="btn btn-secondary" id="exportCsvBtn" type="button" style="padding:6px 12px;">📥 CSV</button>
@@ -1429,7 +1455,6 @@
     let feedSleepChartInst = null;
     let diaperChartInst = null;
 
-    // --- SNABBHOPP FRÅN TOPPKORT / MOBILRAD ---
     window.jumpToSection = function(drawerKey, cardId) {
       if (!drawerStates[drawerKey]) {
         drawerStates[drawerKey] = true;
@@ -1898,10 +1923,12 @@
     function updateLiveTimersAndHealth() {
       const child = getActiveChild();
       const now = new Date();
+      const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
       const events = (child.events || []).slice().sort((a, b) => new Date(b.time) - new Date(a.time));
       const ageInfo = getBabyAgeInfo(child.birthDate);
       const benchmark = ageInfo ? ageInfo.benchmark : null;
 
+      // A. Live-sömn & Vakenfönster
       const liveBtn = document.getElementById('toggleLiveSleepBtn');
       const liveLabel = document.getElementById('liveSleepStatusLabel');
       const liveTimerText = document.getElementById('liveSleepTimerText');
@@ -1961,6 +1988,33 @@
         }
       }
 
+      // B. Separat D-vitamin status idag
+      const vitDEventsToday = events.filter(e =>
+        e.time.startsWith(todayStr) &&
+        (e.type === 'vitamind' || (e.type === 'health' && e.med && e.med.includes('D-droppar')))
+      );
+      const vitDBadge = document.getElementById('vitaminDHeaderBadge');
+      const vitDDetail = document.getElementById('vitaminDStatusDetail');
+      const vitDBtn = document.getElementById('quickVitaminDBtn');
+
+      if (vitDEventsToday.length > 0) {
+        const givenTime = vitDEventsToday[0].time.slice(11, 16);
+        vitDBadge.textContent = `☀️ D-vitamin: ✓ Given kl. ${givenTime}`;
+        vitDBadge.style.background = 'rgba(34, 197, 94, 0.18)';
+        vitDBadge.style.color = 'var(--green)';
+        vitDDetail.innerHTML = `<strong style="color:var(--green);">✓ Given idag kl. ${givenTime}</strong> (5 droppar).`;
+        vitDBtn.textContent = '✓ Given idag (+ logga igen)';
+        vitDBtn.className = 'btn btn-secondary btn-sm';
+      } else {
+        vitDBadge.textContent = '☀️ D-vitamin: Ej given idag';
+        vitDBadge.style.background = 'rgba(251, 146, 60, 0.18)';
+        vitDBadge.style.color = 'var(--orange)';
+        vitDDetail.textContent = 'Ej registrerad idag ännu. Tryck på knappen för att logga direkt.';
+        vitDBtn.textContent = '☀️ Ge D-droppar nu (5 dr)';
+        vitDBtn.className = 'btn btn-orange';
+      }
+
+      // C. Hälsa & Medicin-nedräkning (6 timmar efter Alvedon/Ipren)
       const healthEvents = events.filter(e => e.type === 'health');
       const medEvents = healthEvents.filter(e => e.med && (e.med.includes('Alvedon') || e.med.includes('Ipren')));
       const healthBadge = document.getElementById('healthHeaderBadge');
@@ -2107,15 +2161,15 @@
         document.getElementById('kpiFeedBar').style.width = '0%';
       }
 
-      // 3. Blöjor idag
+      // 3. Blöjor idag (Totalt = Endast kiss + Bajs med kiss underförstått)
       const todayDiapers = diapers.filter(e => e.time.startsWith(todayStr));
-      const kissCount = todayDiapers.filter(e => e.diaperType === 'kiss' || e.diaperType === 'bada').length;
+      const onlyKissCount = todayDiapers.filter(e => e.diaperType === 'kiss').length;
       const bajsCount = todayDiapers.filter(e => e.diaperType === 'bajs' || e.diaperType === 'bada').length;
       document.getElementById('kpiTodayDiapers').textContent = `${todayDiapers.length} st`;
-      document.getElementById('kpiTodayDiaperSplit').textContent = `${kissCount} kiss • ${bajsCount} bajs`;
+      document.getElementById('kpiTodayDiaperSplit').textContent = `${onlyKissCount} endast kiss • ${bajsCount} bajs`;
       if (diapers.length > 0) {
         const dTime = diapers[0].time.slice(11, 16);
-        const dLabel = diapers[0].diaperType === 'bada' ? 'Kiss & Bajs' : diapers[0].diaperType;
+        const dLabel = diapers[0].diaperType === 'bada' ? 'Bajs (kiss & bajs)' : (diapers[0].diaperType === 'bajs' ? 'Bajs' : 'Endast kiss');
         document.getElementById('kpiLastDiaperTime').textContent = `Senaste byte: kl. ${dTime} (${dLabel})`;
         document.getElementById('diaperHeaderMini').textContent = `Senast: ${dTime}`;
       } else {
@@ -2200,7 +2254,8 @@
       const mlData = days.map(d => feeds.filter(e => e.time.startsWith(d)).reduce((s, e) => s + (Number(e.bottleMl) || 0), 0));
       const sleepData = days.map(d => +(sleeps.filter(e => (e.endTime || e.time).startsWith(d)).reduce((s, e) => s + (Number(e.durationMin) || 0), 0) / 60).toFixed(1));
 
-      const kissData = days.map(d => diapers.filter(e => e.time.startsWith(d) && (e.diaperType === 'kiss' || e.diaperType === 'bada')).length);
+      // Staplade staplar: Endast kiss + Bajs (kiss underförstått) = Totalt antal blöjor
+      const onlyKissData = days.map(d => diapers.filter(e => e.time.startsWith(d) && e.diaperType === 'kiss').length);
       const bajsData = days.map(d => diapers.filter(e => e.time.startsWith(d) && (e.diaperType === 'bajs' || e.diaperType === 'bada')).length);
 
       const ctx1 = document.getElementById('feedSleepChart').getContext('2d');
@@ -2233,17 +2288,27 @@
         data: {
           labels: shortLabels,
           datasets: [
-            { label: 'Kissblöjor', data: kissData, backgroundColor: '#eab308', borderRadius: 5 },
-            { label: 'Bajsblöjor', data: bajsData, backgroundColor: '#22c55e', borderRadius: 5 }
+            { label: 'Endast kiss', data: onlyKissData, backgroundColor: '#eab308', borderRadius: 4 },
+            { label: 'Bajs (kiss underförstått)', data: bajsData, backgroundColor: '#22c55e', borderRadius: 4 }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { labels: { color: '#94a3b8' } } },
+          plugins: {
+            legend: { labels: { color: '#94a3b8' } },
+            tooltip: {
+              callbacks: {
+                footer: (items) => {
+                  const sum = items.reduce((a, b) => a + (b.parsed.y || 0), 0);
+                  return `Totalt: ${sum} blöjor`;
+                }
+              }
+            }
+          },
           scales: {
-            x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
-            y: { ticks: { color: '#94a3b8', stepSize: 1 }, grid: { color: '#334155' } }
+            x: { stacked: true, ticks: { color: '#94a3b8' }, grid: { display: false } },
+            y: { stacked: true, ticks: { color: '#94a3b8', stepSize: 1 }, grid: { color: '#334155' } }
           }
         }
       });
@@ -2275,7 +2340,10 @@
           detail = p.join(' • ') || 'Matning';
         } else if (ev.type === 'diaper') {
           badge = `<span class="tag-pill tag-diaper">🧷 Blöjbyte</span>`;
-          detail = ev.diaperType === 'bada' ? '💧💩 Kiss & Bajs' : (ev.diaperType === 'bajs' ? '💩 Bajs' : '💧 Kiss');
+          detail = ev.diaperType === 'bada' ? '💩 Bajs (kiss & bajs)' : (ev.diaperType === 'bajs' ? '💩 Bajs' : '💧 Endast kiss');
+        } else if (ev.type === 'vitamind') {
+          badge = `<span class="tag-pill tag-vitamind">☀️ D-vitamin</span>`;
+          detail = ev.dose || '5 droppar';
         } else if (ev.type === 'health') {
           badge = `<span class="tag-pill tag-health">🌡️ Hälsa</span>`;
           const hp = [];
@@ -2359,9 +2427,9 @@
         html += `
           <label>Innehåll
             <select id="edit_diaperType">
-              <option value="kiss" ${ev.diaperType === 'kiss' ? 'selected' : ''}>💧 Kiss</option>
+              <option value="kiss" ${ev.diaperType === 'kiss' ? 'selected' : ''}>💧 Endast kiss</option>
               <option value="bajs" ${ev.diaperType === 'bajs' ? 'selected' : ''}>💩 Bajs</option>
-              <option value="bada" ${ev.diaperType === 'bada' ? 'selected' : ''}>💧💩 Kiss & Bajs</option>
+              <option value="bada" ${ev.diaperType === 'bada' ? 'selected' : ''}>💧💩 Bajs (kiss & bajs)</option>
             </select>
           </label>
         `;
@@ -2377,6 +2445,13 @@
               <input type="text" id="edit_endTime" value="${(endT || '').slice(0, 5)}" />
             </label>
           </div>
+        `;
+      } else if (ev.type === 'vitamind') {
+        titleEl.textContent = '✏️ Ändra D-vitamin';
+        html += `
+          <label>Dosering
+            <input type="text" id="edit_dose" value="${ev.dose || '5 droppar'}" />
+          </label>
         `;
       } else if (ev.type === 'health') {
         titleEl.textContent = '✏️ Ändra hälsopost';
@@ -2439,6 +2514,8 @@
             ev.durationMin = Math.round((eDt - sDt) / 60000);
           }
         }
+      } else if (ev.type === 'vitamind') {
+        ev.dose = document.getElementById('edit_dose').value.trim() || '5 droppar';
       } else if (ev.type === 'health') {
         const tNum = parseFloat(document.getElementById('edit_temp').value);
         ev.temp = !isNaN(tNum) && tNum > 0 ? tNum.toFixed(1) : '';
@@ -2586,6 +2663,20 @@
       }
     });
 
+    // Snabbknapp för D-vitamin under Hälsa
+    document.getElementById('quickVitaminDBtn').addEventListener('click', () => {
+      const nowStr = toLocalIsoString(new Date());
+      getActiveChild().events.push({
+        id: Date.now().toString(),
+        type: 'vitamind',
+        time: nowStr,
+        dose: '5 droppar',
+        comment: ''
+      });
+      persistData();
+      renderAll();
+    });
+
     document.getElementById('logFilterSelect').addEventListener('change', renderAll);
 
     document.getElementById('addFeedBtn').addEventListener('click', () => {
@@ -2700,10 +2791,11 @@
 
     document.getElementById('exportCsvBtn').addEventListener('click', () => {
       const child = getActiveChild();
-      let csv = 'Profil;Tidpunkt;Typ;VansterMin;HogerMin;FlaskaMl;Smakportion;Bloja;SomnMin;Temp;Medicin;Kommentar\n';
+      let csv = 'Profil;Tidpunkt;Typ;VansterMin;HogerMin;FlaskaMl;Smakportion;Bloja;SomnMin;Temp;Medicin;D_Vitamin;Kommentar\n';
       (child.events || []).forEach(ev => {
         const solid = [ev.solidCategory, ev.solidDetail].filter(Boolean).join(': ');
-        csv += `"${child.label}";${ev.time};${ev.type};${ev.leftMin || ''};${ev.rightMin || ''};${ev.bottleMl || ''};"${solid}";${ev.diaperType || ''};${ev.durationMin || ''};${ev.temp || ''};"${ev.med || ''}";"${ev.comment || ''}"\n`;
+        const vitD = ev.type === 'vitamind' ? (ev.dose || '5 droppar') : '';
+        csv += `"${child.label}";${ev.time};${ev.type};${ev.leftMin || ''};${ev.rightMin || ''};${ev.bottleMl || ''};"${solid}";${ev.diaperType || ''};${ev.durationMin || ''};${ev.temp || ''};"${ev.med || ''}";"${vitD}";"${ev.comment || ''}"\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
@@ -2713,7 +2805,7 @@
       a.click();
     });
 
-    // --- FIREBASE INIT (MED SKYDD MOT ÖVERSKRIVNING VID MIGRERING) ---
+    // --- FIREBASE INIT ---
     function initFirebase() {
       if (!firebase.apps.length) {
         firebase.initializeApp(FIREBASE_CONFIG);
