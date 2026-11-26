@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bebiskollen – Matning, Blöjor, Sömn & Utvecklingskurva</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231e293b'/%3E%3Ccircle cx='32' cy='32' r='16' fill='%2338bdf8' opacity='0.25'/%3E%3Cpath d='M24 34c2 4 14 4 16 0' stroke='%2322c55e' stroke-width='4' stroke-linecap='round' fill='none'/%3E%3Ccircle cx='26' cy='26' r='2.5' fill='%23f8fafc'/%3E%3Ccircle cx='38' cy='26' r='2.5' fill='%23f8fafc'/%3E%3C/svg%3E" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --card-border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --red: #ef4444;
+      --purple: #a855f7;
+      --pink: #f472b6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 980px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .grid-3 { grid-template-columns: 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 540px) {
+      .grid-4 { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .grid-4 .card, .grid-3 .card, .grid-2 .card {
+      margin-bottom: 0;
+    }
+
+    .card-title {
+      color: var(--muted);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .big-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .sub-value {
+      color: var(--muted);
+      font-size: 0.81rem;
+      margin-top: 6px;
+      line-height: 1.45;
+    }
+
+    .pill-highlight {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      background: rgba(15, 23, 42, 0.6);
+    }
+
+    .btn {
+      background: var(--accent);
+      color: #0f172a;
+      border: none;
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .btn:hover { opacity: 0.9; }
+
+    .btn-green {
+      background: var(--green);
+      color: #052e16;
+    }
+
+    .btn-yellow {
+      background: var(--yellow);
+      color: #1e1b04;
+    }
+
+    .btn-purple {
+      background: var(--purple);
+      color: #faf5ff;
+    }
+
+    .btn-secondary {
+      background: rgba(148, 163, 184, 0.15);
+      color: var(--text);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--red);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 4px 8px;
+      font-size: 0.76rem;
+    }
+
+    input[type="text"], input[type="number"], input[type="date"], input[type="datetime-local"], select {
+      background: var(--bg);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      width: 100%;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .diaper-radio-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .diaper-btn {
+      background: var(--bg);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 10px 8px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .diaper-btn.active {
+      border-color: var(--yellow);
+      background: rgba(234, 179, 8, 0.18);
+      color: var(--yellow);
+    }
+
+    .proj-box {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .progress-bg {
+      height: 8px;
+      background: #0f172a;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.3s;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 260px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.86rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tag-pill {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .tag-feed { background: rgba(56, 189, 248, 0.15); color: var(--accent); }
+    .tag-diaper { background: rgba(234, 179, 8, 0.15); color: var(--yellow); }
+    .tag-sleep { background: rgba(168, 85, 247, 0.15); color: var(--purple); }
+
+    .status-dot {
+      height: 8px;
+      width: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>👶 Bebiskollen <span class="badge" id="ageHeaderBadge">Ålder ej angiven</span></h1>
+      <div class="sub-value">Matning (bröst & flaska), blöjbyten, sömn & åldersbaserad forskningsprojektion</div>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <span class="badge" id="authStatusBadge"><span class="status-dot" style="background:var(--yellow);"></span>Ej inloggad (Lokal lagring)</span>
+      <button class="btn" id="googleLoginBtn" type="button">Logga in med Google</button>
+      <button class="btn btn-secondary" id="googleLogoutBtn" type="button" style="display:none;">Logga ut</button>
+    </div>
+  </header>
+
+  <!-- 1. NYTTIG ÖVERSIKT I TOPPEN: SENASTE & DAGENS STATUS -->
+  <div class="grid-4">
+    <div class="card">
+      <div class="card-title">Senaste Matning & Nästa Bröst</div>
+      <div class="big-value" id="kpiLastFeedTime" style="color: var(--accent);">–</div>
+      <div class="pill-highlight" id="kpiNextBreast" style="color: var(--green);">Nästa förslag: Vänster eller Höger</div>
+      <div class="sub-value" id="kpiLastFeedDetail">Ingen matning loggad ännu</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Mat Idag (00:00 – Nu)</div>
+      <div class="big-value" id="kpiTodayFeed" style="color: var(--green);">0 ml • 0 min</div>
+      <div class="pill-highlight" id="kpiTodayFeedCount" style="color: var(--muted);">0 matningar idag</div>
+      <div class="sub-value" id="kpiTodayBreastSplit">Vänster: 0 min • Höger: 0 min</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Blöjbyten Idag</div>
+      <div class="big-value" id="kpiTodayDiapers" style="color: var(--yellow);">0 st</div>
+      <div class="pill-highlight" id="kpiTodayDiaperSplit" style="color: var(--muted);">0 kiss • 0 bajs</div>
+      <div class="sub-value" id="kpiLastDiaperTime">Senaste byte: –</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Sömn Senaste 24 Timmarna</div>
+      <div class="big-value" id="kpiSleep24h" style="color: var(--purple);">0,0 h</div>
+      <div class="pill-highlight" id="kpiSleepCount24h" style="color: var(--muted);">0 sömnpass senaste dygnet</div>
+      <div class="sub-value" id="kpiLongestSleep">Längsta sammanhängande pass: 0,0 h</div>
+    </div>
+  </div>
+
+  <!-- 2. ÅLDERSBASERAD PROJEKTION & RIKTMÄRKEN (WHO / 1177 / RIKSHANDBOKEN) -->
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+      <div>
+        <div class="card-title" style="margin-bottom:2px;">Utvecklings- & Forskningsprojektion utifrån Barnets Ålder</div>
+        <div class="sub-value" style="margin-top:0;" id="projectionIntroText">
+          Ange barnets födelsedatum (sparas privat på ditt konto) för att jämföra ert 7-dygnssnitt mot medicinska riktmärken och se vad som väntar härnäst.
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+        <label style="min-width:170px;">
+          Födelsedatum (anonymt)
+          <input type="date" id="birthDateInput" />
+        </label>
+      </div>
+    </div>
+
+    <div class="grid-3" style="margin-bottom:0;">
+      <!-- Matprojektion -->
+      <div class="proj-box">
+        <div style="display:flex; justify-content:space-between; font-size:0.84rem; font-weight:700; margin-bottom:4px;">
+          <span style="color:var(--accent);">🍼 Mat & Näringsbehov</span>
+          <span id="projFeedTarget">Riktvärde: –</span>
+        </div>
+        <div style="font-size:1.1rem; font-weight:700;" id="projFeedActual">Ert snitt (7d): –</div>
+        <div class="progress-bg"><div class="progress-fill" id="projFeedBar" style="width:0%; background:var(--accent);"></div></div>
+        <div class="sub-value" style="font-size:0.78rem;" id="projFeedForecast">Fyll i födelsedatum ovan för åldersanalys och nästa steg.</div>
+      </div>
+
+      <!-- Blöjprojektion -->
+      <div class="proj-box">
+        <div style="display:flex; justify-content:space-between; font-size:0.84rem; font-weight:700; margin-bottom:4px;">
+          <span style="color:var(--yellow);">🧷 Blöjor & Magfunktion</span>
+          <span id="projDiaperTarget">Riktvärde: –</span>
+        </div>
+        <div style="font-size:1.1rem; font-weight:700;" id="projDiaperActual">Ert snitt (7d): –</div>
+        <div class="progress-bg"><div class="progress-fill" id="projDiaperBar" style="width:0%; background:var(--yellow);"></div></div>
+        <div class="sub-value" style="font-size:0.78rem;" id="projDiaperForecast">Fyll i födelsedatum ovan för att se normalintervall för kiss och avföring.</div>
+      </div>
+
+      <!-- Sömnprojektion -->
+      <div class="proj-box">
+        <div style="display:flex; justify-content:space-between; font-size:0.84rem; font-weight:700; margin-bottom:4px;">
+          <span style="color:var(--purple);">🌙 Sömn & Dygnsrytm</span>
+          <span id="projSleepTarget">Riktvärde: –</span>
+        </div>
+        <div style="font-size:1.1rem; font-weight:700;" id="projSleepActual">Ert snitt (7d): –</div>
+        <div class="progress-bg"><div class="progress-fill" id="projSleepBar" style="width:0%; background:var(--purple);"></div></div>
+        <div class="sub-value" style="font-size:0.78rem;" id="projSleepForecast">Fyll i födelsedatum ovan för att se sömnbehov och kommande sömnfaser.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. SNABB INMATNING LÄNGRE NER (MATNING, BLÖJBYTE, SÖMN) -->
+  <div class="grid-3">
+    <!-- Logga Matning -->
+    <div class="card">
+      <div class="card-title" style="color:var(--accent);">🍼 Logga Matning</div>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+        <label>
+          Tidpunkt
+          <input type="datetime-local" id="feedTimeInput" />
+        </label>
+        <div class="form-grid-2">
+          <label>
+            Vänster bröst (min)
+            <input type="number" id="feedLeftMin" placeholder="0" min="0" step="1" />
+          </label>
+          <label>
+            Höger bröst (min)
+            <input type="number" id="feedRightMin" placeholder="0" min="0" step="1" />
+          </label>
+        </div>
+        <label>
+          Flaska (antal ml)
+          <input type="number" id="feedBottleMl" placeholder="t.ex. 120" min="0" step="5" />
+        </label>
+        <label>
+          Kommentar (valfritt)
+          <input type="text" id="feedComment" placeholder="t.ex. Spytt mycket / Rapade bra" />
+        </label>
+        <button class="btn btn-green" id="addFeedBtn" type="button" style="margin-top:4px;">+ Spara matning</button>
+      </div>
+    </div>
+
+    <!-- Logga Blöjbyte -->
+    <div class="card">
+      <div class="card-title" style="color:var(--yellow);">🧷 Logga Blöjbyte</div>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+        <label>
+          Tidpunkt
+          <input type="datetime-local" id="diaperTimeInput" />
+        </label>
+        <div>
+          <span style="font-size:0.78rem; color:var(--muted);">Innehåll</span>
+          <div class="diaper-radio-group" id="diaperTypeGroup">
+            <button type="button" class="diaper-btn active" data-val="kiss">💧 Kiss</button>
+            <button type="button" class="diaper-btn" data-val="bajs">💩 Bajs</button>
+            <button type="button" class="diaper-btn" data-val="bada">💧💩 Båda</button>
+          </div>
+        </div>
+        <label>
+          Kommentar (valfritt)
+          <input type="text" id="diaperComment" placeholder="t.ex. Löst / Röd rumpa / Mycket" />
+        </label>
+        <button class="btn btn-yellow" id="addDiaperBtn" type="button" style="margin-top:auto;">+ Spara blöjbyte</button>
+      </div>
+    </div>
+
+    <!-- Logga Sömn -->
+    <div class="card">
+      <div class="card-title" style="color:var(--purple);">🌙 Logga Sömn</div>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+        <label>
+          Somnade (starttid)
+          <input type="datetime-local" id="sleepStartInput" />
+        </label>
+        <label>
+          Vaknade (sluttid)
+          <input type="datetime-local" id="sleepEndInput" />
+        </label>
+        <div class="sub-value" id="sleepDurationPreview" style="margin-top:0; color:var(--purple); font-weight:600;">
+          Längd: 0 min
+        </div>
+        <label>
+          Kommentar (valfritt)
+          <input type="text" id="sleepComment" placeholder="t.ex. Tupplur i vagnen / Vaknade 1 ggr" />
+        </label>
+        <button class="btn btn-purple" id="addSleepBtn" type="button" style="margin-top:auto;">+ Spara sömnpass</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. STATISTIKGRAFER (7 SENASTE DAGARNA) -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Mat & Sömn – Senaste 7 Dagarna</div>
+      <div class="chart-wrapper">
+        <canvas id="feedSleepChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Blöjbyten (Kiss vs. Bajs) – Senaste 7 Dagarna</div>
+      <div class="chart-wrapper">
+        <canvas id="diaperChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. SENASTE HÄNDELSER & HISTORIK -->
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+      <div>
+        <div class="card-title" style="margin-bottom:2px;">Händelselogg (Senaste registreringarna)</div>
+        <div class="sub-value" style="margin-top:0;" id="cloudSyncStatusText">Logga in med Google högst upp för att synka mellan era mobiler.</div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <select id="logFilterSelect" style="width:160px; padding:6px 10px;">
+          <option value="all">Alla händelser</option>
+          <option value="feed">Endast matning</option>
+          <option value="diaper">Endast blöjbyten</option>
+          <option value="sleep">Endast sömn</option>
+        </select>
+        <button class="btn btn-secondary" id="exportCsvBtn" type="button">📥 Exportera CSV</button>
+      </div>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Tidpunkt</th>
+            <th>Typ</th>
+            <th>Detaljer</th>
+            <th>Kommentar</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="eventsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // --- FIREBASE CONFIG (Klistra in din egen config från Firebase Console) ---
+    const FIREBASE_CONFIG = {
+      apiKey: "DIN_API_KEY",
+      authDomain: "DITT_PROJEKT.firebaseapp.com",
+      databaseURL: "https://DITT_PROJEKT-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "DITT_PROJEKT",
+      storageBucket: "DITT_PROJEKT.firebasestorage.app",
+      messagingSenderId: "000000000000",
+      appId: "1:000000000000:web:0000000000000000"
+    };
+
+    // --- MEDICINSKA RIKTMÄRKEN PER ÅLDER (WHO / 1177 / RIKSHANDBOKEN) ---
+    const AGE_BENCHMARKS = [
+      {
+        maxMonths: 1,
+        label: "0–1 månad (Nyfödd)",
+        feedMlPerDay: 550,
+        feedsPerDay: "8–12 ggr/dygn",
+        diapersPerDay: 7,
+        poopNote: "1–5 bajsblöjor/dygn (ofta efter varje mål)",
+        sleepHours: 16.5,
+        nextPhase: "Vid 1–2 månader ökar magsäckens volym så måltiderna blir något glesare men större (ca 100–130 ml/mål), och det första sociala svarsleendet dyker upp."
+      },
+      {
+        maxMonths: 3,
+        label: "1–3 månader",
+        feedMlPerDay: 750,
+        feedsPerDay: "6–8 ggr/dygn",
+        diapersPerDay: 6,
+        poopNote: "Från flera ggr/dag till varannan dag (helammat)",
+        sleepHours: 15.0,
+        nextPhase: "Runt 3–4 månader blir sömnen mer uppdelad i längre nattpass och 3–4 dagstupplurar, men många barn får en tillfällig sömnregression kring 4 månader."
+      },
+      {
+        maxMonths: 6,
+        label: "3–6 månader",
+        feedMlPerDay: 850,
+        feedsPerDay: "5–7 ggr/dygn",
+        diapersPerDay: 6,
+        poopNote: "6+ våta kissblöjor/dygn; bajs varierar kraftigt",
+        sleepHours: 14.5,
+        nextPhase: "Från 4–6 månader börjar nyfikenheten på fast föda (smaksensationer). Vid 6 månader rekommenderas järnrik mat/gröt utöver bröstmjölk/ersättning."
+      },
+      {
+        maxMonths: 9,
+        label: "6–9 månader",
+        feedMlPerDay: 750,
+        feedsPerDay: "4–5 mjölkmål + 2–3 smakportioner/mål",
+        diapersPerDay: 6,
+        poopNote: "Fastare avföring i takt med mer vanlig mat",
+        sleepHours: 14.0,
+        nextPhase: "Mellan 8–10 månader går de flesta barn ner från 3 till 2 dagstupplurar och äter allt mer familjemat med plockbitar."
+      },
+      {
+        maxMonths: 12,
+        label: "9–12 månader",
+        feedMlPerDay: 600,
+        feedsPerDay: "3–4 mjölkmål + 3 huvudmål & mellanmål",
+        diapersPerDay: 5,
+        poopNote: "1–2 bajsblöjor/dygn och 5–6 kissblöjor",
+        sleepHours: 13.5,
+        nextPhase: "Runt 12–15 månader övergår många barn till en enda längre dagstupplur efter lunch och dricker vatten/mjölk ur mugg."
+      },
+      {
+        maxMonths: 36,
+        label: "12+ månader (Småbarn)",
+        feedMlPerDay: 400,
+        feedsPerDay: "3 huvudmål + 2 mellanmål (ev. välling/amning)",
+        diapersPerDay: 5,
+        poopNote: "1–2 bajsblöjor/dygn",
+        sleepHours: 12.5,
+        nextPhase: "Stabil dygnsrytm med 10–11,5 timmars nattsömn och 1,5–2 timmars vila mitt på dagen."
+      }
+    ];
+
+    let appData = JSON.parse(localStorage.getItem('bebiskollen_data') || 'null') || {
+      birthDate: '',
+      events: []
+    };
+
+    let selectedDiaperType = 'kiss';
+    let currentUser = null;
+    let dbRef = null;
+    let feedSleepChartInst = null;
+    let diaperChartInst = null;
+
+    function toLocalDatetimeValue(dateObj) {
+      const pad = n => String(n).padStart(2, '0');
+      return `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}T${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}`;
+    }
+
+    function setDefaultFormTimes() {
+      const now = new Date();
+      document.getElementById('feedTimeInput').value = toLocalDatetimeValue(now);
+      document.getElementById('diaperTimeInput').value = toLocalDatetimeValue(now);
+      document.getElementById('sleepEndInput').value = toLocalDatetimeValue(now);
+      const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+      document.getElementById('sleepStartInput').value = toLocalDatetimeValue(oneHourAgo);
+      updateSleepDurationPreview();
+    }
+
+    function updateSleepDurationPreview() {
+      const s = new Date(document.getElementById('sleepStartInput').value);
+      const e = new Date(document.getElementById('sleepEndInput').value);
+      const el = document.getElementById('sleepDurationPreview');
+      if (isNaN(s) || isNaN(e) || e <= s) {
+        el.textContent = 'Längd: Kontrollera start- och sluttid';
+        return;
+      }
+      const mins = Math.round((e - s) / 60000);
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      el.textContent = `Längd: ${h > 0 ? h + ' h ' : ''}${m} min (${(mins / 60).toFixed(1).replace('.', ',')} h)`;
+    }
+
+    function getBabyAgeInfo(birthDateStr) {
+      if (!birthDateStr) return null;
+      const birth = new Date(birthDateStr + 'T00:00:00');
+      const now = new Date();
+      if (isNaN(birth) || birth > now) return null;
+
+      const diffDays = Math.floor((now - birth) / (1000 * 60 * 60 * 24));
+      const weeks = Math.floor(diffDays / 7);
+      const monthsExact = diffDays / 30.4375;
+      const fullMonths = Math.floor(monthsExact);
+      const remDays = Math.round(diffDays - fullMonths * 30.4375);
+
+      const text = fullMonths < 2
+        ? `${weeks} veckor (${diffDays} dagar)`
+        : `${fullMonths} mån, ${Math.max(0, remDays)} dagar (${weeks} v)`;
+
+      const benchmark = AGE_BENCHMARKS.find(b => monthsExact <= b.maxMonths) || AGE_BENCHMARKS[AGE_BENCHMARKS.length - 1];
+      return { diffDays, weeks, monthsExact, text, benchmark };
+    }
+
+    async function persistData() {
+      localStorage.setItem('bebiskollen_data', JSON.stringify(appData));
+      if (dbRef && currentUser) {
+        try {
+          await dbRef.set(appData);
+          document.getElementById('cloudSyncStatusText').style.color = 'var(--green)';
+          document.getElementById('cloudSyncStatusText').textContent = `Synkat med Firebase kl. ${new Date().toLocaleTimeString('sv-SE')}`;
+        } catch (err) {
+          document.getElementById('cloudSyncStatusText').style.color = 'var(--red)';
+          document.getElementById('cloudSyncStatusText').textContent = `Kunde inte synka: ${err.message}`;
+        }
+      }
+    }
+
+    function formatMinutes(mins) {
+      if (!mins) return '0 min';
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      return h > 0 ? `${h} h ${m} min` : `${m} min`;
+    }
+
+    function renderAll() {
+      const events = (appData.events || []).slice().sort((a, b) => new Date(b.time) - new Date(a.time));
+      const now = new Date();
+      const todayStr = now.toISOString().slice(0, 10);
+      const last24hMs = now.getTime() - 24 * 60 * 60 * 1000;
+      const last7dMs = now.getTime() - 7 * 24 * 60 * 60 * 1000;
+
+      // 1. Senaste matning & nästa bröst
+      const feeds = events.filter(e => e.type === 'feed');
+      if (feeds.length > 0) {
+        const last = feeds[0];
+        const diffMins = Math.max(0, Math.round((now - new Date(last.time)) / 60000));
+        const h = Math.floor(diffMins / 60);
+        const m = diffMins % 60;
+        document.getElementById('kpiLastFeedTime').textContent = `${h > 0 ? h + 'h ' : ''}${m}m sedan`;
+
+        const parts = [];
+        if (last.leftMin > 0) parts.push(`Vänster ${last.leftMin} min`);
+        if (last.rightMin > 0) parts.push(`Höger ${last.rightMin} min`);
+        if (last.bottleMl > 0) parts.push(`Flaska ${last.bottleMl} ml`);
+        document.getElementById('kpiLastFeedDetail').textContent = `Kl. ${last.time.slice(11, 16)} (${parts.join(', ') || 'loggad'})`;
+
+        const nextEl = document.getElementById('kpiNextBreast');
+        if (last.leftMin > 0 && (!last.rightMin || last.leftMin > last.rightMin)) {
+          nextEl.textContent = '👉 Börja med: Höger bröst';
+          nextEl.style.color = 'var(--green)';
+        } else if (last.rightMin > 0 && (!last.leftMin || last.rightMin > last.leftMin)) {
+          nextEl.textContent = '👉 Börja med: Vänster bröst';
+          nextEl.style.color = 'var(--green)';
+        } else {
+          nextEl.textContent = 'Flaska senast – valfritt bröst';
+          nextEl.style.color = 'var(--accent)';
+        }
+      }
+
+      // 2. Mat idag
+      const todayFeeds = feeds.filter(e => e.time.startsWith(todayStr));
+      const todayMl = todayFeeds.reduce((s, e) => s + (Number(e.bottleMl) || 0), 0);
+      const todayLeft = todayFeeds.reduce((s, e) => s + (Number(e.leftMin) || 0), 0);
+      const todayRight = todayFeeds.reduce((s, e) => s + (Number(e.rightMin) || 0), 0);
+      document.getElementById('kpiTodayFeed').textContent = `${todayMl} ml • ${todayLeft + todayRight} min`;
+      document.getElementById('kpiTodayFeedCount').textContent = `${todayFeeds.length} matningar idag`;
+      document.getElementById('kpiTodayBreastSplit').textContent = `Vänster: ${todayLeft} min • Höger: ${todayRight} min`;
+
+      // 3. Blöjor idag
+      const diapers = events.filter(e => e.type === 'diaper');
+      const todayDiapers = diapers.filter(e => e.time.startsWith(todayStr));
+      const kissCount = todayDiapers.filter(e => e.diaperType === 'kiss' || e.diaperType === 'bada').length;
+      const bajsCount = todayDiapers.filter(e => e.diaperType === 'bajs' || e.diaperType === 'bada').length;
+      document.getElementById('kpiTodayDiapers').textContent = `${todayDiapers.length} st`;
+      document.getElementById('kpiTodayDiaperSplit').textContent = `${kissCount} kiss • ${bajsCount} bajs`;
+      document.getElementById('kpiLastDiaperTime').textContent = diapers.length > 0
+        ? `Senaste byte: kl. ${diapers[0].time.slice(11, 16)} (${diapers[0].diaperType === 'bada' ? 'Kiss & Bajs' : diapers[0].diaperType})`
+        : 'Senaste byte: –';
+
+      // 4. Sömn senaste 24h
+      const sleeps = events.filter(e => e.type === 'sleep');
+      const sleeps24h = sleeps.filter(e => new Date(e.endTime || e.time).getTime() >= last24hMs);
+      const sleepMins24h = sleeps24h.reduce((s, e) => s + (Number(e.durationMin) || 0), 0);
+      const longestMin = sleeps24h.reduce((max, e) => Math.max(max, Number(e.durationMin) || 0), 0);
+      document.getElementById('kpiSleep24h').textContent = `${(sleepMins24h / 60).toFixed(1).replace('.', ',')} h`;
+      document.getElementById('kpiSleepCount24h').textContent = `${sleeps24h.length} sömnpass senaste 24h`;
+      document.getElementById('kpiLongestSleep').textContent = `Längsta sammanhängande: ${(longestMin / 60).toFixed(1).replace('.', ',')} h`;
+
+      // 5. Åldersprojektion
+      document.getElementById('birthDateInput').value = appData.birthDate || '';
+      const ageInfo = getBabyAgeInfo(appData.birthDate);
+      if (ageInfo) {
+        document.getElementById('ageHeaderBadge').textContent = ageInfo.text;
+        const b = ageInfo.benchmark;
+        document.getElementById('projectionIntroText').innerHTML =
+          `Fas: <strong>${b.label}</strong> • ${b.nextPhase}`;
+
+        // 7-dygnssnitt
+        const activeDays = Math.max(1, Math.min(7, new Set(events.filter(e => new Date(e.time).getTime() >= last7dMs).map(e => e.time.slice(0, 10))).size || 1));
+        const feeds7d = feeds.filter(e => new Date(e.time).getTime() >= last7dMs);
+        const avgMl7d = Math.round(feeds7d.reduce((s, e) => s + (Number(e.bottleMl) || 0), 0) / activeDays);
+        const avgBreastMin7d = Math.round(feeds7d.reduce((s, e) => s + (Number(e.leftMin) || 0) + (Number(e.rightMin) || 0), 0) / activeDays);
+        const avgFeedsCount7d = (feeds7d.length / activeDays).toFixed(1).replace('.', ',');
+
+        document.getElementById('projFeedTarget').textContent = `Riktvärde: ~${b.feedMlPerDay} ml (${b.feedsPerDay})`;
+        document.getElementById('projFeedActual').textContent = `Snitt (7d): ${avgMl7d} ml + ${avgBreastMin7d} min bröst (${avgFeedsCount7d} ggr/dygn)`;
+        const feedPct = Math.min(100, Math.round(((avgMl7d + avgBreastMin7d * 10) / b.feedMlPerDay) * 100));
+        document.getElementById('projFeedBar').style.width = `${feedPct}%`;
+        document.getElementById('projFeedForecast').textContent = `Riktvärdet avser total dygnsmängd (bröstmjölk + ersättning). ${b.feedsPerDay} är normalt i denna ålder.`;
+
+        const diapers7d = diapers.filter(e => new Date(e.time).getTime() >= last7dMs);
+        const avgDiapers7d = (diapers7d.length / activeDays).toFixed(1).replace('.', ',');
+        document.getElementById('projDiaperTarget').textContent = `Riktvärde: ${b.diapersPerDay}+ blöjor/dygn`;
+        document.getElementById('projDiaperActual').textContent = `Snitt (7d): ${avgDiapers7d} blöjor/dygn`;
+        document.getElementById('projDiaperBar').style.width = `${Math.min(100, Math.round(((diapers7d.length / activeDays) / b.diapersPerDay) * 100))}%`;
+        document.getElementById('projDiaperForecast').textContent = `Normalt nu: ${b.poopNote}. Minst 6 tunga kissblöjor/dygn visar gott vätskeintag.`;
+
+        const sleeps7d = sleeps.filter(e => new Date(e.time).getTime() >= last7dMs);
+        const avgSleepH7d = (sleeps7d.reduce((s, e) => s + (Number(e.durationMin) || 0), 0) / 60 / activeDays);
+        document.getElementById('projSleepTarget').textContent = `Riktvärde: ~${b.sleepHours.toFixed(1).replace('.', ',')} h/dygn`;
+        document.getElementById('projSleepActual').textContent = `Snitt (7d): ${avgSleepH7d.toFixed(1).replace('.', ',')} h/dygn`;
+        document.getElementById('projSleepBar').style.width = `${Math.min(100, Math.round((avgSleepH7d / b.sleepHours) * 100))}%`;
+        document.getElementById('projSleepForecast').textContent = `Inkluderar både nattsömn och dagstupplurar. Individuell variation på ±2 timmar är helt normalt.`;
+      } else {
+        document.getElementById('ageHeaderBadge').textContent = 'Ange födelsedatum';
+      }
+
+      renderCharts(feeds, diapers, sleeps);
+      renderEventsTable(events);
+    }
+
+    function renderCharts(feeds, diapers, sleeps) {
+      const days = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        days.push(d.toISOString().slice(0, 10));
+      }
+
+      const shortLabels = days.map(d => d.slice(5));
+      const mlData = days.map(d => feeds.filter(e => e.time.startsWith(d)).reduce((s, e) => s + (Number(e.bottleMl) || 0), 0));
+      const sleepData = days.map(d => +(sleeps.filter(e => (e.endTime || e.time).startsWith(d)).reduce((s, e) => s + (Number(e.durationMin) || 0), 0) / 60).toFixed(1));
+
+      const kissData = days.map(d => diapers.filter(e => e.time.startsWith(d) && (e.diaperType === 'kiss' || e.diaperType === 'bada')).length);
+      const bajsData = days.map(d => diapers.filter(e => e.time.startsWith(d) && (e.diaperType === 'bajs' || e.diaperType === 'bada')).length);
+
+      const ctx1 = document.getElementById('feedSleepChart').getContext('2d');
+      if (feedSleepChartInst) feedSleepChartInst.destroy();
+      feedSleepChartInst = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: shortLabels,
+          datasets: [
+            { label: 'Flaska (ml)', data: mlData, backgroundColor: '#38bdf8', borderRadius: 5, yAxisID: 'y' },
+            { label: 'Sömn (timmar)', data: sleepData, backgroundColor: '#a855f7', borderRadius: 5, yAxisID: 'y1' }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#94a3b8' } } },
+          scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+            y: { type: 'linear', position: 'left', ticks: { color: '#38bdf8' }, grid: { color: '#334155' } },
+            y1: { type: 'linear', position: 'right', ticks: { color: '#a855f7' }, grid: { display: false } }
+          }
+        }
+      });
+
+      const ctx2 = document.getElementById('diaperChart').getContext('2d');
+      if (diaperChartInst) diaperChartInst.destroy();
+      diaperChartInst = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+          labels: shortLabels,
+          datasets: [
+            { label: 'Kissblöjor', data: kissData, backgroundColor: '#eab308', borderRadius: 5 },
+            { label: 'Bajsblöjor', data: bajsData, backgroundColor: '#22c55e', borderRadius: 5 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#94a3b8' } } },
+          scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+            y: { ticks: { color: '#94a3b8', stepSize: 1 }, grid: { color: '#334155' } }
+          }
+        }
+      });
+    }
+
+    function renderEventsTable(events) {
+      const filter = document.getElementById('logFilterSelect').value;
+      const filtered = filter === 'all' ? events : events.filter(e => e.type === filter);
+      const tbody = document.getElementById('eventsTableBody');
+
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="5" style="color:var(--muted); text-align:center; padding:18px;">Inga händelser loggade ännu.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.slice(0, 60).map(ev => {
+        let badge = '';
+        let detail = '';
+        if (ev.type === 'feed') {
+          badge = `<span class="tag-pill tag-feed">🍼 Matning</span>`;
+          const p = [];
+          if (ev.leftMin > 0) p.push(`Vänster: ${ev.leftMin} min`);
+          if (ev.rightMin > 0) p.push(`Höger: ${ev.rightMin} min`);
+          if (ev.bottleMl > 0) p.push(`Flaska: ${ev.bottleMl} ml`);
+          detail = p.join(' • ') || 'Matning';
+        } else if (ev.type === 'diaper') {
+          badge = `<span class="tag-pill tag-diaper">🧷 Blöjbyte</span>`;
+          detail = ev.diaperType === 'bada' ? '💧💩 Kiss & Bajs' : (ev.diaperType === 'bajs' ? '💩 Bajs' : '💧 Kiss');
+        } else {
+          badge = `<span class="tag-pill tag-sleep">🌙 Sömn</span>`;
+          detail = `${formatMinutes(ev.durationMin)} (${ev.time.slice(11, 16)}–${(ev.endTime || '').slice(11, 16)})`;
+        }
+
+        return `
+          <tr>
+            <td><strong>${ev.time.replace('T', ' ')}</strong></td>
+            <td>${badge}</td>
+            <td>${detail}</td>
+            <td style="color:var(--muted);">${ev.comment || '–'}</td>
+            <td><button class="btn btn-danger" type="button" onclick="deleteEvent('${ev.id}')">✕</button></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    window.deleteEvent = function(id) {
+      appData.events = (appData.events || []).filter(e => e.id !== id);
+      persistData();
+      renderAll();
+    };
+
+    // --- EVENT LISTENERS ---
+    document.querySelectorAll('#diaperTypeGroup .diaper-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#diaperTypeGroup .diaper-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedDiaperType = btn.dataset.val;
+      });
+    });
+
+    document.getElementById('birthDateInput').addEventListener('change', (e) => {
+      appData.birthDate = e.target.value;
+      persistData();
+      renderAll();
+    });
+
+    document.getElementById('sleepStartInput').addEventListener('change', updateSleepDurationPreview);
+    document.getElementById('sleepEndInput').addEventListener('change', updateSleepDurationPreview);
+    document.getElementById('logFilterSelect').addEventListener('change', renderAll);
+
+    document.getElementById('addFeedBtn').addEventListener('click', () => {
+      const time = document.getElementById('feedTimeInput').value || toLocalDatetimeValue(new Date());
+      const leftMin = Number(document.getElementById('feedLeftMin').value) || 0;
+      const rightMin = Number(document.getElementById('feedRightMin').value) || 0;
+      const bottleMl = Number(document.getElementById('feedBottleMl').value) || 0;
+      const comment = document.getElementById('feedComment').value.trim();
+
+      if (leftMin === 0 && rightMin === 0 && bottleMl === 0 && !comment) return;
+
+      appData.events.push({
+        id: Date.now().toString(),
+        type: 'feed',
+        time,
+        leftMin,
+        rightMin,
+        bottleMl,
+        comment
+      });
+
+      document.getElementById('feedLeftMin').value = '';
+      document.getElementById('feedRightMin').value = '';
+      document.getElementById('feedBottleMl').value = '';
+      document.getElementById('feedComment').value = '';
+      setDefaultFormTimes();
+      persistData();
+      renderAll();
+    });
+
+    document.getElementById('addDiaperBtn').addEventListener('click', () => {
+      const time = document.getElementById('diaperTimeInput').value || toLocalDatetimeValue(new Date());
+      const comment = document.getElementById('diaperComment').value.trim();
+
+      appData.events.push({
+        id: Date.now().toString(),
+        type: 'diaper',
+        time,
+        diaperType: selectedDiaperType,
+        comment
+      });
+
+      document.getElementById('diaperComment').value = '';
+      setDefaultFormTimes();
+      persistData();
+      renderAll();
+    });
+
+    document.getElementById('addSleepBtn').addEventListener('click', () => {
+      const start = document.getElementById('sleepStartInput').value;
+      const end = document.getElementById('sleepEndInput').value;
+      const comment = document.getElementById('sleepComment').value.trim();
+      const sDate = new Date(start);
+      const eDate = new Date(end);
+
+      if (isNaN(sDate) || isNaN(eDate) || eDate <= sDate) {
+        alert('Sluttiden måste vara efter starttiden.');
+        return;
+      }
+
+      const durationMin = Math.round((eDate - sDate) / 60000);
+      appData.events.push({
+        id: Date.now().toString(),
+        type: 'sleep',
+        time: start,
+        endTime: end,
+        durationMin,
+        comment
+      });
+
+      document.getElementById('sleepComment').value = '';
+      setDefaultFormTimes();
+      persistData();
+      renderAll();
+    });
+
+    document.getElementById('exportCsvBtn').addEventListener('click', () => {
+      let csv = 'Tidpunkt;Typ;VansterMin;HogerMin;FlaskaMl;Bloja;SomnMin;Kommentar\n';
+      (appData.events || []).forEach(ev => {
+        csv += `${ev.time};${ev.type};${ev.leftMin || ''};${ev.rightMin || ''};${ev.bottleMl || ''};${ev.diaperType || ''};${ev.durationMin || ''};"${ev.comment || ''}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'bebiskollen_logg.csv';
+      a.click();
+    });
+
+    // --- FIREBASE INIT ---
+    function initFirebase() {
+      if (!FIREBASE_CONFIG.apiKey || FIREBASE_CONFIG.apiKey === 'DIN_API_KEY') return;
+      if (!firebase.apps.length) {
+        firebase.initializeApp(FIREBASE_CONFIG);
+      }
+
+      firebase.auth().onAuthStateChanged(user => {
+        currentUser = user;
+        if (user) {
+          document.getElementById('authStatusBadge').innerHTML = `<span class="status-dot" style="background:var(--green);"></span>${user.email}`;
+          document.getElementById('googleLoginBtn').style.display = 'none';
+          document.getElementById('googleLogoutBtn').style.display = 'inline-block';
+
+          dbRef = firebase.database().ref('bebiskollen_privat');
+          dbRef.on('value', snap => {
+            const cloud = snap.val();
+            if (cloud && typeof cloud === 'object') {
+              appData = {
+                birthDate: cloud.birthDate || appData.birthDate || '',
+                events: Array.isArray(cloud.events) ? cloud.events : []
+              };
+              localStorage.setItem('bebiskollen_data', JSON.stringify(appData));
+              renderAll();
+            }
+            document.getElementById('cloudSyncStatusText').style.color = 'var(--green)';
+            document.getElementById('cloudSyncStatusText').textContent = `Inloggad som ${user.email} • Realtidssynk aktiv mellan era mobiler.`;
+          });
+        } else {
+          document.getElementById('authStatusBadge').innerHTML = `<span class="status-dot" style="background:var(--yellow);"></span>Ej inloggad (Lokal lagring)`;
+          document.getElementById('googleLoginBtn').style.display = 'inline-block';
+          document.getElementById('googleLogoutBtn').style.display = 'none';
+          dbRef = null;
+        }
+      });
+    }
+
+    document.getElementById('googleLoginBtn').addEventListener('click', () => {
+      if (!firebase.apps.length) {
+        alert('Lägg först in din Firebase Config i koden (rad 376).');
+        return;
+      }
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider).catch(err => alert('Inloggning misslyckades: ' + err.message));
+    });
+
+    document.getElementById('googleLogoutBtn').addEventListener('click', () => {
+      if (firebase.apps.length) firebase.auth().signOut();
+    });
+
+    setDefaultFormTimes();
+    renderAll();
+    initFirebase();
+  </script>
+</body>
+</html>
