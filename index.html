@@ -539,15 +539,16 @@
   </div>
 
   <script>
-    // --- FIREBASE CONFIG (Klistra in din egen config från Firebase Console) ---
+    // --- FÄRDIGKOPPLAD FIREBASE-KONFIGURATION FÖR BEBISKOLLEN ---
     const FIREBASE_CONFIG = {
-      apiKey: "DIN_API_KEY",
-      authDomain: "DITT_PROJEKT.firebaseapp.com",
-      databaseURL: "https://DITT_PROJEKT-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "DITT_PROJEKT",
-      storageBucket: "DITT_PROJEKT.firebasestorage.app",
-      messagingSenderId: "000000000000",
-      appId: "1:000000000000:web:0000000000000000"
+      apiKey: "AIzaSyAecb30dHRYYa2-Vxn0z2OYHYLT8Bw8U3I",
+      authDomain: "bebiskollen-cadac.firebaseapp.com",
+      databaseURL: "https://bebiskollen-cadac-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "bebiskollen-cadac",
+      storageBucket: "bebiskollen-cadac.firebasestorage.app",
+      messagingSenderId: "252460287084",
+      appId: "1:252460287084:web:0bd73042ebed7a1b570449",
+      measurementId: "G-GT21ZBTSC6"
     };
 
     // --- MEDICINSKA RIKTMÄRKEN PER ÅLDER (WHO / 1177 / RIKSHANDBOKEN) ---
@@ -768,7 +769,6 @@
         document.getElementById('projectionIntroText').innerHTML =
           `Fas: <strong>${b.label}</strong> • ${b.nextPhase}`;
 
-        // 7-dygnssnitt
         const activeDays = Math.max(1, Math.min(7, new Set(events.filter(e => new Date(e.time).getTime() >= last7dMs).map(e => e.time.slice(0, 10))).size || 1));
         const feeds7d = feeds.filter(e => new Date(e.time).getTime() >= last7dMs);
         const avgMl7d = Math.round(feeds7d.reduce((s, e) => s + (Number(e.bottleMl) || 0), 0) / activeDays);
@@ -1017,7 +1017,6 @@
 
     // --- FIREBASE INIT ---
     function initFirebase() {
-      if (!FIREBASE_CONFIG.apiKey || FIREBASE_CONFIG.apiKey === 'DIN_API_KEY') return;
       if (!firebase.apps.length) {
         firebase.initializeApp(FIREBASE_CONFIG);
       }
@@ -1042,6 +1041,9 @@
             }
             document.getElementById('cloudSyncStatusText').style.color = 'var(--green)';
             document.getElementById('cloudSyncStatusText').textContent = `Inloggad som ${user.email} • Realtidssynk aktiv mellan era mobiler.`;
+          }, err => {
+            document.getElementById('cloudSyncStatusText').style.color = 'var(--red)';
+            document.getElementById('cloudSyncStatusText').textContent = `Åtkomst nekad av databasregler (${err.message}).`;
           });
         } else {
           document.getElementById('authStatusBadge').innerHTML = `<span class="status-dot" style="background:var(--yellow);"></span>Ej inloggad (Lokal lagring)`;
@@ -1053,16 +1055,12 @@
     }
 
     document.getElementById('googleLoginBtn').addEventListener('click', () => {
-      if (!firebase.apps.length) {
-        alert('Lägg först in din Firebase Config i koden (rad 376).');
-        return;
-      }
       const provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).catch(err => alert('Inloggning misslyckades: ' + err.message));
     });
 
     document.getElementById('googleLogoutBtn').addEventListener('click', () => {
-      if (firebase.apps.length) firebase.auth().signOut();
+      firebase.auth().signOut();
     });
 
     setDefaultFormTimes();
