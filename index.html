@@ -158,13 +158,14 @@
     }
 
     .kpi-rem-text {
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       color: var(--muted);
       display: flex;
       justify-content: space-between;
+      align-items: baseline;
       gap: 6px;
-      flex-wrap: wrap;
       margin-bottom: 6px;
+      line-height: 1.35;
     }
 
     .kpi-rem-text strong {
@@ -1114,27 +1115,31 @@
 
       document.getElementById('historyCountBadge').textContent = `${events.length} händelser`;
 
+      // Hämta exakt benchmark från inmatat födelsedatum i utvecklingsblocket
       const ageInfo = getBabyAgeInfo(appData.birthDate);
-      const benchmark = ageInfo ? ageInfo.benchmark : AGE_BENCHMARKS[2]; // Default 3-6 mån riktmärke tills födelsedatum anges
+      const benchmark = ageInfo ? ageInfo.benchmark : null;
 
-      // Beräkna ert 7-dygnssnitt (exklusive idag om ni har historik, annars inklusive idag)
       const feeds = events.filter(e => e.type === 'feed');
       const diapers = events.filter(e => e.type === 'diaper');
       const sleeps = events.filter(e => e.type === 'sleep');
 
-      const events7d = events.filter(e => new Date(e.time).getTime() >= last7dMs);
-      const activeDays = Math.max(1, Math.min(7, new Set(events7d.map(e => e.time.slice(0, 10))).size || 1));
+      // 7-dygnssnitt baserat på avslutade dagar (exklusive idag om det finns tidigare dagar, annars totalt)
+      const events7dPast = events.filter(e => new Date(e.time).getTime() >= last7dMs && !e.time.startsWith(todayStr));
+      const events7dAll = events.filter(e => new Date(e.time).getTime() >= last7dMs);
+      const hasPastDays = events7dPast.length > 0;
+      const avgSourceEvents = hasPastDays ? events7dPast : events7dAll;
+      const activeDays = Math.max(1, Math.min(7, new Set(avgSourceEvents.map(e => e.time.slice(0, 10))).size || 1));
 
-      const feeds7d = feeds.filter(e => new Date(e.time).getTime() >= last7dMs);
-      const avgMl7d = Math.round(feeds7d.reduce((s, e) => s + (Number(e.bottleMl) || 0), 0) / activeDays);
-      const avgBreastMin7d = Math.round(feeds7d.reduce((s, e) => s + (Number(e.leftMin) || 0) + (Number(e.rightMin) || 0), 0) / activeDays);
+      const feedsAvgSrc = feeds.filter(e => avgSourceEvents.includes(e));
+      const avgMl7d = Math.round(feedsAvgSrc.reduce((s, e) => s + (Number(e.bottleMl) || 0), 0) / activeDays);
+      const avgBreastMin7d = Math.round(feedsAvgSrc.reduce((s, e) => s + (Number(e.leftMin) || 0) + (Number(e.rightMin) || 0), 0) / activeDays);
       const avgTotalFeedEquiv7d = avgMl7d + avgBreastMin7d * 10;
 
-      const diapers7d = diapers.filter(e => new Date(e.time).getTime() >= last7dMs);
-      const avgDiapers7d = diapers7d.length / activeDays;
+      const diapersAvgSrc = diapers.filter(e => avgSourceEvents.includes(e));
+      const avgDiapers7d = diapersAvgSrc.length / activeDays;
 
-      const sleeps7d = sleeps.filter(e => new Date(e.time).getTime() >= last7dMs);
-      const avgSleepH7d = sleeps7d.reduce((s, e) => s + (Number(e.durationMin) || 0), 0) / 60 / activeDays;
+      const sleepsAvgSrc = sleeps.filter(e => avgSourceEvents.includes(e));
+      const avgSleepH7d = sleepsAvgSrc.reduce((s, e) => s + (Number(e.durationMin) || 0), 0) / 60 / activeDays;
 
       // 1. Senaste matning & nästa bröst + laddstapel för intervall
       if (feeds.length > 0) {
@@ -1164,21 +1169,29 @@
           nextEl.style.color = 'var(--accent)';
         }
 
-        const intervalGoalMin = Math.round(benchmark.feedIntervalHours * 60);
-        const remMin = Math.max(0, intervalGoalMin - diffMins);
-        const intervalPct = Math.min(100, Math.round((diffMins / intervalGoalMin) * 100));
-        document.getElementById('kpiNextFeedLeftText').innerHTML = remMin > 0
-          ? `Rek. intervall (${benchmark.feedIntervalHours.toString().replace('.', ',')}h): <strong>~${formatMinutes(remMin)} kvar</strong>`
-          : `Rek. intervall (${benchmark.feedIntervalHours.toString().replace('.', ',')}h): <strong>Dags snart</strong>`;
-        document.getElementById('kpiNextFeedPctText').textContent = `${intervalPct} %`;
-        document.getElementById('kpiNextFeedBar').style.width = `${intervalPct}%`;
+        if (benchmark) {
+          const intervalGoalMin = Math.round(benchmark.feedIntervalHours * 60);
+          const remMin = Math.max(0, intervalGoalMin - diffMins);
+          const intervalPct = Math.min(100, Math.round((diffMins / intervalGoalMin) * 100));
+          document.getElementById('kpiNextFeedLeftText').innerHTML = remMin > 0
+            ? `Rek. intervall (${benchmark.feedIntervalHours.toString().replace('.', ',')}h): <strong>~${formatMinutes(remMin)} kvar</strong>`
+            : `Rek. intervall (${benchmark.feedIntervalHours.toString().replace('.', ',')}h): <strong>Dags snart</strong>`;
+          document.getElementById('kpiNextFeedPctText').textContent = `${intervalPct} %`;
+          document.getElementById('kpiNextFeedBar').style.width = `${intervalPct}%`;
+        } else {
+          document.getElementById('kpiNextFeedLeftText').textContent = 'Ange födelsedatum för rek. intervall';
+          document.getElementById('kpiNextFeedPctText').textContent = '–';
+          document.getElementById('kpiNextFeedBar').style.width = '0%';
+        }
       } else {
-        document.getElementById('kpiNextFeedLeftText').textContent = `Rek. intervall: ca ${benchmark.feedIntervalHours.toString().replace('.', ',')} h`;
+        document.getElementById('kpiNextFeedLeftText').textContent = benchmark
+          ? `Rek. intervall: ca ${benchmark.feedIntervalHours.toString().replace('.', ',')} h`
+          : 'Ange födelsedatum för rek. intervall';
         document.getElementById('kpiNextFeedPctText').textContent = '0 %';
         document.getElementById('kpiNextFeedBar').style.width = '0%';
       }
 
-      // 2. Mat idag + kvar enligt snitt & rekommendation
+      // 2. Mat idag + kvar till snitt & åldersrekommendation
       const todayFeeds = feeds.filter(e => e.time.startsWith(todayStr));
       const todayMl = todayFeeds.reduce((s, e) => s + (Number(e.bottleMl) || 0), 0);
       const todayLeft = todayFeeds.reduce((s, e) => s + (Number(e.leftMin) || 0), 0);
@@ -1189,15 +1202,21 @@
       document.getElementById('kpiTodayFeedCount').textContent = `${todayFeeds.length} matningar idag`;
       document.getElementById('kpiTodayBreastSplit').textContent = `Vänster: ${todayLeft} min • Höger: ${todayRight} min`;
 
-      const remFeedAvg = Math.max(0, avgTotalFeedEquiv7d - todayEquivMl);
-      const remFeedRec = Math.max(0, benchmark.feedMlPerDay - todayEquivMl);
-      const feedProgressPct = Math.min(100, Math.round((todayEquivMl / benchmark.feedMlPerDay) * 100));
-      document.getElementById('kpiFeedRemText').innerHTML =
-        `Kvar snitt: <strong>${remFeedAvg} ml</strong> • Rek: <strong>${remFeedRec} ml</strong>`;
-      document.getElementById('kpiFeedPctText').textContent = `${feedProgressPct} %`;
-      document.getElementById('kpiFeedBar').style.width = `${feedProgressPct}%`;
+      const snittFeedLabel = hasPastDays ? `${Math.max(0, avgTotalFeedEquiv7d - todayEquivMl)} ml` : '–';
+      if (benchmark) {
+        const remFeedRec = Math.max(0, benchmark.feedMlPerDay - todayEquivMl);
+        const feedProgressPct = Math.min(100, Math.round((todayEquivMl / benchmark.feedMlPerDay) * 100));
+        document.getElementById('kpiFeedRemText').innerHTML =
+          `Kvar snitt: <strong>${snittFeedLabel}</strong> • Kvar rek (${benchmark.feedMlPerDay} ml): <strong>${remFeedRec} ml</strong>`;
+        document.getElementById('kpiFeedPctText').textContent = `${feedProgressPct} %`;
+        document.getElementById('kpiFeedBar').style.width = `${feedProgressPct}%`;
+      } else {
+        document.getElementById('kpiFeedRemText').innerHTML = `Kvar snitt: <strong>${snittFeedLabel}</strong> • Ange födelsedatum för rek.`;
+        document.getElementById('kpiFeedPctText').textContent = '–';
+        document.getElementById('kpiFeedBar').style.width = '0%';
+      }
 
-      // 3. Blöjor idag + kvar enligt snitt & rekommendation
+      // 3. Blöjor idag + kvar till snitt & åldersrekommendation
       const todayDiapers = diapers.filter(e => e.time.startsWith(todayStr));
       const kissCount = todayDiapers.filter(e => e.diaperType === 'kiss' || e.diaperType === 'bada').length;
       const bajsCount = todayDiapers.filter(e => e.diaperType === 'bajs' || e.diaperType === 'bada').length;
@@ -1210,15 +1229,21 @@
         document.getElementById('diaperHeaderMini').textContent = `Senast: ${dTime}`;
       }
 
-      const remDiaperAvg = Math.max(0, Math.round(avgDiapers7d) - todayDiapers.length);
-      const remDiaperRec = Math.max(0, benchmark.diapersPerDay - todayDiapers.length);
-      const diaperProgressPct = Math.min(100, Math.round((todayDiapers.length / benchmark.diapersPerDay) * 100));
-      document.getElementById('kpiDiaperRemText').innerHTML =
-        `Kvar snitt: <strong>${remDiaperAvg} st</strong> • Rek: <strong>${remDiaperRec} st</strong>`;
-      document.getElementById('kpiDiaperPctText').textContent = `${diaperProgressPct} %`;
-      document.getElementById('kpiDiaperBar').style.width = `${diaperProgressPct}%`;
+      const snittDiaperLabel = hasPastDays ? `${Math.max(0, Math.round(avgDiapers7d) - todayDiapers.length)} st` : '–';
+      if (benchmark) {
+        const remDiaperRec = Math.max(0, benchmark.diapersPerDay - todayDiapers.length);
+        const diaperProgressPct = Math.min(100, Math.round((todayDiapers.length / benchmark.diapersPerDay) * 100));
+        document.getElementById('kpiDiaperRemText').innerHTML =
+          `Kvar snitt: <strong>${snittDiaperLabel}</strong> • Kvar rek (${benchmark.diapersPerDay} st): <strong>${remDiaperRec} st</strong>`;
+        document.getElementById('kpiDiaperPctText').textContent = `${diaperProgressPct} %`;
+        document.getElementById('kpiDiaperBar').style.width = `${diaperProgressPct}%`;
+      } else {
+        document.getElementById('kpiDiaperRemText').innerHTML = `Kvar snitt: <strong>${snittDiaperLabel}</strong> • Ange födelsedatum för rek.`;
+        document.getElementById('kpiDiaperPctText').textContent = '–';
+        document.getElementById('kpiDiaperBar').style.width = '0%';
+      }
 
-      // 4. Sömn senaste 24h + kvar enligt snitt & rekommendation
+      // 4. Sömn senaste 24h + kvar till snitt & åldersrekommendation
       const sleeps24h = sleeps.filter(e => new Date(e.endTime || e.time).getTime() >= last24hMs);
       const sleepMins24h = sleeps24h.reduce((s, e) => s + (Number(e.durationMin) || 0), 0);
       const sleepHours24h = sleepMins24h / 60;
@@ -1229,38 +1254,44 @@
       document.getElementById('kpiLongestSleep').textContent = `Längsta sammanhängande: ${(longestMin / 60).toFixed(1).replace('.', ',')} h`;
       document.getElementById('sleepHeaderMini').textContent = `24h: ${sleepHText}`;
 
-      const remSleepAvg = Math.max(0, avgSleepH7d - sleepHours24h).toFixed(1).replace('.', ',');
-      const remSleepRec = Math.max(0, benchmark.sleepHours - sleepHours24h).toFixed(1).replace('.', ',');
-      const sleepProgressPct = Math.min(100, Math.round((sleepHours24h / benchmark.sleepHours) * 100));
-      document.getElementById('kpiSleepRemText').innerHTML =
-        `Kvar snitt: <strong>${remSleepAvg} h</strong> • Rek: <strong>${remSleepRec} h</strong>`;
-      document.getElementById('kpiSleepPctText').textContent = `${sleepProgressPct} %`;
-      document.getElementById('kpiSleepBar').style.width = `${sleepProgressPct}%`;
+      const snittSleepLabel = hasPastDays ? `${Math.max(0, avgSleepH7d - sleepHours24h).toFixed(1).replace('.', ',')} h` : '–';
+      if (benchmark) {
+        const remSleepRec = Math.max(0, benchmark.sleepHours - sleepHours24h).toFixed(1).replace('.', ',');
+        const sleepProgressPct = Math.min(100, Math.round((sleepHours24h / benchmark.sleepHours) * 100));
+        document.getElementById('kpiSleepRemText').innerHTML =
+          `Kvar snitt: <strong>${snittSleepLabel}</strong> • Kvar rek (${benchmark.sleepHours.toFixed(1).replace('.', ',')} h): <strong>${remSleepRec} h</strong>`;
+        document.getElementById('kpiSleepPctText').textContent = `${sleepProgressPct} %`;
+        document.getElementById('kpiSleepBar').style.width = `${sleepProgressPct}%`;
+      } else {
+        document.getElementById('kpiSleepRemText').innerHTML = `Kvar snitt: <strong>${snittSleepLabel}</strong> • Ange födelsedatum för rek.`;
+        document.getElementById('kpiSleepPctText').textContent = '–';
+        document.getElementById('kpiSleepBar').style.width = '0%';
+      }
 
       // 5. Åldersprojektion (ihopfällbar sektion)
       syncBirthDateDropdowns();
-      if (ageInfo) {
+      if (ageInfo && benchmark) {
         document.getElementById('ageHeaderBadge').textContent = ageInfo.text;
-        const b = ageInfo.benchmark;
+        const b = benchmark;
         document.getElementById('projHeaderPhaseBadge').textContent = b.label;
         document.getElementById('projHeaderShort').textContent = `Mål: ~${b.feedMlPerDay} ml • ${b.sleepHours.toFixed(1).replace('.', ',')} h sömn`;
         document.getElementById('projectionIntroText').innerHTML =
           `Fas: <strong>${b.label}</strong> • ${b.nextPhase}`;
 
-        const avgFeedsCount7d = (feeds7d.length / activeDays).toFixed(1).replace('.', ',');
+        const avgFeedsCount7d = (feedsAvgSrc.length / activeDays).toFixed(1).replace('.', ',');
         document.getElementById('projFeedTarget').textContent = `Riktvärde: ~${b.feedMlPerDay} ml (${b.feedsPerDay})`;
-        document.getElementById('projFeedActual').textContent = `Snitt (7d): ${avgMl7d} ml + ${avgBreastMin7d} min bröst (${avgFeedsCount7d} ggr/dygn)`;
+        document.getElementById('projFeedActual').textContent = `Snitt (${activeDays}d): ${avgMl7d} ml + ${avgBreastMin7d} min bröst (${avgFeedsCount7d} ggr/dygn)`;
         const feedPct = Math.min(100, Math.round((avgTotalFeedEquiv7d / b.feedMlPerDay) * 100));
         document.getElementById('projFeedBar').style.width = `${feedPct}%`;
         document.getElementById('projFeedForecast').textContent = `Riktvärdet avser total dygnsmängd (bröstmjölk + ersättning). ${b.feedsPerDay} är normalt i denna ålder.`;
 
         document.getElementById('projDiaperTarget').textContent = `Riktvärde: ${b.diapersPerDay}+ blöjor/dygn`;
-        document.getElementById('projDiaperActual').textContent = `Snitt (7d): ${avgDiapers7d.toFixed(1).replace('.', ',')} blöjor/dygn`;
+        document.getElementById('projDiaperActual').textContent = `Snitt (${activeDays}d): ${avgDiapers7d.toFixed(1).replace('.', ',')} blöjor/dygn`;
         document.getElementById('projDiaperBar').style.width = `${Math.min(100, Math.round((avgDiapers7d / b.diapersPerDay) * 100))}%`;
         document.getElementById('projDiaperForecast').textContent = `Normalt nu: ${b.poopNote}. Minst 6 tunga kissblöjor/dygn visar gott vätskeintag.`;
 
         document.getElementById('projSleepTarget').textContent = `Riktvärde: ~${b.sleepHours.toFixed(1).replace('.', ',')} h/dygn`;
-        document.getElementById('projSleepActual').textContent = `Snitt (7d): ${avgSleepH7d.toFixed(1).replace('.', ',')} h/dygn`;
+        document.getElementById('projSleepActual').textContent = `Snitt (${activeDays}d): ${avgSleepH7d.toFixed(1).replace('.', ',')} h/dygn`;
         document.getElementById('projSleepBar').style.width = `${Math.min(100, Math.round((avgSleepH7d / b.sleepHours) * 100))}%`;
         document.getElementById('projSleepForecast').textContent = `Inkluderar både nattsömn och dagstupplurar. Individuell variation på ±2 timmar är helt normalt.`;
       } else {
