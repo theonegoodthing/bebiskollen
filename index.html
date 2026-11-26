@@ -32,6 +32,10 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       background-color: var(--bg);
       color: var(--text);
@@ -46,7 +50,7 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       padding-bottom: 14px;
       border-bottom: 1px solid var(--card-border);
     }
@@ -57,6 +61,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
     .badge {
@@ -69,6 +74,58 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .profile-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid var(--card-border);
+      padding: 8px 12px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+
+    .profile-bar select {
+      width: auto;
+      min-width: 145px;
+      font-weight: 700;
+      color: var(--accent);
+      padding: 7px 10px;
+    }
+
+    /* Snabbhopps-rad för mobil */
+    .quick-nav-bar {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 14px;
+      scrollbar-width: none;
+    }
+
+    .quick-nav-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-pill-btn {
+      background: rgba(30, 41, 59, 0.95);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .nav-pill-btn:hover, .nav-pill-btn:active {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.12);
     }
 
     .grid-4 {
@@ -108,6 +165,12 @@
       border-radius: 14px;
       padding: 16px 18px;
       margin-bottom: 18px;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .card.highlight-pulse {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
     }
 
     .grid-4 .card {
@@ -115,6 +178,23 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+    }
+
+    .clickable-kpi {
+      cursor: pointer;
+      position: relative;
+    }
+
+    .clickable-kpi:hover, .clickable-kpi:active {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .kpi-jump-hint {
+      font-size: 0.72rem;
+      color: var(--accent);
+      font-weight: 600;
+      opacity: 0.85;
     }
 
     .grid-3 .card, .grid-2 .card {
@@ -128,6 +208,10 @@
       letter-spacing: 0.05em;
       margin-bottom: 6px;
       font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
     }
 
     .big-value {
@@ -225,6 +309,20 @@
       background: rgba(148, 163, 184, 0.15);
       color: var(--text);
       border: 1px solid var(--card-border);
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      border-radius: 7px;
+    }
+
+    .btn-edit {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 4px 8px;
+      font-size: 0.76rem;
     }
 
     .btn-danger {
@@ -465,6 +563,29 @@
       border-radius: 50%;
       display: inline-block;
     }
+
+    /* Modal för redigering av händelse i loggen */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 16px;
+    }
+
+    .modal-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 18px;
+      width: 100%;
+      max-width: 440px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
   </style>
 </head>
 <body>
@@ -481,12 +602,34 @@
     </div>
   </header>
 
-  <!-- 1. NYTTIG ÖVERSIKT I TOPPEN MED VISUELLA LADDSTAPLAR & KVARVARANDE MÄNGD -->
+  <!-- PROFILVÄLJARE FÖR FLERA BARN -->
+  <div class="profile-bar">
+    <span style="font-size:0.82rem; font-weight:700; color:var(--muted);">👤 Aktiv profil:</span>
+    <select id="profileSelect"></select>
+    <button type="button" class="btn btn-secondary btn-sm" id="renameProfileBtn" title="Byt visningsnamn på vald profil">✏️ Byt namn</button>
+    <button type="button" class="btn btn-green btn-sm" id="addProfileBtn">+ Lägg till barn</button>
+    <button type="button" class="btn btn-danger" id="deleteProfileBtn" style="margin-left:auto; display:none;" title="Ta bort denna profil">Ta bort profil</button>
+  </div>
+
+  <!-- SNABBHOPPS-RAD FÖR MOBIL -->
+  <div class="quick-nav-bar">
+    <button type="button" class="nav-pill-btn" onclick="jumpToSection('feed', 'card_feed')">🍼 Logga mat</button>
+    <button type="button" class="nav-pill-btn" onclick="jumpToSection('diaper', 'card_diaper')">🧷 Logga blöja</button>
+    <button type="button" class="nav-pill-btn" onclick="jumpToSection('sleep', 'card_sleep')">🌙 Logga sömn</button>
+    <button type="button" class="nav-pill-btn" onclick="jumpToSection('growth', 'card_growth')">📏 Längd & vikt</button>
+    <button type="button" class="nav-pill-btn" onclick="jumpToSection('health', 'card_health')">🌡️ Hälsa & temp</button>
+    <button type="button" class="nav-pill-btn" onclick="jumpToSection('history', 'card_history')">📋 Händelselogg</button>
+  </div>
+
+  <!-- 1. KLICKBARA ÖVERSIKTSBLOCK I TOPPEN (HOPPAR DIREKT TILL LOGG-BLOCKET) -->
   <div class="grid-4">
     <!-- Block 1: Senaste matning -->
-    <div class="card">
+    <div class="card clickable-kpi" onclick="jumpToSection('feed', 'card_feed')" title="Tryck för att logga matning">
       <div>
-        <div class="card-title">Senaste Matning & Nästa Bröst</div>
+        <div class="card-title">
+          <span>Senaste Matning & Nästa Bröst</span>
+          <span class="kpi-jump-hint">Logga ↓</span>
+        </div>
         <div class="big-value" id="kpiLastFeedTime" style="color: var(--accent);">–</div>
         <div class="pill-highlight" id="kpiNextBreast" style="color: var(--green);">Nästa förslag: Vänster eller Höger</div>
         <div class="sub-value" id="kpiLastFeedDetail">Ingen matning loggad ännu</div>
@@ -500,10 +643,13 @@
       </div>
     </div>
 
-    <!-- Block 2: Mat idag (inkl. smakportioner) -->
-    <div class="card">
+    <!-- Block 2: Mat idag -->
+    <div class="card clickable-kpi" onclick="jumpToSection('feed', 'card_feed')" title="Tryck för att logga matning">
       <div>
-        <div class="card-title">Mat Idag (00:00 – Nu)</div>
+        <div class="card-title">
+          <span>Mat Idag (00:00 – Nu)</span>
+          <span class="kpi-jump-hint">Logga ↓</span>
+        </div>
         <div class="big-value" id="kpiTodayFeed" style="color: var(--green);">0 ml • 0 min</div>
         <div class="pill-highlight" id="kpiTodayFeedCount" style="color: var(--muted);">0 matningar idag</div>
         <div class="sub-value" id="kpiTodayBreastSplit">Vänster: 0 min • Höger: 0 min</div>
@@ -518,9 +664,12 @@
     </div>
 
     <!-- Block 3: Blöjbyten idag -->
-    <div class="card">
+    <div class="card clickable-kpi" onclick="jumpToSection('diaper', 'card_diaper')" title="Tryck för att logga blöjbyte">
       <div>
-        <div class="card-title">Blöjbyten Idag</div>
+        <div class="card-title">
+          <span>Blöjbyten Idag</span>
+          <span class="kpi-jump-hint">Logga ↓</span>
+        </div>
         <div class="big-value" id="kpiTodayDiapers" style="color: var(--yellow);">0 st</div>
         <div class="pill-highlight" id="kpiTodayDiaperSplit" style="color: var(--muted);">0 kiss • 0 bajs</div>
         <div class="sub-value" id="kpiLastDiaperTime">Senaste byte: –</div>
@@ -535,9 +684,12 @@
     </div>
 
     <!-- Block 4: Sömn & Vakenfönster -->
-    <div class="card">
+    <div class="card clickable-kpi" onclick="jumpToSection('sleep', 'card_sleep')" title="Tryck för att logga sömn">
       <div>
-        <div class="card-title" id="kpiSleepTitle">Sömn (24h) & Vakenfönster</div>
+        <div class="card-title" id="kpiSleepTitle">
+          <span>Sömn (24h) & Vakenfönster</span>
+          <span class="kpi-jump-hint">Logga ↓</span>
+        </div>
         <div class="big-value" id="kpiSleep24h" style="color: var(--purple);">0,0 h</div>
         <div class="pill-highlight" id="kpiWakeWindowBadge" style="color: var(--accent);">Vaken nu: –</div>
         <div class="sub-value" id="kpiLongestSleep">Längsta sammanhängande: 0,0 h</div>
@@ -553,7 +705,7 @@
   </div>
 
   <!-- 2. IHOPFÄLLBAR ÅLDERSPROJEKTION & RIKTMÄRKEN -->
-  <div class="card">
+  <div class="card" id="card_projection">
     <div class="collapsible-header" onclick="toggleDrawer('projection')">
       <div style="display:flex; align-items:center; gap:10px;">
         <span class="chevron open" id="chev_projection">▶</span>
@@ -621,7 +773,7 @@
   </div>
 
   <!-- LÄNGD & VIKT + TILLVÄXTPROGNOS -->
-  <div class="card">
+  <div class="card" id="card_growth">
     <div class="collapsible-header" onclick="toggleDrawer('growth')">
       <div style="display:flex; align-items:center; gap:10px;">
         <span class="chevron open" id="chev_growth">▶</span>
@@ -723,7 +875,7 @@
   <!-- 3. IHOPFÄLLBARA INMATNINGSBLOCK MED SKROLLBAR TID, SMAKPORTIONER & LIVE-SÖMN -->
   <div class="grid-3">
     <!-- Block A: Logga Matning & Smakportioner -->
-    <div class="card">
+    <div class="card" id="card_feed">
       <div class="collapsible-header" onclick="toggleDrawer('feed')">
         <div style="display:flex; align-items:center; gap:8px;">
           <span class="chevron open" id="chev_feed">▶</span>
@@ -797,7 +949,7 @@
               <button type="button" class="chip-btn" onclick="toggleSolidCategory(this, 'Plockmat')">🥑 Plock</button>
             </div>
             <div style="display:flex; gap:8px; align-items:center;">
-              <input type="text" id="feedSolidDetail" placeholder="Vad åt hon? (t.ex. Palsternacka, 3 tsk)" style="flex:1; font-size:0.85rem; padding:7px 9px;" />
+              <input type="text" id="feedSolidDetail" placeholder="Vad åt barnet? (t.ex. Palsternacka, 3 tsk)" style="flex:1; font-size:0.85rem; padding:7px 9px;" />
               <label style="flex-direction:row; align-items:center; gap:5px; white-space:nowrap; font-size:0.76rem; color:var(--text); cursor:pointer;">
                 <input type="checkbox" id="feedIsNewFood" style="width:16px; height:16px;" /> Ny råvara
               </label>
@@ -814,7 +966,7 @@
     </div>
 
     <!-- Block B: Logga Blöjbyte -->
-    <div class="card">
+    <div class="card" id="card_diaper">
       <div class="collapsible-header" onclick="toggleDrawer('diaper')">
         <div style="display:flex; align-items:center; gap:8px;">
           <span class="chevron open" id="chev_diaper">▶</span>
@@ -854,7 +1006,7 @@
     </div>
 
     <!-- Block C: Logga Sömn (Med Live-timer "Sover nu") -->
-    <div class="card">
+    <div class="card" id="card_sleep">
       <div class="collapsible-header" onclick="toggleDrawer('sleep')">
         <div style="display:flex; align-items:center; gap:8px;">
           <span class="chevron open" id="chev_sleep">▶</span>
@@ -864,12 +1016,11 @@
       </div>
 
       <div class="drawer-body" id="body_sleep">
-        <!-- Live-timer för pågående sömn -->
         <div class="live-sleep-banner" id="liveSleepBox">
           <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
             <div>
               <div style="font-size:0.75rem; font-weight:700; color:var(--purple); text-transform:uppercase;" id="liveSleepStatusLabel">Live-timer för tupplur/natt</div>
-              <div style="font-size:1.05rem; font-weight:700;" id="liveSleepTimerText">Tryck när hon somnar</div>
+              <div style="font-size:1.05rem; font-weight:700;" id="liveSleepTimerText">Tryck när barnet somnar</div>
             </div>
             <button type="button" class="btn btn-purple" id="toggleLiveSleepBtn" style="padding:8px 12px; font-size:0.82rem;">😴 Starta sömn nu</button>
           </div>
@@ -918,8 +1069,8 @@
     </div>
   </div>
 
-  <!-- 3B. NYTT BLOCK: HÄLSA, FEBER & MEDICIN-NEDRÄKNING -->
-  <div class="card">
+  <!-- 3B. BLOCK: HÄLSA, FEBER & MEDICIN-NEDRÄKNING -->
+  <div class="card" id="card_health">
     <div class="collapsible-header" onclick="toggleDrawer('health')">
       <div style="display:flex; align-items:center; gap:10px;">
         <span class="chevron" id="chev_health">▶</span>
@@ -936,7 +1087,7 @@
     </div>
 
     <div class="drawer-body" id="body_health">
-      <div style="display:grid; grid-template-columns: 1.5fr 0.9fr 1.2fr 1.2fr auto; gap:10px; align-items:end;" class="health-grid-row">
+      <div style="display:grid; grid-template-columns: 1.5fr 0.9fr 1.2fr 1.2fr auto; gap:10px; align-items:end;">
         <label>
           Tidpunkt (Dag • Tim • Min)
           <div class="scroll-datetime-row">
@@ -974,7 +1125,7 @@
   </div>
 
   <!-- 4. IHOPFÄLLBARA STATISTIKGRAFER (7 SENASTE DAGARNA) -->
-  <div class="card">
+  <div class="card" id="card_charts">
     <div class="collapsible-header" onclick="toggleDrawer('charts')">
       <div style="display:flex; align-items:center; gap:10px;">
         <span class="chevron open" id="chev_charts">▶</span>
@@ -1003,8 +1154,8 @@
     </div>
   </div>
 
-  <!-- 5. IHOPFÄLLBAR HÄNDELSELOGG & HISTORIK -->
-  <div class="card">
+  <!-- 5. IHOPFÄLLBAR HÄNDELSELOGG & HISTORIK (MED REDIGERING) -->
+  <div class="card" id="card_history">
     <div class="collapsible-header" onclick="toggleDrawer('history')">
       <div style="display:flex; align-items:center; gap:10px;">
         <span class="chevron open" id="chev_history">▶</span>
@@ -1036,11 +1187,24 @@
               <th>Typ</th>
               <th>Detaljer</th>
               <th>Kommentar</th>
-              <th></th>
+              <th style="text-align:right;">Ändra</th>
             </tr>
           </thead>
           <tbody id="eventsTableBody"></tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FÖR ATT REDIGERA EN HÄNDELSE I LOGGEN -->
+  <div class="modal-backdrop" id="editEventModal">
+    <div class="modal-card">
+      <div style="font-weight:700; font-size:1.05rem; margin-bottom:4px;" id="editModalTitle">Redigera händelse</div>
+      <div class="sub-value" style="margin-top:0; margin-bottom:12px;">Justera värden (t.ex. kvarlämnad flaska eller tidpunkt) och spara.</div>
+      <div id="editModalFields" style="display:flex; flex-direction:column; gap:10px;"></div>
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:16px;">
+        <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Avbryt</button>
+        <button type="button" class="btn btn-green" onclick="saveEditedEvent()">💾 Spara ändring</button>
       </div>
     </div>
   </div>
@@ -1173,18 +1337,78 @@
       { months: 228, label: 'Vuxen' }
     ];
 
-    let appData = JSON.parse(localStorage.getItem('bebiskollen_data') || 'null') || {
-      birthDate: '',
-      startWeight: '',
-      startLength: '',
-      growthCurve: 'girl',
-      activeSleepStart: null,
-      growthRecords: [],
-      events: []
-    };
+    function createEmptyChildProfile(id, label) {
+      return {
+        id: id || 'child_' + Date.now(),
+        label: label || 'Barn 1',
+        birthDate: '',
+        startWeight: '',
+        startLength: '',
+        growthCurve: 'girl',
+        activeSleepStart: null,
+        growthRecords: [],
+        events: []
+      };
+    }
 
-    if (!Array.isArray(appData.growthRecords)) appData.growthRecords = [];
-    if (!appData.growthCurve) appData.growthCurve = 'girl';
+    function normalizeStoreData(raw) {
+      if (!raw || typeof raw !== 'object') {
+        const first = createEmptyChildProfile('child_1', 'Barn 1');
+        return { activeChildId: first.id, children: { [first.id]: first } };
+      }
+
+      if (raw.children && typeof raw.children === 'object' && Object.keys(raw.children).length > 0) {
+        const normalizedChildren = {};
+        Object.keys(raw.children).forEach((cid, idx) => {
+          const c = raw.children[cid] || {};
+          normalizedChildren[cid] = {
+            id: cid,
+            label: c.label || `Barn ${idx + 1}`,
+            birthDate: c.birthDate || '',
+            startWeight: c.startWeight || '',
+            startLength: c.startLength || '',
+            growthCurve: c.growthCurve || 'girl',
+            activeSleepStart: c.activeSleepStart !== undefined ? c.activeSleepStart : null,
+            growthRecords: Array.isArray(c.growthRecords) ? c.growthRecords : [],
+            events: Array.isArray(c.events) ? c.events : []
+          };
+        });
+        const firstKey = Object.keys(normalizedChildren)[0];
+        const activeId = (raw.activeChildId && normalizedChildren[raw.activeChildId]) ? raw.activeChildId : firstKey;
+        return { activeChildId: activeId, children: normalizedChildren };
+      }
+
+      const migrated = {
+        id: 'child_1',
+        label: 'Barn 1',
+        birthDate: raw.birthDate || '',
+        startWeight: raw.startWeight || '',
+        startLength: raw.startLength || '',
+        growthCurve: raw.growthCurve || 'girl',
+        activeSleepStart: raw.activeSleepStart !== undefined ? raw.activeSleepStart : null,
+        growthRecords: Array.isArray(raw.growthRecords) ? raw.growthRecords : [],
+        events: Array.isArray(raw.events) ? raw.events : []
+      };
+      return {
+        activeChildId: 'child_1',
+        children: { child_1: migrated }
+      };
+    }
+
+    let storeData = normalizeStoreData(JSON.parse(localStorage.getItem('bebiskollen_data') || 'null'));
+
+    function getActiveChild() {
+      const ids = Object.keys(storeData.children);
+      if (!ids.length) {
+        const def = createEmptyChildProfile('child_1', 'Barn 1');
+        storeData.children[def.id] = def;
+        storeData.activeChildId = def.id;
+      }
+      if (!storeData.children[storeData.activeChildId]) {
+        storeData.activeChildId = Object.keys(storeData.children)[0];
+      }
+      return storeData.children[storeData.activeChildId];
+    }
 
     let drawerStates = JSON.parse(localStorage.getItem('bebiskollen_drawers') || 'null') || {
       projection: false,
@@ -1199,10 +1423,39 @@
 
     let selectedDiaperType = 'kiss';
     let selectedSolidCategory = '';
+    let editingEventId = null;
     let currentUser = null;
     let dbRef = null;
     let feedSleepChartInst = null;
     let diaperChartInst = null;
+
+    // --- SNABBHOPP FRÅN TOPPKORT / MOBILRAD ---
+    window.jumpToSection = function(drawerKey, cardId) {
+      if (!drawerStates[drawerKey]) {
+        drawerStates[drawerKey] = true;
+        localStorage.setItem('bebiskollen_drawers', JSON.stringify(drawerStates));
+        applyDrawerStates();
+      }
+      const el = document.getElementById(cardId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        el.classList.remove('highlight-pulse');
+        void el.offsetWidth;
+        el.classList.add('highlight-pulse');
+        setTimeout(() => el.classList.remove('highlight-pulse'), 1400);
+      }
+    };
+
+    function renderProfileSelector() {
+      const sel = document.getElementById('profileSelect');
+      const delBtn = document.getElementById('deleteProfileBtn');
+      const ids = Object.keys(storeData.children);
+      sel.innerHTML = ids.map(cid => {
+        const child = storeData.children[cid];
+        return `<option value="${cid}" ${cid === storeData.activeChildId ? 'selected' : ''}>${child.label}</option>`;
+      }).join('');
+      delBtn.style.display = ids.length > 1 ? 'inline-block' : 'none';
+    }
 
     window.toggleDrawer = function(key) {
       drawerStates[key] = !drawerStates[key];
@@ -1278,7 +1531,7 @@
 
       const curYear = now.getFullYear();
       const years = [`<option value="">År</option>`];
-      for (let y = curYear; y >= curYear - 5; y--) {
+      for (let y = curYear; y >= curYear - 10; y--) {
         years.push(`<option value="${y}">${y}</option>`);
       }
 
@@ -1373,9 +1626,14 @@
       el.textContent = `Längd: ${h > 0 ? h + ' h ' : ''}${m} min (${(mins / 60).toFixed(1).replace('.', ',')} h)`;
     };
 
-    function syncBirthDateDropdowns() {
-      if (!appData.birthDate || appData.birthDate.length < 10) return;
-      const [y, m, d] = appData.birthDate.split('-');
+    function syncBirthDateDropdowns(child) {
+      if (!child.birthDate || child.birthDate.length < 10) {
+        document.getElementById('birthYearSelect').value = '';
+        document.getElementById('birthMonthSelect').value = '';
+        document.getElementById('birthDaySelect').value = '';
+        return;
+      }
+      const [y, m, d] = child.birthDate.split('-');
       document.getElementById('birthYearSelect').value = y || '';
       document.getElementById('birthMonthSelect').value = m || '';
       document.getElementById('birthDaySelect').value = d || '';
@@ -1386,7 +1644,7 @@
       const m = document.getElementById('birthMonthSelect').value;
       const d = document.getElementById('birthDaySelect').value;
       if (y && m && d) {
-        appData.birthDate = `${y}-${m}-${d}`;
+        getActiveChild().birthDate = `${y}-${m}-${d}`;
         persistData();
         renderAll();
       }
@@ -1440,16 +1698,16 @@
       return { wMed: ref.wMed[0], wSd: ref.wSd[0], lMed: ref.lMed[0], lSd: ref.lSd[0] };
     }
 
-    function renderGrowthSection(ageInfo) {
-      const startW = parseFloat(appData.startWeight) || 0;
-      const startL = parseFloat(appData.startLength) || 0;
-      const curveKey = appData.growthCurve || 'girl';
+    function renderGrowthSection(child, ageInfo) {
+      const startW = parseFloat(child.startWeight) || 0;
+      const startL = parseFloat(child.startLength) || 0;
+      const curveKey = child.growthCurve || 'girl';
 
-      document.getElementById('startWeightInput').value = appData.startWeight || '';
-      document.getElementById('startLengthInput').value = appData.startLength || '';
+      document.getElementById('startWeightInput').value = child.startWeight || '';
+      document.getElementById('startLengthInput').value = child.startLength || '';
       document.getElementById('growthCurveSelect').value = curveKey;
 
-      const records = (appData.growthRecords || []).slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+      const records = (child.growthRecords || []).slice().sort((a, b) => new Date(a.date) - new Date(b.date));
       const latestRec = records.length > 0 ? records[records.length - 1] : null;
       const prevRec = records.length > 1 ? records[records.length - 2] : null;
 
@@ -1515,8 +1773,8 @@
       let refW = startW;
       let refL = startL;
 
-      if (latestRec && appData.birthDate) {
-        const ageAtLatest = getBabyAgeInfo(appData.birthDate, latestRec.date);
+      if (latestRec && child.birthDate) {
+        const ageAtLatest = getBabyAgeInfo(child.birthDate, latestRec.date);
         if (ageAtLatest) {
           refMonths = ageAtLatest.monthsExact;
           refW = latestRec.weight;
@@ -1575,7 +1833,7 @@
       const descRecords = records.slice().reverse();
       tbody.innerHTML = descRecords.map((rec, idx) => {
         const olderRec = descRecords[idx + 1] || null;
-        const ageAtRec = appData.birthDate ? getBabyAgeInfo(appData.birthDate, rec.date) : null;
+        const ageAtRec = child.birthDate ? getBabyAgeInfo(child.birthDate, rec.date) : null;
 
         let prevCell = '–';
         if (olderRec) {
@@ -1610,16 +1868,17 @@
     }
 
     window.deleteGrowthRecord = function(id) {
-      appData.growthRecords = (appData.growthRecords || []).filter(r => r.id !== id);
+      const child = getActiveChild();
+      child.growthRecords = (child.growthRecords || []).filter(r => r.id !== id);
       persistData();
       renderAll();
     };
 
     async function persistData() {
-      localStorage.setItem('bebiskollen_data', JSON.stringify(appData));
+      localStorage.setItem('bebiskollen_data', JSON.stringify(storeData));
       if (dbRef && currentUser) {
         try {
-          await dbRef.set(appData);
+          await dbRef.set(storeData);
           document.getElementById('cloudSyncStatusText').style.color = 'var(--green)';
           document.getElementById('cloudSyncStatusText').textContent = `Synkat med Firebase kl. ${new Date().toLocaleTimeString('sv-SE')}`;
         } catch (err) {
@@ -1636,14 +1895,13 @@
       return h > 0 ? `${h} h ${m} min` : `${m} min`;
     }
 
-    // Uppdaterar live-sömntimer, vakenfönster och medicin-nedräkning
     function updateLiveTimersAndHealth() {
+      const child = getActiveChild();
       const now = new Date();
-      const events = (appData.events || []).slice().sort((a, b) => new Date(b.time) - new Date(a.time));
-      const ageInfo = getBabyAgeInfo(appData.birthDate);
+      const events = (child.events || []).slice().sort((a, b) => new Date(b.time) - new Date(a.time));
+      const ageInfo = getBabyAgeInfo(child.birthDate);
       const benchmark = ageInfo ? ageInfo.benchmark : null;
 
-      // A. Live-sömn & Vakenfönster
       const liveBtn = document.getElementById('toggleLiveSleepBtn');
       const liveLabel = document.getElementById('liveSleepStatusLabel');
       const liveTimerText = document.getElementById('liveSleepTimerText');
@@ -1652,23 +1910,23 @@
       const wakePctText = document.getElementById('kpiWakeWindowPctText');
       const wakeBar = document.getElementById('kpiWakeWindowBar');
 
-      if (appData.activeSleepStart) {
-        const startDt = new Date(appData.activeSleepStart);
+      if (child.activeSleepStart) {
+        const startDt = new Date(child.activeSleepStart);
         const sleptMins = Math.max(0, Math.round((now - startDt) / 60000));
-        liveLabel.textContent = `😴 Sover just nu (somnade ${appData.activeSleepStart.slice(11, 16)})`;
+        liveLabel.textContent = `😴 Sover just nu (somnade ${child.activeSleepStart.slice(11, 16)})`;
         liveTimerText.textContent = `Sovit: ${formatMinutes(sleptMins)}`;
         liveBtn.textContent = '☀️ Vaknade nu & spara';
         liveBtn.className = 'btn btn-green';
 
         wakeBadge.textContent = `😴 Sover just nu (${formatMinutes(sleptMins)})`;
         wakeBadge.style.color = 'var(--purple)';
-        wakeText.innerHTML = `Somnade kl. <strong>${appData.activeSleepStart.slice(11, 16)}</strong>`;
+        wakeText.innerHTML = `Somnade kl. <strong>${child.activeSleepStart.slice(11, 16)}</strong>`;
         wakePctText.textContent = 'Sover';
         wakeBar.style.width = '100%';
         wakeBar.style.background = 'var(--green)';
       } else {
         liveLabel.textContent = 'Live-timer för tupplur/natt';
-        liveTimerText.textContent = 'Tryck när hon somnar';
+        liveTimerText.textContent = 'Tryck när barnet somnar';
         liveBtn.textContent = '😴 Starta sömn nu';
         liveBtn.className = 'btn btn-purple';
 
@@ -1703,7 +1961,6 @@
         }
       }
 
-      // B. Hälsa & Medicin-nedräkning (6 timmar efter Alvedon/Ipren)
       const healthEvents = events.filter(e => e.type === 'health');
       const medEvents = healthEvents.filter(e => e.med && (e.med.includes('Alvedon') || e.med.includes('Ipren')));
       const healthBadge = document.getElementById('healthHeaderBadge');
@@ -1712,7 +1969,7 @@
       if (medEvents.length > 0) {
         const lastMed = medEvents[0];
         const minsSinceMed = Math.max(0, Math.round((now - new Date(lastMed.time)) / 60000));
-        const cooldownMin = 360; // 6 timmar
+        const cooldownMin = 360;
         if (minsSinceMed < cooldownMin) {
           const leftMin = cooldownMin - minsSinceMed;
           healthBadge.textContent = `Senaste dos: ${lastMed.med.split(' ')[0]} kl. ${lastMed.time.slice(11, 16)}`;
@@ -1733,7 +1990,9 @@
     }
 
     function renderAll() {
-      const events = (appData.events || []).slice().sort((a, b) => new Date(b.time) - new Date(a.time));
+      renderProfileSelector();
+      const child = getActiveChild();
+      const events = (child.events || []).slice().sort((a, b) => new Date(b.time) - new Date(a.time));
       const now = new Date();
       const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
       const last24hMs = now.getTime() - 24 * 60 * 60 * 1000;
@@ -1741,7 +2000,7 @@
 
       document.getElementById('historyCountBadge').textContent = `${events.length} händelser`;
 
-      const ageInfo = getBabyAgeInfo(appData.birthDate);
+      const ageInfo = getBabyAgeInfo(child.birthDate);
       const benchmark = ageInfo ? ageInfo.benchmark : null;
 
       const feeds = events.filter(e => e.type === 'feed');
@@ -1809,6 +2068,10 @@
           document.getElementById('kpiNextFeedBar').style.width = '0%';
         }
       } else {
+        document.getElementById('kpiLastFeedTime').textContent = '–';
+        document.getElementById('kpiNextBreast').textContent = 'Nästa förslag: Vänster eller Höger';
+        document.getElementById('kpiLastFeedDetail').textContent = 'Ingen matning loggad ännu';
+        document.getElementById('feedHeaderMini').textContent = 'Bröst, flaska & mat';
         document.getElementById('kpiNextFeedLeftText').textContent = benchmark
           ? `Rek. intervall: ca ${benchmark.feedIntervalHours.toString().replace('.', ',')} h`
           : 'Ange födelsedatum för rek. intervall';
@@ -1855,6 +2118,9 @@
         const dLabel = diapers[0].diaperType === 'bada' ? 'Kiss & Bajs' : diapers[0].diaperType;
         document.getElementById('kpiLastDiaperTime').textContent = `Senaste byte: kl. ${dTime} (${dLabel})`;
         document.getElementById('diaperHeaderMini').textContent = `Senast: ${dTime}`;
+      } else {
+        document.getElementById('kpiLastDiaperTime').textContent = 'Senaste byte: –';
+        document.getElementById('diaperHeaderMini').textContent = 'Kiss / Bajs';
       }
 
       const snittDiaperLabel = hasPastDays ? `${Math.max(0, Math.round(avgDiapers7d) - todayDiapers.length)} st` : '–';
@@ -1879,12 +2145,12 @@
       const sleepHText = `${sleepHours24h.toFixed(1).replace('.', ',')} h`;
       document.getElementById('kpiSleep24h').textContent = sleepHText;
       document.getElementById('kpiLongestSleep').textContent = `${sleeps24h.length} pass (24h) • Längst: ${(longestMin / 60).toFixed(1).replace('.', ',')} h`;
-      document.getElementById('sleepHeaderMini').textContent = appData.activeSleepStart ? '😴 Sover nu' : `24h: ${sleepHText}`;
+      document.getElementById('sleepHeaderMini').textContent = child.activeSleepStart ? '😴 Sover nu' : `24h: ${sleepHText}`;
 
       // 5. Åldersprojektion
-      syncBirthDateDropdowns();
+      syncBirthDateDropdowns(child);
       if (ageInfo && benchmark) {
-        document.getElementById('ageHeaderBadge').textContent = ageInfo.text;
+        document.getElementById('ageHeaderBadge').textContent = `${child.label} • ${ageInfo.text}`;
         const b = benchmark;
         document.getElementById('projHeaderPhaseBadge').textContent = b.label;
         document.getElementById('projHeaderShort').textContent = `Mål: ~${b.feedMlPerDay} ml • ${b.sleepHours.toFixed(1).replace('.', ',')} h sömn`;
@@ -1908,12 +2174,13 @@
         document.getElementById('projSleepBar').style.width = `${Math.min(100, Math.round((avgSleepH7d / b.sleepHours) * 100))}%`;
         document.getElementById('projSleepForecast').textContent = `Inkluderar både nattsömn och dagstupplurar. Individuell variation på ±2 timmar är helt normalt.`;
       } else {
-        document.getElementById('ageHeaderBadge').textContent = 'Ange födelsedatum';
+        document.getElementById('ageHeaderBadge').textContent = `${child.label} • Ange födelsedatum`;
         document.getElementById('projHeaderPhaseBadge').textContent = 'Ange födelsedatum';
+        document.getElementById('projHeaderShort').textContent = 'Riktvärden per ålder';
       }
 
       updateLiveTimersAndHealth();
-      renderGrowthSection(ageInfo);
+      renderGrowthSection(child, ageInfo);
       renderCharts(feeds, diapers, sleeps);
       renderEventsTable(events);
     }
@@ -2026,17 +2293,207 @@
             <td>${badge}</td>
             <td>${detail}</td>
             <td style="color:var(--muted);">${ev.comment || '–'}</td>
-            <td><button class="btn btn-danger" type="button" onclick="deleteEvent('${ev.id}')">✕</button></td>
+            <td style="white-space:nowrap; text-align:right;">
+              <button class="btn btn-edit" type="button" onclick="openEditModal('${ev.id}')" title="Ändra värden">✏️</button>
+              <button class="btn btn-danger" type="button" onclick="deleteEvent('${ev.id}')" title="Ta bort">✕</button>
+            </td>
           </tr>
         `;
       }).join('');
     }
 
-    window.deleteEvent = function(id) {
-      appData.events = (appData.events || []).filter(e => e.id !== id);
+    // --- REDIGERA BEFINTLIG HÄNDELSE I LOGGEN ---
+    window.openEditModal = function(id) {
+      const child = getActiveChild();
+      const ev = (child.events || []).find(e => e.id === id);
+      if (!ev) return;
+      editingEventId = id;
+
+      const fieldsDiv = document.getElementById('editModalFields');
+      const titleEl = document.getElementById('editModalTitle');
+      const [datePart, timePart] = (ev.time || '2026-01-01T12:00').split('T');
+
+      let html = `
+        <div class="form-grid-2">
+          <label>Datum (ÅÅÅÅ-MM-DD)
+            <input type="text" id="edit_date" value="${datePart || ''}" />
+          </label>
+          <label>Klockslag (TT:MM)
+            <input type="text" id="edit_time" value="${(timePart || '').slice(0, 5)}" />
+          </label>
+        </div>
+      `;
+
+      if (ev.type === 'feed') {
+        titleEl.textContent = '✏️ Ändra matning';
+        html += `
+          <div class="form-grid-2">
+            <label>Vänster bröst (min)
+              <input type="number" id="edit_leftMin" value="${ev.leftMin || 0}" min="0" step="1" />
+            </label>
+            <label>Höger bröst (min)
+              <input type="number" id="edit_rightMin" value="${ev.rightMin || 0}" min="0" step="1" />
+            </label>
+          </div>
+          <label>Flaska (ml) – justera om det blev kvar i flaskan
+            <input type="number" id="edit_bottleMl" value="${ev.bottleMl || 0}" min="0" step="5" />
+          </label>
+          <div class="form-grid-2">
+            <label>Smakportion kategori
+              <select id="edit_solidCategory">
+                <option value="">Ingen</option>
+                <option value="Gröt" ${ev.solidCategory === 'Gröt' ? 'selected' : ''}>Gröt</option>
+                <option value="Grönsak/Puré" ${ev.solidCategory === 'Grönsak/Puré' ? 'selected' : ''}>Grönsak/Puré</option>
+                <option value="Frukt/Bär" ${ev.solidCategory === 'Frukt/Bär' ? 'selected' : ''}>Frukt/Bär</option>
+                <option value="Protein/Ägg" ${ev.solidCategory === 'Protein/Ägg' ? 'selected' : ''}>Protein/Ägg</option>
+                <option value="Plockmat" ${ev.solidCategory === 'Plockmat' ? 'selected' : ''}>Plockmat</option>
+              </select>
+            </label>
+            <label>Smakportion detalj
+              <input type="text" id="edit_solidDetail" value="${ev.solidDetail || ''}" />
+            </label>
+          </div>
+        `;
+      } else if (ev.type === 'diaper') {
+        titleEl.textContent = '✏️ Ändra blöjbyte';
+        html += `
+          <label>Innehåll
+            <select id="edit_diaperType">
+              <option value="kiss" ${ev.diaperType === 'kiss' ? 'selected' : ''}>💧 Kiss</option>
+              <option value="bajs" ${ev.diaperType === 'bajs' ? 'selected' : ''}>💩 Bajs</option>
+              <option value="bada" ${ev.diaperType === 'bada' ? 'selected' : ''}>💧💩 Kiss & Bajs</option>
+            </select>
+          </label>
+        `;
+      } else if (ev.type === 'sleep') {
+        titleEl.textContent = '✏️ Ändra sömnpass';
+        const [endD, endT] = (ev.endTime || ev.time || '2026-01-01T13:00').split('T');
+        html += `
+          <div class="form-grid-2">
+            <label>Vaknade datum
+              <input type="text" id="edit_endDate" value="${endD || ''}" />
+            </label>
+            <label>Vaknade klockslag
+              <input type="text" id="edit_endTime" value="${(endT || '').slice(0, 5)}" />
+            </label>
+          </div>
+        `;
+      } else if (ev.type === 'health') {
+        titleEl.textContent = '✏️ Ändra hälsopost';
+        html += `
+          <div class="form-grid-2">
+            <label>Temp (°C)
+              <input type="number" id="edit_temp" value="${ev.temp || ''}" step="0.1" />
+            </label>
+            <label>Medicin
+              <input type="text" id="edit_med" value="${ev.med || ''}" />
+            </label>
+          </div>
+        `;
+      }
+
+      html += `
+        <label>Kommentar
+          <input type="text" id="edit_comment" value="${ev.comment || ''}" />
+        </label>
+      `;
+
+      fieldsDiv.innerHTML = html;
+      document.getElementById('editEventModal').style.display = 'flex';
+    };
+
+    window.closeEditModal = function() {
+      document.getElementById('editEventModal').style.display = 'none';
+      editingEventId = null;
+    };
+
+    window.saveEditedEvent = function() {
+      if (!editingEventId) return;
+      const child = getActiveChild();
+      const ev = (child.events || []).find(e => e.id === editingEventId);
+      if (!ev) return;
+
+      const dVal = document.getElementById('edit_date').value.trim();
+      const tVal = document.getElementById('edit_time').value.trim();
+      if (dVal && tVal) {
+        ev.time = `${dVal}T${tVal}`;
+      }
+      ev.comment = document.getElementById('edit_comment').value.trim();
+
+      if (ev.type === 'feed') {
+        ev.leftMin = Number(document.getElementById('edit_leftMin').value) || 0;
+        ev.rightMin = Number(document.getElementById('edit_rightMin').value) || 0;
+        ev.bottleMl = Number(document.getElementById('edit_bottleMl').value) || 0;
+        ev.solidCategory = document.getElementById('edit_solidCategory').value;
+        ev.solidDetail = document.getElementById('edit_solidDetail').value.trim();
+      } else if (ev.type === 'diaper') {
+        ev.diaperType = document.getElementById('edit_diaperType').value;
+      } else if (ev.type === 'sleep') {
+        const endD = document.getElementById('edit_endDate').value.trim();
+        const endT = document.getElementById('edit_endTime').value.trim();
+        if (endD && endT) {
+          ev.endTime = `${endD}T${endT}`;
+          const sDt = new Date(ev.time);
+          const eDt = new Date(ev.endTime);
+          if (!isNaN(sDt) && !isNaN(eDt) && eDt > sDt) {
+            ev.durationMin = Math.round((eDt - sDt) / 60000);
+          }
+        }
+      } else if (ev.type === 'health') {
+        const tNum = parseFloat(document.getElementById('edit_temp').value);
+        ev.temp = !isNaN(tNum) && tNum > 0 ? tNum.toFixed(1) : '';
+        ev.med = document.getElementById('edit_med').value.trim();
+      }
+
+      closeEditModal();
       persistData();
       renderAll();
     };
+
+    window.deleteEvent = function(id) {
+      const child = getActiveChild();
+      child.events = (child.events || []).filter(e => e.id !== id);
+      persistData();
+      renderAll();
+    };
+
+    // --- PROFILHANTERING ---
+    document.getElementById('profileSelect').addEventListener('change', (e) => {
+      storeData.activeChildId = e.target.value;
+      persistData();
+      renderAll();
+    });
+
+    document.getElementById('addProfileBtn').addEventListener('click', () => {
+      const nextNum = Object.keys(storeData.children).length + 1;
+      const inputName = prompt('Ange namn eller etikett för den nya barnprofilen:', `Barn ${nextNum}`);
+      if (!inputName || !inputName.trim()) return;
+      const newChild = createEmptyChildProfile('child_' + Date.now(), inputName.trim());
+      storeData.children[newChild.id] = newChild;
+      storeData.activeChildId = newChild.id;
+      persistData();
+      renderAll();
+    });
+
+    document.getElementById('renameProfileBtn').addEventListener('click', () => {
+      const child = getActiveChild();
+      const newName = prompt('Nytt visningsnamn för profilen:', child.label);
+      if (!newName || !newName.trim()) return;
+      child.label = newName.trim();
+      persistData();
+      renderAll();
+    });
+
+    document.getElementById('deleteProfileBtn').addEventListener('click', () => {
+      const ids = Object.keys(storeData.children);
+      if (ids.length <= 1) return;
+      const child = getActiveChild();
+      if (!confirm(`Vill du ta bort profilen "${child.label}" och dess loggar?`)) return;
+      delete storeData.children[child.id];
+      storeData.activeChildId = Object.keys(storeData.children)[0];
+      persistData();
+      renderAll();
+    });
 
     // --- EVENT LISTENERS ---
     document.querySelectorAll('#diaperTypeGroup .diaper-btn').forEach(btn => {
@@ -2052,19 +2509,19 @@
     });
 
     document.getElementById('startWeightInput').addEventListener('change', (e) => {
-      appData.startWeight = e.target.value;
+      getActiveChild().startWeight = e.target.value;
       persistData();
       renderAll();
     });
 
     document.getElementById('startLengthInput').addEventListener('change', (e) => {
-      appData.startLength = e.target.value;
+      getActiveChild().startLength = e.target.value;
       persistData();
       renderAll();
     });
 
     document.getElementById('growthCurveSelect').addEventListener('change', (e) => {
-      appData.growthCurve = e.target.value;
+      getActiveChild().growthCurve = e.target.value;
       persistData();
       renderAll();
     });
@@ -2085,7 +2542,8 @@
         return;
       }
 
-      appData.growthRecords.push({
+      const child = getActiveChild();
+      child.growthRecords.push({
         id: Date.now().toString(),
         date: `${y}-${m}-${d}`,
         weight,
@@ -2098,21 +2556,21 @@
       renderAll();
     });
 
-    // Live-timer knapp för sömn
     document.getElementById('toggleLiveSleepBtn').addEventListener('click', () => {
+      const child = getActiveChild();
       const now = new Date();
-      if (!appData.activeSleepStart) {
-        appData.activeSleepStart = toLocalIsoString(now);
+      if (!child.activeSleepStart) {
+        child.activeSleepStart = toLocalIsoString(now);
         persistData();
         renderAll();
       } else {
-        const startStr = appData.activeSleepStart;
+        const startStr = child.activeSleepStart;
         const endStr = toLocalIsoString(now);
         const sDate = new Date(startStr);
         const durationMin = Math.max(1, Math.round((now - sDate) / 60000));
         const comment = document.getElementById('sleepComment').value.trim();
 
-        appData.events.push({
+        child.events.push({
           id: Date.now().toString(),
           type: 'sleep',
           time: startStr,
@@ -2120,7 +2578,7 @@
           durationMin,
           comment
         });
-        appData.activeSleepStart = null;
+        child.activeSleepStart = null;
         document.getElementById('sleepComment').value = '';
         setDefaultFormTimes();
         persistData();
@@ -2141,7 +2599,7 @@
 
       if (leftMin === 0 && rightMin === 0 && bottleMl === 0 && !selectedSolidCategory && !solidDetail && !comment) return;
 
-      appData.events.push({
+      getActiveChild().events.push({
         id: Date.now().toString(),
         type: 'feed',
         time,
@@ -2172,7 +2630,7 @@
       const time = getScrollPickerIsoString('diaper');
       const comment = document.getElementById('diaperComment').value.trim();
 
-      appData.events.push({
+      getActiveChild().events.push({
         id: Date.now().toString(),
         type: 'diaper',
         time,
@@ -2199,7 +2657,7 @@
       }
 
       const durationMin = Math.round((eDate - sDate) / 60000);
-      appData.events.push({
+      getActiveChild().events.push({
         id: Date.now().toString(),
         type: 'sleep',
         time: start,
@@ -2223,7 +2681,7 @@
 
       if (!temp && !med && !comment) return;
 
-      appData.events.push({
+      getActiveChild().events.push({
         id: Date.now().toString(),
         type: 'health',
         time,
@@ -2241,20 +2699,21 @@
     });
 
     document.getElementById('exportCsvBtn').addEventListener('click', () => {
-      let csv = 'Tidpunkt;Typ;VansterMin;HogerMin;FlaskaMl;Smakportion;Bloja;SomnMin;Temp;Medicin;Kommentar\n';
-      (appData.events || []).forEach(ev => {
+      const child = getActiveChild();
+      let csv = 'Profil;Tidpunkt;Typ;VansterMin;HogerMin;FlaskaMl;Smakportion;Bloja;SomnMin;Temp;Medicin;Kommentar\n';
+      (child.events || []).forEach(ev => {
         const solid = [ev.solidCategory, ev.solidDetail].filter(Boolean).join(': ');
-        csv += `${ev.time};${ev.type};${ev.leftMin || ''};${ev.rightMin || ''};${ev.bottleMl || ''};"${solid}";${ev.diaperType || ''};${ev.durationMin || ''};${ev.temp || ''};"${ev.med || ''}";"${ev.comment || ''}"\n`;
+        csv += `"${child.label}";${ev.time};${ev.type};${ev.leftMin || ''};${ev.rightMin || ''};${ev.bottleMl || ''};"${solid}";${ev.diaperType || ''};${ev.durationMin || ''};${ev.temp || ''};"${ev.med || ''}";"${ev.comment || ''}"\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'bebiskollen_logg.csv';
+      a.download = `bebiskollen_${child.label.toLowerCase().replace(/[^a-z0-9]/gi, '_')}.csv`;
       a.click();
     });
 
-    // --- FIREBASE INIT ---
+    // --- FIREBASE INIT (MED SKYDD MOT ÖVERSKRIVNING VID MIGRERING) ---
     function initFirebase() {
       if (!firebase.apps.length) {
         firebase.initializeApp(FIREBASE_CONFIG);
@@ -2271,16 +2730,12 @@
           dbRef.on('value', snap => {
             const cloud = snap.val();
             if (cloud && typeof cloud === 'object') {
-              appData = {
-                birthDate: cloud.birthDate || appData.birthDate || '',
-                startWeight: cloud.startWeight || appData.startWeight || '',
-                startLength: cloud.startLength || appData.startLength || '',
-                growthCurve: cloud.growthCurve || appData.growthCurve || 'girl',
-                activeSleepStart: cloud.activeSleepStart !== undefined ? cloud.activeSleepStart : appData.activeSleepStart,
-                growthRecords: Array.isArray(cloud.growthRecords) ? cloud.growthRecords : (appData.growthRecords || []),
-                events: Array.isArray(cloud.events) ? cloud.events : []
-              };
-              localStorage.setItem('bebiskollen_data', JSON.stringify(appData));
+              const wasLegacy = !cloud.children;
+              storeData = normalizeStoreData(cloud);
+              localStorage.setItem('bebiskollen_data', JSON.stringify(storeData));
+              if (wasLegacy) {
+                dbRef.set(storeData);
+              }
               renderAll();
             }
             document.getElementById('cloudSyncStatusText').style.color = 'var(--green)';
@@ -2313,7 +2768,6 @@
     renderAll();
     initFirebase();
 
-    // Uppdatera live-timers varje halvminut
     setInterval(updateLiveTimersAndHealth, 30000);
   </script>
 </body>
