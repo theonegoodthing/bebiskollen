@@ -216,6 +216,7 @@
     .btn-green { background: var(--green); color: #052e16; }
     .btn-yellow { background: var(--yellow); color: #1e1b04; }
     .btn-purple { background: var(--purple); color: #faf5ff; }
+    .btn-pink { background: var(--pink); color: #2b091a; }
 
     .btn-secondary {
       background: rgba(148, 163, 184, 0.15);
@@ -350,6 +351,48 @@
       padding: 14px;
     }
 
+    .forecast-milestones-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 980px) {
+      .forecast-milestones-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    @media (max-width: 540px) {
+      .forecast-milestones-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .milestone-tile {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid var(--card-border);
+      border-radius: 9px;
+      padding: 9px 8px;
+      text-align: center;
+    }
+
+    .milestone-tile.passed {
+      opacity: 0.55;
+    }
+
+    .milestone-age {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--pink);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .milestone-val {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
     .progress-bg {
       height: 8px;
       background: #0f172a;
@@ -416,7 +459,7 @@
   <header>
     <div>
       <h1>👶 Bebiskollen <span class="badge" id="ageHeaderBadge">Ålder ej angiven</span></h1>
-      <div class="sub-value">Matning (bröst & flaska), blöjbyten, sömn & åldersbaserad forskningsprojektion</div>
+      <div class="sub-value">Matning (bröst & flaska), blöjbyten, sömn, tillväxt & åldersprojektion</div>
     </div>
     <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
       <span class="badge" id="authStatusBadge"><span class="status-dot" style="background:var(--yellow);"></span>Ej inloggad (Lokal lagring)</span>
@@ -560,6 +603,111 @@
           <div class="progress-bg" style="margin:8px 0;"><div class="progress-fill" id="projSleepBar" style="width:0%; background:var(--purple);"></div></div>
           <div class="sub-value" style="font-size:0.78rem;" id="projSleepForecast">Välj födelsedatum ovan för sömnbehov och kommande sömnfaser.</div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NYTT BLOCK: LÄNGD & VIKT + TILLVÄXTPROGNOS (MELLAN UTVECKLING OCH MATNING) -->
+  <div class="card">
+    <div class="collapsible-header" onclick="toggleDrawer('growth')">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span class="chevron open" id="chev_growth">▶</span>
+        <div>
+          <div style="font-weight:700; font-size:0.95rem;">
+            📏 Längd & Vikt <span class="badge" style="background:rgba(244, 114, 182, 0.15); color:var(--pink);" id="growthHeaderBadge">Startvärden ej angivna</span>
+          </div>
+          <div class="sub-value" style="margin-top:2px;">Klicka för att fälla in/ut mätningar, procentuell ökning och tillväxtprognos till vuxen ålder.</div>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:0.88rem; font-weight:700; color:var(--pink);" id="growthHeaderLatest">–</div>
+      </div>
+    </div>
+
+    <div class="drawer-body" id="body_growth">
+      <!-- Startvärden + Kurvval -->
+      <div class="grid-3" style="margin-bottom:14px;">
+        <label>
+          Startvikt vid födseln (kg)
+          <input type="number" id="startWeightInput" placeholder="t.ex. 3.55" step="0.01" min="0.5" max="10" />
+        </label>
+        <label>
+          Startlängd vid födseln (cm)
+          <input type="number" id="startLengthInput" placeholder="t.ex. 50.5" step="0.5" min="30" max="70" />
+        </label>
+        <label>
+          Referenskurva (WHO / BVC)
+          <select id="growthCurveSelect">
+            <option value="girl">Flicka (WHO / Svensk BVC)</option>
+            <option value="boy">Pojke (WHO / Svensk BVC)</option>
+            <option value="avg">Neutralt snitt</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Resultatkort: Sedan förra mätningen & Sedan start -->
+      <div class="grid-2" style="margin-bottom:14px;">
+        <div class="proj-box">
+          <div class="card-title" style="color:var(--pink);">📈 Sedan förra mätningen</div>
+          <div style="font-size:1.1rem; font-weight:700;" id="growthDiffPrevText">Lägg till en mätning nedan</div>
+          <div class="sub-value" id="growthDiffPrevSub">Visar vikt- och längdökning i % samt gram/cm jämfört med föregående mätning.</div>
+        </div>
+        <div class="proj-box">
+          <div class="card-title" style="color:var(--green);">🚀 Totalt sedan start (födseln)</div>
+          <div style="font-size:1.1rem; font-weight:700;" id="growthDiffStartText">Ange startvikt & startlängd ovan</div>
+          <div class="sub-value" id="growthDiffStartSub">Visar total tillväxt i % och kg/cm sedan födseln.</div>
+        </div>
+      </div>
+
+      <!-- Prognos: 6 mån, 12 mån, 2 år, 5 år, 10 år, 15 år och Vuxen -->
+      <div class="proj-box" style="margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+          <div style="font-size:0.84rem; font-weight:700; color:var(--pink);">🔮 Tillväxtprognos (Om barnet följer sin nuvarande kurva)</div>
+          <div class="sub-value" style="margin-top:0; font-size:0.75rem;" id="growthCurveStatusText">Baseras på senaste mätning och ålder</div>
+        </div>
+        <div class="forecast-milestones-grid" id="growthForecastGrid"></div>
+      </div>
+
+      <!-- Logga ny mätning -->
+      <div class="proj-box" style="margin-bottom:12px;">
+        <div class="card-title" style="color:var(--accent); margin-bottom:8px;">+ Registrera ny vikt & längd</div>
+        <div style="display:grid; grid-template-columns: 1.5fr 1fr 1fr auto; gap:8px; align-items:end;" class="growth-input-grid">
+          <label>
+            Datum (År • Månad • Dag)
+            <div class="scroll-date-row">
+              <select id="growthYearSel"></select>
+              <select id="growthMonthSel"></select>
+              <select id="growthDaySel"></select>
+            </div>
+          </label>
+          <label>
+            Vikt (kg)
+            <input type="number" id="newWeightInput" placeholder="t.ex. 6.85" step="0.01" min="0.5" max="150" />
+          </label>
+          <label>
+            Längd (cm)
+            <input type="number" id="newLengthInput" placeholder="t.ex. 64.5" step="0.1" min="30" max="220" />
+          </label>
+          <button class="btn btn-pink" id="addGrowthBtn" type="button" style="height:38px;">+ Spara mätning</button>
+        </div>
+      </div>
+
+      <!-- Tabell över loggade mätningar -->
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Ålder då</th>
+              <th>Vikt (kg)</th>
+              <th>Längd (cm)</th>
+              <th>Sedan förra</th>
+              <th>Sedan start</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="growthTableBody"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -886,13 +1034,57 @@
       }
     ];
 
+    // WHO & Svensk BVC referenskurvor (Median M och Standardavvikelse SD) för Vikt (kg) och Längd (cm)
+    // Åldrar i månader: 0, 1, 2, 3, 4, 5, 6, 9, 12, 18, 24 (2 år), 60 (5 år), 120 (10 år), 180 (15 år), 228 (Vuxen)
+    const WHO_GROWTH_REF = {
+      girl: {
+        ages: [0, 1, 2, 3, 4, 5, 6, 9, 12, 18, 24, 60, 120, 180, 228],
+        wMed: [3.23, 4.19, 5.13, 5.85, 6.42, 6.90, 7.30, 8.23, 8.95, 10.23, 11.48, 18.2, 31.9, 52.1, 61.5],
+        wSd:  [0.45, 0.56, 0.68, 0.77, 0.85, 0.91, 0.96, 1.08, 1.18, 1.35, 1.52, 2.6, 5.4, 8.2, 9.0],
+        lMed: [49.1, 53.7, 57.1, 59.8, 62.1, 64.0, 65.7, 70.1, 74.0, 80.7, 86.4, 109.4, 138.6, 161.8, 166.5],
+        lSd:  [1.86, 1.95, 2.04, 2.13, 2.21, 2.28, 2.35, 2.52, 2.68, 2.98, 3.25, 4.5, 6.2, 6.6, 6.5]
+      },
+      boy: {
+        ages: [0, 1, 2, 3, 4, 5, 6, 9, 12, 18, 24, 60, 120, 180, 228],
+        wMed: [3.35, 4.47, 5.57, 6.38, 7.00, 7.51, 7.93, 8.90, 9.65, 10.94, 12.15, 18.3, 31.2, 56.0, 75.5],
+        wSd:  [0.46, 0.58, 0.70, 0.79, 0.86, 0.92, 0.97, 1.09, 1.19, 1.35, 1.51, 2.5, 5.1, 8.8, 10.5],
+        lMed: [49.9, 54.7, 58.4, 61.4, 63.9, 65.9, 67.6, 72.0, 75.7, 82.3, 87.8, 110.0, 137.8, 170.1, 180.0],
+        lSd:  [1.89, 1.95, 2.04, 2.12, 2.19, 2.25, 2.31, 2.47, 2.62, 2.91, 3.18, 4.5, 6.1, 7.4, 7.0]
+      },
+      avg: {
+        ages: [0, 1, 2, 3, 4, 5, 6, 9, 12, 18, 24, 60, 120, 180, 228],
+        wMed: [3.29, 4.33, 5.35, 6.12, 6.71, 7.21, 7.62, 8.57, 9.30, 10.59, 11.82, 18.25, 31.55, 54.05, 68.5],
+        wSd:  [0.46, 0.57, 0.69, 0.78, 0.86, 0.92, 0.97, 1.09, 1.19, 1.35, 1.52, 2.55, 5.25, 8.5, 9.8],
+        lMed: [49.5, 54.2, 57.8, 60.6, 63.0, 65.0, 66.7, 71.1, 74.9, 81.5, 87.1, 109.7, 138.2, 166.0, 173.3],
+        lSd:  [1.88, 1.95, 2.04, 2.13, 2.20, 2.27, 2.33, 2.50, 2.65, 2.95, 3.22, 4.5, 6.15, 7.0, 6.8]
+      }
+    };
+
+    const PROJECTION_MILESTONES = [
+      { months: 6, label: '6 mån' },
+      { months: 12, label: '12 mån' },
+      { months: 24, label: '2 år' },
+      { months: 60, label: '5 år' },
+      { months: 120, label: '10 år' },
+      { months: 180, label: '15 år' },
+      { months: 228, label: 'Vuxen' }
+    ];
+
     let appData = JSON.parse(localStorage.getItem('bebiskollen_data') || 'null') || {
       birthDate: '',
+      startWeight: '',
+      startLength: '',
+      growthCurve: 'girl',
+      growthRecords: [],
       events: []
     };
 
+    if (!Array.isArray(appData.growthRecords)) appData.growthRecords = [];
+    if (!appData.growthCurve) appData.growthCurve = 'girl';
+
     let drawerStates = JSON.parse(localStorage.getItem('bebiskollen_drawers') || 'null') || {
       projection: false,
+      growth: true,
       feed: true,
       diaper: true,
       sleep: true,
@@ -971,19 +1163,29 @@
       for (let y = curYear; y >= curYear - 5; y--) {
         years.push(`<option value="${y}">${y}</option>`);
       }
-      document.getElementById('birthYearSelect').innerHTML = years.join('');
 
       const months = [`<option value="">Månad</option>`];
       MONTHS_SV.forEach((name, idx) => {
         months.push(`<option value="${String(idx + 1).padStart(2, '0')}">${name}</option>`);
       });
-      document.getElementById('birthMonthSelect').innerHTML = months.join('');
 
       const days = [`<option value="">Dag</option>`];
       for (let d = 1; d <= 31; d++) {
         days.push(`<option value="${String(d).padStart(2, '0')}">${d}</option>`);
       }
+
+      document.getElementById('birthYearSelect').innerHTML = years.join('');
+      document.getElementById('birthMonthSelect').innerHTML = months.join('');
       document.getElementById('birthDaySelect').innerHTML = days.join('');
+
+      document.getElementById('growthYearSel').innerHTML = years.join('');
+      document.getElementById('growthMonthSel').innerHTML = months.join('');
+      document.getElementById('growthDaySel').innerHTML = days.join('');
+
+      // Sätt dagens datum i Längd & Vikt-rullgardinerna
+      document.getElementById('growthYearSel').value = String(curYear);
+      document.getElementById('growthMonthSel').value = String(now.getMonth() + 1).padStart(2, '0');
+      document.getElementById('growthDaySel').value = String(now.getDate()).padStart(2, '0');
     }
 
     function setScrollPickerFromDate(prefix, dateObj) {
@@ -1065,13 +1267,13 @@
       }
     }
 
-    function getBabyAgeInfo(birthDateStr) {
+    function getBabyAgeInfo(birthDateStr, targetDateStr = null) {
       if (!birthDateStr) return null;
       const birth = new Date(birthDateStr + 'T00:00:00');
-      const now = new Date();
-      if (isNaN(birth) || birth > now) return null;
+      const refDate = targetDateStr ? new Date(targetDateStr + 'T12:00:00') : new Date();
+      if (isNaN(birth) || isNaN(refDate) || birth > refDate) return null;
 
-      const diffDays = Math.floor((now - birth) / (1000 * 60 * 60 * 24));
+      const diffDays = Math.floor((refDate - birth) / (1000 * 60 * 60 * 24));
       const weeks = Math.floor(diffDays / 7);
       const monthsExact = diffDays / 30.4375;
       const fullMonths = Math.floor(monthsExact);
@@ -1081,9 +1283,220 @@
         ? `${weeks} veckor (${diffDays} dagar)`
         : `${fullMonths} mån, ${Math.max(0, remDays)} dagar (${weeks} v)`;
 
+      const shortAge = fullMonths < 2
+        ? `${weeks} v (${diffDays} d)`
+        : `${fullMonths} mån ${Math.max(0, remDays)} d`;
+
       const benchmark = AGE_BENCHMARKS.find(b => monthsExact <= b.maxMonths) || AGE_BENCHMARKS[AGE_BENCHMARKS.length - 1];
-      return { diffDays, weeks, monthsExact, text, benchmark };
+      return { diffDays, weeks, monthsExact, text, shortAge, benchmark };
     }
+
+    // --- HJÄLPFUNKTIONER FÖR TILLVÄXTPROGNOS (INTERPOLERING PÅ WHO-KURVOR) ---
+    function getWhoStatsAtMonth(curveKey, targetMonths) {
+      const ref = WHO_GROWTH_REF[curveKey] || WHO_GROWTH_REF.girl;
+      const ages = ref.ages;
+      if (targetMonths <= ages[0]) {
+        return { wMed: ref.wMed[0], wSd: ref.wSd[0], lMed: ref.lMed[0], lSd: ref.lSd[0] };
+      }
+      if (targetMonths >= ages[ages.length - 1]) {
+        const last = ages.length - 1;
+        return { wMed: ref.wMed[last], wSd: ref.wSd[last], lMed: ref.lMed[last], lSd: ref.lSd[last] };
+      }
+      for (let i = 0; i < ages.length - 1; i++) {
+        if (targetMonths >= ages[i] && targetMonths <= ages[i + 1]) {
+          const t = (targetMonths - ages[i]) / (ages[i + 1] - ages[i]);
+          return {
+            wMed: ref.wMed[i] + t * (ref.wMed[i + 1] - ref.wMed[i]),
+            wSd:  ref.wSd[i]  + t * (ref.wSd[i + 1]  - ref.wSd[i]),
+            lMed: ref.lMed[i] + t * (ref.lMed[i + 1] - ref.lMed[i]),
+            lSd:  ref.lSd[i]  + t * (ref.lSd[i + 1]  - ref.lSd[i])
+          };
+        }
+      }
+      return { wMed: ref.wMed[0], wSd: ref.wSd[0], lMed: ref.lMed[0], lSd: ref.lSd[0] };
+    }
+
+    function renderGrowthSection(ageInfo) {
+      const startW = parseFloat(appData.startWeight) || 0;
+      const startL = parseFloat(appData.startLength) || 0;
+      const curveKey = appData.growthCurve || 'girl';
+
+      document.getElementById('startWeightInput').value = appData.startWeight || '';
+      document.getElementById('startLengthInput').value = appData.startLength || '';
+      document.getElementById('growthCurveSelect').value = curveKey;
+
+      const records = (appData.growthRecords || []).slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+      const latestRec = records.length > 0 ? records[records.length - 1] : null;
+      const prevRec = records.length > 1 ? records[records.length - 2] : null;
+
+      // Rubrik & badge
+      if (latestRec) {
+        document.getElementById('growthHeaderBadge').textContent = `${latestRec.weight.toFixed(2).replace('.', ',')} kg • ${latestRec.length.toFixed(1).replace('.', ',')} cm`;
+        document.getElementById('growthHeaderLatest').textContent = `Mätt ${latestRec.date}`;
+      } else if (startW > 0 || startL > 0) {
+        document.getElementById('growthHeaderBadge').textContent = `Start: ${startW ? startW + ' kg' : '–'} • ${startL ? startL + ' cm' : '–'}`;
+        document.getElementById('growthHeaderLatest').textContent = 'Väntar på första mätningen';
+      } else {
+        document.getElementById('growthHeaderBadge').textContent = 'Startvärden ej angivna';
+        document.getElementById('growthHeaderLatest').textContent = '–';
+      }
+
+      // 1. Sedan förra mätningen (om minst 2 mätningar finns, eller 1 mätning + startvärde)
+      const diffPrevTextEl = document.getElementById('growthDiffPrevText');
+      const diffPrevSubEl = document.getElementById('growthDiffPrevSub');
+
+      if (latestRec && (prevRec || (startW > 0 && startL > 0))) {
+        const baseW = prevRec ? prevRec.weight : startW;
+        const baseL = prevRec ? prevRec.length : startL;
+        const baseLabel = prevRec ? `förra mätningen (${prevRec.date})` : 'startvärdet (födseln)';
+
+        const wDiff = latestRec.weight - baseW;
+        const wPct = baseW > 0 ? ((wDiff / baseW) * 100) : 0;
+        const lDiff = latestRec.length - baseL;
+        const lPct = baseL > 0 ? ((lDiff / baseL) * 100) : 0;
+
+        diffPrevTextEl.innerHTML =
+          `<span style="color:var(--green);">${wDiff >= 0 ? '+' : ''}${wPct.toFixed(1).replace('.', ',')} %</span> vikt (${wDiff >= 0 ? '+' : ''}${Math.round(wDiff * 1000)} g) • ` +
+          `<span style="color:var(--accent);">${lDiff >= 0 ? '+' : ''}${lPct.toFixed(1).replace('.', ',')} %</span> längd (${lDiff >= 0 ? '+' : ''}${lDiff.toFixed(1).replace('.', ',')} cm)`;
+        diffPrevSubEl.textContent = `Jämfört med ${baseLabel}: ${baseW.toFixed(2).replace('.', ',')} kg / ${baseL.toFixed(1).replace('.', ',')} cm.`;
+      } else {
+        diffPrevTextEl.textContent = 'Lägg till mätning för jämförelse';
+        diffPrevSubEl.textContent = 'Behöver startvärden eller minst två loggade mätningar.';
+      }
+
+      // 2. Totalt sedan start
+      const diffStartTextEl = document.getElementById('growthDiffStartText');
+      const diffStartSubEl = document.getElementById('growthDiffStartSub');
+
+      if (latestRec && (startW > 0 || startL > 0)) {
+        const parts = [];
+        if (startW > 0) {
+          const wDiff = latestRec.weight - startW;
+          const wPct = (wDiff / startW) * 100;
+          parts.push(`<span style="color:var(--green);">${wDiff >= 0 ? '+' : ''}${wPct.toFixed(1).replace('.', ',')} %</span> (${wDiff >= 0 ? '+' : ''}${wDiff.toFixed(2).replace('.', ',')} kg)`);
+        }
+        if (startL > 0) {
+          const lDiff = latestRec.length - startL;
+          const lPct = (lDiff / startL) * 100;
+          parts.push(`<span style="color:var(--accent);">${lDiff >= 0 ? '+' : ''}${lPct.toFixed(1).replace('.', ',')} %</span> (${lDiff >= 0 ? '+' : ''}${lDiff.toFixed(1).replace('.', ',')} cm)`);
+        }
+        diffStartTextEl.innerHTML = parts.join(' • ');
+        diffStartSubEl.textContent = `Från start (${startW || '–'} kg / ${startL || '–'} cm) till ${latestRec.weight.toFixed(2).replace('.', ',')} kg / ${latestRec.length.toFixed(1).replace('.', ',')} cm.`;
+      } else {
+        diffStartTextEl.textContent = 'Ange startvikt, startlängd & mätning';
+        diffStartSubEl.textContent = 'Visar total procentuell ökning sedan födseln.';
+      }
+
+      // 3. Tillväxtprognos vid 6 mån, 12 mån, 2 år, 5 år, 10 år, 15 år och Vuxen
+      const forecastGrid = document.getElementById('growthForecastGrid');
+      const statusTextEl = document.getElementById('growthCurveStatusText');
+
+      // Bestäm referenspunkt för Z-score (senaste mätning med ålder, eller startvärde vid 0 mån)
+      let refMonths = 0;
+      let refW = startW;
+      let refL = startL;
+
+      if (latestRec && appData.birthDate) {
+        const ageAtLatest = getBabyAgeInfo(appData.birthDate, latestRec.date);
+        if (ageAtLatest) {
+          refMonths = ageAtLatest.monthsExact;
+          refW = latestRec.weight;
+          refL = latestRec.length;
+        }
+      }
+
+      const currentAgeMonths = ageInfo ? ageInfo.monthsExact : 0;
+
+      if (refW > 0 || refL > 0) {
+        const refStats = getWhoStatsAtMonth(curveKey, refMonths);
+        const zWeight = refW > 0 ? (refW - refStats.wMed) / refStats.wSd : 0;
+        const zLength = refL > 0 ? (refL - refStats.lMed) / refStats.lSd : 0;
+
+        // Dämpa extrema Z-scores en aning på lång sikt (regression mot medelvärdet i vuxen ålder)
+        const clampZ = (z) => Math.max(-2.5, Math.min(2.5, z));
+        const zWClamped = clampZ(zWeight);
+        const zLClamped = clampZ(zLength);
+
+        const wSdLabel = `${zWClamped >= 0 ? '+' : ''}${zWClamped.toFixed(1).replace('.', ',')} SD`;
+        const lSdLabel = `${zLClamped >= 0 ? '+' : ''}${zLClamped.toFixed(1).replace('.', ',')} SD`;
+        statusTextEl.textContent = `Nuvarande kurvläge: Vikt ${wSdLabel} • Längd ${lSdLabel}`;
+
+        forecastGrid.innerHTML = PROJECTION_MILESTONES.map(ms => {
+          const msStats = getWhoStatsAtMonth(curveKey, ms.months);
+          const damping = ms.months >= 120 ? 0.85 : 1.0;
+          const predW = refW > 0 ? Math.max(2, msStats.wMed + zWClamped * damping * msStats.wSd) : null;
+          const predL = refL > 0 ? Math.max(45, msStats.lMed + zLClamped * damping * msStats.lSd) : null;
+          const isPassed = currentAgeMonths > ms.months;
+
+          return `
+            <div class="milestone-tile ${isPassed ? 'passed' : ''}">
+              <div class="milestone-age">${ms.label}${isPassed ? ' ✓' : ''}</div>
+              <div class="milestone-val">
+                ${predW ? `${predW.toFixed(1).replace('.', ',')} kg` : '–'}<br/>
+                <span style="color:var(--accent); font-size:0.82rem;">${predL ? `${Math.round(predL)} cm` : '–'}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        statusTextEl.textContent = 'Ange födelsedatum samt startvikt/startlängd för prognos';
+        forecastGrid.innerHTML = PROJECTION_MILESTONES.map(ms => `
+          <div class="milestone-tile">
+            <div class="milestone-age">${ms.label}</div>
+            <div class="milestone-val" style="color:var(--muted);">– kg<br/>– cm</div>
+          </div>
+        `).join('');
+      }
+
+      // 4. Tabell över mätningar (senaste överst)
+      const tbody = document.getElementById('growthTableBody');
+      if (!records.length) {
+        tbody.innerHTML = `<tr><td colspan="7" style="color:var(--muted); text-align:center; padding:14px;">Inga mätningar loggade ännu.</td></tr>`;
+        return;
+      }
+
+      const descRecords = records.slice().reverse();
+      tbody.innerHTML = descRecords.map((rec, idx) => {
+        const olderRec = descRecords[idx + 1] || null;
+        const ageAtRec = appData.birthDate ? getBabyAgeInfo(appData.birthDate, rec.date) : null;
+
+        let prevCell = '–';
+        if (olderRec) {
+          const wP = ((rec.weight - olderRec.weight) / olderRec.weight) * 100;
+          const lP = ((rec.length - olderRec.length) / olderRec.length) * 100;
+          prevCell = `${wP >= 0 ? '+' : ''}${wP.toFixed(1).replace('.', ',')}% / ${lP >= 0 ? '+' : ''}${lP.toFixed(1).replace('.', ',')}%`;
+        } else if (startW > 0 && startL > 0) {
+          const wP = ((rec.weight - startW) / startW) * 100;
+          const lP = ((rec.length - startL) / startL) * 100;
+          prevCell = `${wP >= 0 ? '+' : ''}${wP.toFixed(1).replace('.', ',')}% / ${lP >= 0 ? '+' : ''}${lP.toFixed(1).replace('.', ',')}% (vs start)`;
+        }
+
+        let startCell = '–';
+        if (startW > 0 && startL > 0) {
+          const wS = ((rec.weight - startW) / startW) * 100;
+          const lS = ((rec.length - startL) / startL) * 100;
+          startCell = `${wS >= 0 ? '+' : ''}${wS.toFixed(1).replace('.', ',')}% / ${lS >= 0 ? '+' : ''}${lS.toFixed(1).replace('.', ',')}%`;
+        }
+
+        return `
+          <tr>
+            <td><strong>${rec.date}</strong></td>
+            <td style="color:var(--muted);">${ageAtRec ? ageAtRec.shortAge : '–'}</td>
+            <td style="color:var(--green); font-weight:700;">${rec.weight.toFixed(2).replace('.', ',')} kg</td>
+            <td style="color:var(--accent); font-weight:700;">${rec.length.toFixed(1).replace('.', ',')} cm</td>
+            <td>${prevCell}</td>
+            <td>${startCell}</td>
+            <td><button class="btn btn-danger" type="button" onclick="deleteGrowthRecord('${rec.id}')">✕</button></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    window.deleteGrowthRecord = function(id) {
+      appData.growthRecords = (appData.growthRecords || []).filter(r => r.id !== id);
+      persistData();
+      renderAll();
+    };
 
     async function persistData() {
       localStorage.setItem('bebiskollen_data', JSON.stringify(appData));
@@ -1115,7 +1528,6 @@
 
       document.getElementById('historyCountBadge').textContent = `${events.length} händelser`;
 
-      // Hämta exakt benchmark från inmatat födelsedatum i utvecklingsblocket
       const ageInfo = getBabyAgeInfo(appData.birthDate);
       const benchmark = ageInfo ? ageInfo.benchmark : null;
 
@@ -1123,7 +1535,6 @@
       const diapers = events.filter(e => e.type === 'diaper');
       const sleeps = events.filter(e => e.type === 'sleep');
 
-      // 7-dygnssnitt baserat på avslutade dagar (exklusive idag om det finns tidigare dagar, annars totalt)
       const events7dPast = events.filter(e => new Date(e.time).getTime() >= last7dMs && !e.time.startsWith(todayStr));
       const events7dAll = events.filter(e => new Date(e.time).getTime() >= last7dMs);
       const hasPastDays = events7dPast.length > 0;
@@ -1141,7 +1552,7 @@
       const sleepsAvgSrc = sleeps.filter(e => avgSourceEvents.includes(e));
       const avgSleepH7d = sleepsAvgSrc.reduce((s, e) => s + (Number(e.durationMin) || 0), 0) / 60 / activeDays;
 
-      // 1. Senaste matning & nästa bröst + laddstapel för intervall
+      // 1. Senaste matning & nästa bröst
       if (feeds.length > 0) {
         const last = feeds[0];
         const diffMins = Math.max(0, Math.round((now - new Date(last.time)) / 60000));
@@ -1191,7 +1602,7 @@
         document.getElementById('kpiNextFeedBar').style.width = '0%';
       }
 
-      // 2. Mat idag + kvar till snitt & åldersrekommendation
+      // 2. Mat idag
       const todayFeeds = feeds.filter(e => e.time.startsWith(todayStr));
       const todayMl = todayFeeds.reduce((s, e) => s + (Number(e.bottleMl) || 0), 0);
       const todayLeft = todayFeeds.reduce((s, e) => s + (Number(e.leftMin) || 0), 0);
@@ -1216,7 +1627,7 @@
         document.getElementById('kpiFeedBar').style.width = '0%';
       }
 
-      // 3. Blöjor idag + kvar till snitt & åldersrekommendation
+      // 3. Blöjor idag
       const todayDiapers = diapers.filter(e => e.time.startsWith(todayStr));
       const kissCount = todayDiapers.filter(e => e.diaperType === 'kiss' || e.diaperType === 'bada').length;
       const bajsCount = todayDiapers.filter(e => e.diaperType === 'bajs' || e.diaperType === 'bada').length;
@@ -1243,7 +1654,7 @@
         document.getElementById('kpiDiaperBar').style.width = '0%';
       }
 
-      // 4. Sömn senaste 24h + kvar till snitt & åldersrekommendation
+      // 4. Sömn senaste 24h
       const sleeps24h = sleeps.filter(e => new Date(e.endTime || e.time).getTime() >= last24hMs);
       const sleepMins24h = sleeps24h.reduce((s, e) => s + (Number(e.durationMin) || 0), 0);
       const sleepHours24h = sleepMins24h / 60;
@@ -1268,7 +1679,7 @@
         document.getElementById('kpiSleepBar').style.width = '0%';
       }
 
-      // 5. Åldersprojektion (ihopfällbar sektion)
+      // 5. Åldersprojektion
       syncBirthDateDropdowns();
       if (ageInfo && benchmark) {
         document.getElementById('ageHeaderBadge').textContent = ageInfo.text;
@@ -1298,6 +1709,9 @@
         document.getElementById('ageHeaderBadge').textContent = 'Ange födelsedatum';
         document.getElementById('projHeaderPhaseBadge').textContent = 'Ange födelsedatum';
       }
+
+      // 6. Längd & Vikt + Tillväxtprognos
+      renderGrowthSection(ageInfo);
 
       renderCharts(feeds, diapers, sleeps);
       renderEventsTable(events);
@@ -1426,6 +1840,53 @@
       document.getElementById(id).addEventListener('change', handleBirthDateDropdownChange);
     });
 
+    document.getElementById('startWeightInput').addEventListener('change', (e) => {
+      appData.startWeight = e.target.value;
+      persistData();
+      renderAll();
+    });
+
+    document.getElementById('startLengthInput').addEventListener('change', (e) => {
+      appData.startLength = e.target.value;
+      persistData();
+      renderAll();
+    });
+
+    document.getElementById('growthCurveSelect').addEventListener('change', (e) => {
+      appData.growthCurve = e.target.value;
+      persistData();
+      renderAll();
+    });
+
+    document.getElementById('addGrowthBtn').addEventListener('click', () => {
+      const y = document.getElementById('growthYearSel').value;
+      const m = document.getElementById('growthMonthSel').value;
+      const d = document.getElementById('growthDaySel').value;
+      const weight = parseFloat(document.getElementById('newWeightInput').value);
+      const length = parseFloat(document.getElementById('newLengthInput').value);
+
+      if (!y || !m || !d) {
+        alert('Välj datum i rullgardinerna.');
+        return;
+      }
+      if (isNaN(weight) || weight <= 0 || isNaN(length) || length <= 0) {
+        alert('Ange både vikt (kg) och längd (cm).');
+        return;
+      }
+
+      appData.growthRecords.push({
+        id: Date.now().toString(),
+        date: `${y}-${m}-${d}`,
+        weight,
+        length
+      });
+
+      document.getElementById('newWeightInput').value = '';
+      document.getElementById('newLengthInput').value = '';
+      persistData();
+      renderAll();
+    });
+
     document.getElementById('logFilterSelect').addEventListener('change', renderAll);
 
     document.getElementById('addFeedBtn').addEventListener('click', () => {
@@ -1534,6 +1995,10 @@
             if (cloud && typeof cloud === 'object') {
               appData = {
                 birthDate: cloud.birthDate || appData.birthDate || '',
+                startWeight: cloud.startWeight || appData.startWeight || '',
+                startLength: cloud.startLength || appData.startLength || '',
+                growthCurve: cloud.growthCurve || appData.growthCurve || 'girl',
+                growthRecords: Array.isArray(cloud.growthRecords) ? cloud.growthRecords : (appData.growthRecords || []),
                 events: Array.isArray(cloud.events) ? cloud.events : []
               };
               localStorage.setItem('bebiskollen_data', JSON.stringify(appData));
