@@ -360,14 +360,14 @@
       background: rgba(15, 23, 42, 0.8);
       border: 1px solid var(--card-border);
       color: var(--text);
-      padding: 7px 9px;
+      padding: 7px 8px;
       border-radius: 8px;
       font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
       flex: 1;
       text-align: center;
-      min-width: 44px;
+      min-width: 40px;
     }
 
     .chip-btn:active, .chip-btn.active-chip {
@@ -384,6 +384,7 @@
       border-radius: 8px;
       font-size: 0.92rem;
       width: 100%;
+      min-width: 0;
     }
 
     select {
@@ -399,32 +400,41 @@
       display: flex;
       flex-direction: column;
       gap: 5px;
+      min-width: 0;
     }
 
     .scroll-datetime-row {
       display: grid;
-      grid-template-columns: 1.5fr 0.85fr 0.85fr auto;
-      gap: 6px;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.8fr) minmax(0, 0.8fr) auto;
+      gap: 5px;
       align-items: center;
+      width: 100%;
+    }
+
+    .scroll-datetime-row select {
+      padding: 8px 6px;
+      font-size: 0.86rem;
     }
 
     .scroll-date-row {
       display: grid;
-      grid-template-columns: 1fr 1.1fr 0.85fr;
-      gap: 6px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 0.85fr);
+      gap: 5px;
       align-items: center;
+      width: 100%;
     }
 
     .now-mini-btn {
       background: rgba(56, 189, 248, 0.15);
       border: 1px solid rgba(56, 189, 248, 0.35);
       color: var(--accent);
-      padding: 9px 10px;
+      padding: 8px 9px;
       border-radius: 8px;
       font-size: 0.78rem;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .form-grid-2 {
@@ -436,7 +446,7 @@
     .diaper-radio-group {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 6px;
       margin: 6px 0;
     }
 
@@ -444,12 +454,13 @@
       background: var(--bg);
       border: 1px solid var(--card-border);
       color: var(--text);
-      padding: 12px 8px;
+      padding: 11px 6px;
       border-radius: 9px;
-      font-size: 0.9rem;
+      font-size: 0.86rem;
       font-weight: 700;
       cursor: pointer;
       text-align: center;
+      min-width: 0;
     }
 
     .diaper-btn.active {
@@ -532,41 +543,39 @@
 
     .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; }
 
-    /* SNABB-POPUP (BOTTOM SHEET PÅ MOBIL, CENTRERAD MODAL PÅ DATOR) */
+    /* CENTRERAD MOBILANPASSAD POPUP */
     .modal-backdrop {
       position: fixed;
       inset: 0;
+      width: 100vw;
+      height: 100dvh;
       background: rgba(2, 6, 23, 0.82);
       display: none;
-      align-items: flex-end;
+      align-items: center;
       justify-content: center;
+      padding: 12px;
       z-index: 9999;
-    }
-
-    @media (min-width: 640px) {
-      .modal-backdrop { align-items: center; padding: 16px; }
     }
 
     .modal-card {
       background: var(--card);
       border: 1px solid var(--card-border);
-      border-radius: 18px 18px 0 0;
-      padding: 18px 18px 24px 18px;
+      border-radius: 16px;
+      padding: 16px;
       width: 100%;
-      max-width: 460px;
-      max-height: 92vh;
+      max-width: 430px;
+      max-height: 88dvh;
       overflow-y: auto;
-      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
-    }
-
-    @media (min-width: 640px) {
-      .modal-card { border-radius: 16px; padding: 20px; }
+      overflow-x: hidden;
+      margin: auto;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
     }
 
     .modal-header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
       margin-bottom: 12px;
     }
   </style>
@@ -638,7 +647,7 @@
       </div>
     </div>
 
-    <!-- Kort 3: Blöjbyten idag (Totalt + Endast kiss + Bajs med kiss underförstått) -->
+    <!-- Kort 3: Blöjbyten idag -->
     <div class="card clickable-kpi" onclick="openQuickLogModal('diaper')">
       <div>
         <div class="card-title">
@@ -679,7 +688,7 @@
     </div>
   </div>
 
-  <!-- 2. IHOPFÄLLBAR HÄNDELSELOGG (DIREKT UNDER ÖVERSIKTEN FÖR SNABB KOLL & ÄNDRING) -->
+  <!-- 2. IHOPFÄLLBAR HÄNDELSELOGG -->
   <div class="card" id="card_history">
     <div class="collapsible-header" onclick="toggleDrawer('history')">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -688,7 +697,7 @@
         <span class="badge" id="historyCountBadge">0</span>
       </div>
       <div style="display:flex; gap:6px; align-items:center;" onclick="event.stopPropagation()">
-        <select id="logFilterSelect" style="width:130px; padding:5px 8px; font-size:0.8rem;">
+        <select id="logFilterSelect" style="width:120px; padding:5px 8px; font-size:0.8rem;">
           <option value="all">Alla</option>
           <option value="feed">Mat</option>
           <option value="diaper">Blöjor</option>
@@ -718,8 +727,7 @@
     </div>
   </div>
 
-  <!-- 3. IHOPFÄLLBARA FÖRDJUPNINGSBLOCK (AVSKALAD FÖRSTASIDA) -->
-  <!-- Utveckling & Åldersprojektion -->
+  <!-- 3. IHOPFÄLLBARA FÖRDJUPNINGSBLOCK -->
   <div class="card" id="card_projection">
     <div class="collapsible-header" onclick="toggleDrawer('projection')">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -965,11 +973,11 @@
     </div>
   </div>
 
-  <!-- AVSKALAD SNABB-POPUP FÖR ENHETS- & NATTLOGGNING -->
+  <!-- CENTRERAD SNABB-POPUP FÖR ENHETS- & NATTLOGGNING -->
   <div class="modal-backdrop" id="quickLogModal" onclick="if(event.target===this) closeQuickLogModal()">
     <div class="modal-card">
       <div class="modal-header-row">
-        <div style="font-weight:700; font-size:1.1rem;" id="quickModalTitle">Logga</div>
+        <div style="font-weight:700; font-size:1.05rem;" id="quickModalTitle">Logga</div>
         <button type="button" class="btn btn-secondary btn-sm" onclick="closeQuickLogModal()">✕</button>
       </div>
       <div id="quickModalBody"></div>
@@ -1213,7 +1221,7 @@
       return `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}T${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}`;
     }
 
-    // --- AVSKALAD SNABB-POPUP ---
+    // --- AVSKALAD CENTRERAD SNABB-POPUP ---
     window.openQuickLogModal = function(mode) {
       const modal = document.getElementById('quickLogModal');
       const titleEl = document.getElementById('quickModalTitle');
@@ -1277,7 +1285,7 @@
               <input type="text" id="popFeedComment" placeholder="t.ex. Spytt / Palsternacka" />
             </label>
 
-            <button type="button" class="btn btn-green" style="padding:13px; font-size:0.95rem;" onclick="saveQuickFeed()">💾 Spara matning</button>
+            <button type="button" class="btn btn-green" style="padding:12px; font-size:0.95rem;" onclick="saveQuickFeed()">💾 Spara matning</button>
           </div>
         `;
       } else if (mode === 'diaper') {
@@ -1302,7 +1310,7 @@
               <input type="text" id="popDiaperComment" placeholder="t.ex. Löst / Mycket" />
             </label>
 
-            <button type="button" class="btn btn-yellow" style="padding:13px; font-size:0.95rem;" onclick="saveQuickDiaper()">💾 Spara blöjbyte</button>
+            <button type="button" class="btn btn-yellow" style="padding:12px; font-size:0.95rem;" onclick="saveQuickDiaper()">💾 Spara blöjbyte</button>
           </div>
         `;
       } else if (mode === 'sleep') {
@@ -1311,10 +1319,10 @@
         const liveHtml = child.activeSleepStart
           ? `<div class="live-sleep-banner">
               <div style="font-size:0.8rem; color:var(--purple); font-weight:700;">😴 Sover just nu (sedan ${child.activeSleepStart.slice(11, 16)})</div>
-              <button type="button" class="btn btn-green" style="width:100%; margin-top:8px; padding:12px;" onclick="toggleLiveSleepFromPopup()">☀️ Vaknade nu & spara</button>
+              <button type="button" class="btn btn-green" style="width:100%; margin-top:8px; padding:11px;" onclick="toggleLiveSleepFromPopup()">☀️ Vaknade nu & spara</button>
             </div>`
           : `<div class="live-sleep-banner">
-              <button type="button" class="btn btn-purple" style="width:100%; padding:12px;" onclick="toggleLiveSleepFromPopup()">😴 Starta live-timer (Somnade nu)</button>
+              <button type="button" class="btn btn-purple" style="width:100%; padding:11px;" onclick="toggleLiveSleepFromPopup()">😴 Starta live-timer (Somnade nu)</button>
             </div>`;
 
         bodyEl.innerHTML = `
@@ -1335,7 +1343,7 @@
             <label>Kommentar (valfritt)
               <input type="text" id="popSleepComment" placeholder="t.ex. Tupplur i vagnen" />
             </label>
-            <button type="button" class="btn btn-purple" style="padding:13px; font-size:0.95rem;" onclick="saveQuickSleep()">💾 Spara sömnpass</button>
+            <button type="button" class="btn btn-purple" style="padding:12px; font-size:0.95rem;" onclick="saveQuickSleep()">💾 Spara sömnpass</button>
           </div>
         `;
       } else if (mode === 'vitamind') {
@@ -1348,7 +1356,7 @@
             <label>Dosering
               <input type="text" id="popVitDDose" value="5 droppar" />
             </label>
-            <button type="button" class="btn btn-orange" style="padding:13px; font-size:0.95rem;" onclick="saveQuickVitD()">☀️ Spara D-droppar</button>
+            <button type="button" class="btn btn-orange" style="padding:12px; font-size:0.95rem;" onclick="saveQuickVitD()">☀️ Spara D-droppar</button>
           </div>
         `;
       }
