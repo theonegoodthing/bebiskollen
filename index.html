@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bebiskollen – Matning, Blöjor, Sömn, Tillväxt & Hälsa</title>
+  <title>Bebiskollen</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231e293b'/%3E%3Ccircle cx='32' cy='32' r='16' fill='%2338bdf8' opacity='0.25'/%3E%3Cpath d='M24 34c2 4 14 4 16 0' stroke='%2322c55e' stroke-width='4' stroke-linecap='round' fill='none'/%3E%3Ccircle cx='26' cy='26' r='2.5' fill='%23f8fafc'/%3E%3Ccircle cx='38' cy='26' r='2.5' fill='%23f8fafc'/%3E%3C/svg%3E" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -32,120 +32,163 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
 
     body {
       background-color: var(--bg);
       color: var(--text);
-      padding: 18px;
-      max-width: 1240px;
+      padding: 12px 14px 36px 14px;
+      max-width: 1200px;
       margin: 0 auto;
     }
 
+    /* KOMPAKT TOPP-HEADER */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 16px;
-      padding-bottom: 14px;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
       border-bottom: 1px solid var(--card-border);
     }
 
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     header h1 {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
+      gap: 6px;
     }
 
     .badge {
       background: rgba(56, 189, 248, 0.15);
       color: var(--accent);
-      padding: 4px 10px;
+      padding: 3px 9px;
       border-radius: 999px;
-      font-size: 0.82rem;
+      font-size: 0.76rem;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
-    .profile-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      background: rgba(30, 41, 59, 0.9);
-      border: 1px solid var(--card-border);
-      padding: 8px 12px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-    }
-
-    .profile-bar select {
-      width: auto;
-      min-width: 145px;
-      font-weight: 700;
+    .header-child-select {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
       color: var(--accent);
-      padding: 7px 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      width: auto;
+      cursor: pointer;
     }
 
-    .quick-nav-bar {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      margin-bottom: 14px;
-      scrollbar-width: none;
-    }
-
-    .quick-nav-bar::-webkit-scrollbar {
-      display: none;
-    }
-
-    .nav-pill-btn {
+    .auth-pill-compact {
       background: rgba(30, 41, 59, 0.95);
       border: 1px solid var(--card-border);
-      color: var(--text);
-      padding: 7px 12px;
+      color: var(--muted);
+      padding: 5px 10px;
       border-radius: 999px;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 600;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       white-space: nowrap;
-      transition: border-color 0.15s, background 0.15s;
     }
 
-    .nav-pill-btn:hover, .nav-pill-btn:active {
-      border-color: var(--accent);
-      background: rgba(56, 189, 248, 0.12);
+    /* 2x2 SNABBKNAPPAR FÖR POPUP-LOGGNING */
+    .quick-action-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
     }
 
+    @media (max-width: 680px) {
+      .quick-action-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .quick-log-btn {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 11px 10px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: transform 0.1s, border-color 0.15s, background 0.2s, color 0.2s;
+    }
+
+    .quick-log-btn:active { transform: scale(0.98); }
+    .quick-log-btn.q-feed { border-color: rgba(56, 189, 248, 0.45); }
+    .quick-log-btn.q-diaper { border-color: rgba(234, 179, 8, 0.45); }
+    .quick-log-btn.q-sleep { border-color: rgba(168, 85, 247, 0.45); }
+    .quick-log-btn.q-vitd { border-color: rgba(251, 146, 60, 0.45); }
+
+    @keyframes vitdWarningPulse {
+      0%, 100% {
+        border-color: rgba(251, 146, 60, 0.9);
+        background: rgba(251, 146, 60, 0.16);
+        box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.45);
+      }
+      50% {
+        border-color: rgba(239, 68, 68, 0.95);
+        background: rgba(239, 68, 68, 0.22);
+        box-shadow: 0 0 12px 2px rgba(251, 146, 60, 0.4);
+      }
+    }
+
+    .quick-log-btn.q-vitd.vitd-alert-pulse {
+      animation: vitdWarningPulse 2.2s infinite ease-in-out;
+      color: #fed7aa;
+    }
+
+    .quick-log-btn.q-vitd.vitd-done {
+      border-color: rgba(34, 197, 94, 0.55);
+      background: rgba(34, 197, 94, 0.14);
+      color: #86efac;
+      animation: none;
+      box-shadow: none;
+    }
+
+    /* ÖVERSIKTSKORT (4 ST) */
     .grid-4 {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 18px;
+      gap: 10px;
+      margin-bottom: 14px;
     }
 
     .grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-bottom: 18px;
+      gap: 14px;
+      margin-bottom: 14px;
       align-items: start;
     }
 
     .grid-2 {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 18px;
+      gap: 14px;
     }
 
     @media (max-width: 980px) {
@@ -154,22 +197,17 @@
       .grid-2 { grid-template-columns: 1fr; }
     }
 
-    @media (max-width: 540px) {
+    @media (max-width: 440px) {
       .grid-4 { grid-template-columns: 1fr; }
     }
 
     .card {
       background: var(--card);
       border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 16px 18px;
-      margin-bottom: 18px;
-      transition: border-color 0.25s, box-shadow 0.25s;
-    }
-
-    .card.highlight-pulse {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+      border-radius: 13px;
+      padding: 13px 15px;
+      margin-bottom: 12px;
+      transition: border-color 0.2s;
     }
 
     .grid-4 .card {
@@ -179,83 +217,70 @@
       justify-content: space-between;
     }
 
-    .clickable-kpi {
-      cursor: pointer;
-      position: relative;
-    }
+    .clickable-kpi { cursor: pointer; }
+    .clickable-kpi:active, .clickable-kpi:hover { border-color: var(--accent); }
 
-    .clickable-kpi:hover, .clickable-kpi:active {
-      border-color: var(--accent);
-      transform: translateY(-1px);
-    }
-
-    .kpi-jump-hint {
-      font-size: 0.72rem;
-      color: var(--accent);
-      font-weight: 600;
-      opacity: 0.85;
-    }
-
-    .grid-3 .card, .grid-2 .card {
-      margin-bottom: 0;
-    }
+    .grid-3 .card, .grid-2 .card { margin-bottom: 0; }
 
     .card-title {
       color: var(--muted);
-      font-size: 0.76rem;
+      font-size: 0.72rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      margin-bottom: 6px;
-      font-weight: 600;
+      margin-bottom: 4px;
+      font-weight: 700;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 6px;
     }
 
-    .big-value {
-      font-size: 1.55rem;
+    .kpi-tap-hint {
+      color: var(--accent);
+      font-size: 0.7rem;
       font-weight: 700;
+    }
+
+    .big-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1.2;
     }
 
     .sub-value {
       color: var(--muted);
-      font-size: 0.81rem;
-      margin-top: 6px;
-      line-height: 1.45;
+      font-size: 0.78rem;
+      margin-top: 4px;
+      line-height: 1.4;
     }
 
     .pill-highlight {
       display: inline-block;
-      margin-top: 6px;
-      padding: 3px 8px;
+      margin-top: 5px;
+      padding: 2px 7px;
       border-radius: 6px;
-      font-size: 0.76rem;
+      font-size: 0.74rem;
       font-weight: 600;
       background: rgba(15, 23, 42, 0.6);
     }
 
     .kpi-footer-progress {
-      margin-top: 12px;
-      padding-top: 9px;
+      margin-top: 9px;
+      padding-top: 7px;
       border-top: 1px solid rgba(51, 65, 85, 0.65);
     }
 
     .kpi-rem-text {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       color: var(--muted);
       display: flex;
       justify-content: space-between;
       align-items: baseline;
       gap: 6px;
-      margin-bottom: 6px;
-      line-height: 1.35;
+      margin-bottom: 5px;
     }
 
-    .kpi-rem-text strong {
-      color: var(--text);
-      font-weight: 600;
-    }
+    .kpi-rem-text strong { color: var(--text); font-weight: 600; }
 
     .collapsible-header {
       display: flex;
@@ -270,16 +295,14 @@
       display: inline-block;
       transition: transform 0.2s;
       color: var(--accent);
-      font-size: 0.82rem;
+      font-size: 0.8rem;
     }
 
-    .chevron.open {
-      transform: rotate(90deg);
-    }
+    .chevron.open { transform: rotate(90deg); }
 
     .drawer-body {
-      margin-top: 14px;
-      padding-top: 14px;
+      margin-top: 12px;
+      padding-top: 12px;
       border-top: 1px solid var(--card-border);
     }
 
@@ -292,11 +315,9 @@
       font-weight: 700;
       font-size: 0.88rem;
       cursor: pointer;
-      transition: opacity 0.15s;
     }
 
-    .btn:hover { opacity: 0.9; }
-
+    .btn:active { opacity: 0.88; }
     .btn-green { background: var(--green); color: #052e16; }
     .btn-yellow { background: var(--yellow); color: #1e1b04; }
     .btn-purple { background: var(--purple); color: #faf5ff; }
@@ -310,11 +331,7 @@
       border: 1px solid var(--card-border);
     }
 
-    .btn-sm {
-      padding: 6px 10px;
-      font-size: 0.78rem;
-      border-radius: 7px;
-    }
+    .btn-sm { padding: 6px 10px; font-size: 0.78rem; border-radius: 7px; }
 
     .btn-edit {
       background: rgba(56, 189, 248, 0.15);
@@ -340,23 +357,23 @@
     }
 
     .chip-btn {
-      background: rgba(15, 23, 42, 0.75);
+      background: rgba(15, 23, 42, 0.8);
       border: 1px solid var(--card-border);
       color: var(--text);
-      padding: 5px 9px;
-      border-radius: 7px;
-      font-size: 0.78rem;
+      padding: 7px 9px;
+      border-radius: 8px;
+      font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
       flex: 1;
       text-align: center;
-      min-width: 42px;
+      min-width: 44px;
     }
 
-    .chip-btn:active, .chip-btn:hover, .chip-btn.active-chip {
+    .chip-btn:active, .chip-btn.active-chip {
       border-color: var(--accent);
       color: var(--accent);
-      background: rgba(56, 189, 248, 0.14);
+      background: rgba(56, 189, 248, 0.16);
     }
 
     input[type="text"], input[type="number"], select {
@@ -374,10 +391,7 @@
       appearance: auto;
     }
 
-    input:focus, select:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
+    input:focus, select:focus { outline: none; border-color: var(--accent); }
 
     label {
       font-size: 0.78rem;
@@ -389,7 +403,7 @@
 
     .scroll-datetime-row {
       display: grid;
-      grid-template-columns: 1.6fr 0.85fr 0.85fr auto;
+      grid-template-columns: 1.5fr 0.85fr 0.85fr auto;
       gap: 6px;
       align-items: center;
     }
@@ -430,18 +444,17 @@
       background: var(--bg);
       border: 1px solid var(--card-border);
       color: var(--text);
-      padding: 11px 8px;
-      border-radius: 8px;
-      font-size: 0.88rem;
-      font-weight: 600;
+      padding: 12px 8px;
+      border-radius: 9px;
+      font-size: 0.9rem;
+      font-weight: 700;
       cursor: pointer;
       text-align: center;
-      transition: all 0.15s;
     }
 
     .diaper-btn.active {
       border-color: var(--yellow);
-      background: rgba(234, 179, 8, 0.18);
+      background: rgba(234, 179, 8, 0.2);
       color: var(--yellow);
     }
 
@@ -470,7 +483,7 @@
       background: rgba(15, 23, 42, 0.6);
       border: 1px solid var(--card-border);
       border-radius: 10px;
-      padding: 14px;
+      padding: 12px;
     }
 
     .forecast-milestones-grid {
@@ -480,170 +493,120 @@
       margin-top: 10px;
     }
 
-    @media (max-width: 980px) {
-      .forecast-milestones-grid { grid-template-columns: repeat(4, 1fr); }
-    }
-
-    @media (max-width: 540px) {
-      .forecast-milestones-grid { grid-template-columns: repeat(2, 1fr); }
-    }
+    @media (max-width: 980px) { .forecast-milestones-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 540px) { .forecast-milestones-grid { grid-template-columns: repeat(2, 1fr); } }
 
     .milestone-tile {
       background: rgba(15, 23, 42, 0.75);
       border: 1px solid var(--card-border);
       border-radius: 9px;
-      padding: 9px 8px;
+      padding: 8px 6px;
       text-align: center;
     }
 
-    .milestone-tile.passed {
-      opacity: 0.55;
-    }
-
-    .milestone-age {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--pink);
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-
-    .milestone-val {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.35;
-    }
+    .milestone-tile.passed { opacity: 0.55; }
+    .milestone-age { font-size: 0.72rem; font-weight: 700; color: var(--pink); text-transform: uppercase; margin-bottom: 3px; }
+    .milestone-val { font-size: 0.85rem; font-weight: 700; color: var(--text); line-height: 1.3; }
 
     .progress-bg {
-      height: 8px;
+      height: 7px;
       background: #0f172a;
       border-radius: 999px;
       overflow: hidden;
-      margin: 4px 0 0 0;
     }
 
-    .progress-fill {
-      height: 100%;
-      border-radius: 999px;
-      transition: width 0.3s;
-    }
+    .progress-fill { height: 100%; border-radius: 999px; transition: width 0.3s; }
 
-    .chart-wrapper {
-      position: relative;
-      height: 250px;
-      width: 100%;
-      margin-top: 10px;
-    }
+    .chart-wrapper { position: relative; height: 230px; width: 100%; margin-top: 10px; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 0.86rem;
-    }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.84rem; }
+    th, td { text-align: left; padding: 9px 6px; border-bottom: 1px solid var(--card-border); }
+    th { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
 
-    th, td {
-      text-align: left;
-      padding: 10px 8px;
-      border-bottom: 1px solid var(--card-border);
-    }
-
-    th {
-      color: var(--muted);
-      font-size: 0.74rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .tag-pill {
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 0.74rem;
-      font-weight: 600;
-      display: inline-block;
-    }
-
+    .tag-pill { padding: 3px 7px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; display: inline-block; }
     .tag-feed { background: rgba(56, 189, 248, 0.15); color: var(--accent); }
     .tag-diaper { background: rgba(234, 179, 8, 0.15); color: var(--yellow); }
     .tag-sleep { background: rgba(168, 85, 247, 0.15); color: var(--purple); }
     .tag-health { background: rgba(239, 68, 68, 0.15); color: var(--red); }
     .tag-vitamind { background: rgba(251, 146, 60, 0.18); color: var(--orange); }
 
-    .status-dot {
-      height: 8px;
-      width: 8px;
-      border-radius: 50%;
-      display: inline-block;
-    }
+    .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; }
 
+    /* SNABB-POPUP (BOTTOM SHEET PÅ MOBIL, CENTRERAD MODAL PÅ DATOR) */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(2, 6, 23, 0.8);
+      background: rgba(2, 6, 23, 0.82);
       display: none;
-      align-items: center;
+      align-items: flex-end;
       justify-content: center;
       z-index: 9999;
-      padding: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .modal-backdrop { align-items: center; padding: 16px; }
     }
 
     .modal-card {
       background: var(--card);
       border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 18px;
+      border-radius: 18px 18px 0 0;
+      padding: 18px 18px 24px 18px;
       width: 100%;
-      max-width: 440px;
-      max-height: 90vh;
+      max-width: 460px;
+      max-height: 92vh;
       overflow-y: auto;
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (min-width: 640px) {
+      .modal-card { border-radius: 16px; padding: 20px; }
+    }
+
+    .modal-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
     }
   </style>
 </head>
 <body>
 
+  <!-- KOMPAKT SIDHUVUD -->
   <header>
-    <div>
-      <h1>👶 Bebiskollen <span class="badge" id="ageHeaderBadge">Ålder ej angiven</span></h1>
-      <div class="sub-value">Matning, smakportioner, blöjbyten, sömn & vakenfönster, tillväxt & hälsa</div>
+    <div class="header-left">
+      <h1>👶 Bebiskollen</h1>
+      <select id="headerProfileSelect" class="header-child-select" title="Byt barnprofil"></select>
+      <span class="badge" id="ageHeaderBadge">Ålder ej angiven</span>
     </div>
-    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-      <span class="badge" id="authStatusBadge"><span class="status-dot" style="background:var(--yellow);"></span>Ej inloggad (Lokal lagring)</span>
-      <button class="btn" id="googleLoginBtn" type="button">Logga in med Google</button>
-      <button class="btn btn-secondary" id="googleLogoutBtn" type="button" style="display:none;">Logga ut</button>
+    <div>
+      <button type="button" class="auth-pill-compact" id="headerAuthBtn" title="Google-inloggning & molnsynk">
+        <span class="status-dot" id="headerAuthDot" style="background:var(--yellow);"></span>
+        <span id="headerAuthText">Logga in</span>
+      </button>
     </div>
   </header>
 
-  <!-- PROFILVÄLJARE FÖR FLERA BARN -->
-  <div class="profile-bar">
-    <span style="font-size:0.82rem; font-weight:700; color:var(--muted);">👤 Aktiv profil:</span>
-    <select id="profileSelect"></select>
-    <button type="button" class="btn btn-secondary btn-sm" id="renameProfileBtn" title="Byt visningsnamn på vald profil">✏️ Byt namn</button>
-    <button type="button" class="btn btn-green btn-sm" id="addProfileBtn">+ Lägg till barn</button>
-    <button type="button" class="btn btn-danger" id="deleteProfileBtn" style="margin-left:auto; display:none;" title="Ta bort denna profil">Ta bort profil</button>
+  <!-- 2x2 SNABBKNAPPAR SOM ÖPPNAR AVSKALAD POP-UP -->
+  <div class="quick-action-grid">
+    <button type="button" class="quick-log-btn q-feed" onclick="openQuickLogModal('feed')">🍼 Logga mat</button>
+    <button type="button" class="quick-log-btn q-diaper" onclick="openQuickLogModal('diaper')">🧷 Logga blöja</button>
+    <button type="button" class="quick-log-btn q-sleep" onclick="openQuickLogModal('sleep')">🌙 Logga sömn</button>
+    <button type="button" class="quick-log-btn q-vitd vitd-alert-pulse" id="topQuickVitDBtn" onclick="openQuickLogModal('vitamind')">☀️ D-vitamin</button>
   </div>
 
-  <!-- SNABBHOPPS-RAD FÖR MOBIL -->
-  <div class="quick-nav-bar">
-    <button type="button" class="nav-pill-btn" onclick="jumpToSection('feed', 'card_feed')">🍼 Logga mat</button>
-    <button type="button" class="nav-pill-btn" onclick="jumpToSection('diaper', 'card_diaper')">🧷 Logga blöja</button>
-    <button type="button" class="nav-pill-btn" onclick="jumpToSection('sleep', 'card_sleep')">🌙 Logga sömn</button>
-    <button type="button" class="nav-pill-btn" onclick="jumpToSection('health', 'card_health')">☀️ D-vitamin & Hälsa</button>
-    <button type="button" class="nav-pill-btn" onclick="jumpToSection('growth', 'card_growth')">📏 Längd & vikt</button>
-    <button type="button" class="nav-pill-btn" onclick="jumpToSection('history', 'card_history')">📋 Händelselogg</button>
-  </div>
-
-  <!-- 1. KLICKBARA ÖVERSIKTSBLOCK I TOPPEN (HOPPAR DIREKT TILL LOGG-BLOCKET) -->
+  <!-- 1. ESSENTIELL ÖVERSIKT I TOPPEN (KLICKBARA KORT SOM ÖPPNAR POP-UP) -->
   <div class="grid-4">
-    <!-- Block 1: Senaste matning -->
-    <div class="card clickable-kpi" onclick="jumpToSection('feed', 'card_feed')" title="Tryck för att logga matning">
+    <!-- Kort 1: Senaste matning -->
+    <div class="card clickable-kpi" onclick="openQuickLogModal('feed')">
       <div>
         <div class="card-title">
-          <span>Senaste Matning & Nästa Bröst</span>
-          <span class="kpi-jump-hint">Logga ↓</span>
+          <span>Senaste Matning</span>
+          <span class="kpi-tap-hint">+ Logga</span>
         </div>
         <div class="big-value" id="kpiLastFeedTime" style="color: var(--accent);">–</div>
-        <div class="pill-highlight" id="kpiNextBreast" style="color: var(--green);">Nästa förslag: Vänster eller Höger</div>
+        <div class="pill-highlight" id="kpiNextBreast" style="color: var(--green);">Nästa: Vänster / Höger</div>
         <div class="sub-value" id="kpiLastFeedDetail">Ingen matning loggad ännu</div>
       </div>
       <div class="kpi-footer-progress">
@@ -655,12 +618,12 @@
       </div>
     </div>
 
-    <!-- Block 2: Mat idag -->
-    <div class="card clickable-kpi" onclick="jumpToSection('feed', 'card_feed')" title="Tryck för att logga matning">
+    <!-- Kort 2: Mat idag -->
+    <div class="card clickable-kpi" onclick="openQuickLogModal('feed')">
       <div>
         <div class="card-title">
-          <span>Mat Idag (00:00 – Nu)</span>
-          <span class="kpi-jump-hint">Logga ↓</span>
+          <span>Mat Idag</span>
+          <span class="kpi-tap-hint">+ Logga</span>
         </div>
         <div class="big-value" id="kpiTodayFeed" style="color: var(--green);">0 ml • 0 min</div>
         <div class="pill-highlight" id="kpiTodayFeedCount" style="color: var(--muted);">0 matningar idag</div>
@@ -675,12 +638,12 @@
       </div>
     </div>
 
-    <!-- Block 3: Blöjbyten idag (Totalt + Endast kiss + Bajs med kiss underförstått) -->
-    <div class="card clickable-kpi" onclick="jumpToSection('diaper', 'card_diaper')" title="Tryck för att logga blöjbyte">
+    <!-- Kort 3: Blöjbyten idag (Totalt + Endast kiss + Bajs med kiss underförstått) -->
+    <div class="card clickable-kpi" onclick="openQuickLogModal('diaper')">
       <div>
         <div class="card-title">
           <span>Blöjbyten Idag</span>
-          <span class="kpi-jump-hint">Logga ↓</span>
+          <span class="kpi-tap-hint">+ Logga</span>
         </div>
         <div class="big-value" id="kpiTodayDiapers" style="color: var(--yellow);">0 st</div>
         <div class="pill-highlight" id="kpiTodayDiaperSplit" style="color: var(--muted);">0 endast kiss • 0 bajs</div>
@@ -695,16 +658,16 @@
       </div>
     </div>
 
-    <!-- Block 4: Sömn & Vakenfönster -->
-    <div class="card clickable-kpi" onclick="jumpToSection('sleep', 'card_sleep')" title="Tryck för att logga sömn">
+    <!-- Kort 4: Sömn & Vakenfönster -->
+    <div class="card clickable-kpi" onclick="openQuickLogModal('sleep')">
       <div>
-        <div class="card-title" id="kpiSleepTitle">
-          <span>Sömn (24h) & Vakenfönster</span>
-          <span class="kpi-jump-hint">Logga ↓</span>
+        <div class="card-title">
+          <span>Sömn (24h) & Vaken</span>
+          <span class="kpi-tap-hint">+ Logga</span>
         </div>
         <div class="big-value" id="kpiSleep24h" style="color: var(--purple);">0,0 h</div>
         <div class="pill-highlight" id="kpiWakeWindowBadge" style="color: var(--accent);">Vaken nu: –</div>
-        <div class="sub-value" id="kpiLongestSleep">Längsta sammanhängande: 0,0 h</div>
+        <div class="sub-value" id="kpiLongestSleep">Längsta pass: 0,0 h</div>
       </div>
       <div class="kpi-footer-progress">
         <div class="kpi-rem-text">
@@ -716,491 +679,24 @@
     </div>
   </div>
 
-  <!-- 2. IHOPFÄLLBAR ÅLDERSPROJEKTION & RIKTMÄRKEN -->
-  <div class="card" id="card_projection">
-    <div class="collapsible-header" onclick="toggleDrawer('projection')">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <span class="chevron open" id="chev_projection">▶</span>
-        <div>
-          <div style="font-weight:700; font-size:0.95rem;">
-            Utvecklings- & Forskningsprojektion <span class="badge" id="projHeaderPhaseBadge">Ange födelsedatum</span>
-          </div>
-          <div class="sub-value" style="margin-top:2px;">Klicka för att fälla in/ut jämförelse mot WHO / 1177 / Rikshandboken.</div>
-        </div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:0.88rem; font-weight:700; color:var(--accent);" id="projHeaderShort">Riktvärden per ålder</div>
-      </div>
-    </div>
-
-    <div class="drawer-body" id="body_projection">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
-        <div class="sub-value" style="margin-top:0; max-width:680px;" id="projectionIntroText">
-          Välj barnets födelsedatum i rullgardinerna (sparas privat på ert konto) för att jämföra ert 7-dygnssnitt mot medicinska riktmärken.
-        </div>
-        <div style="min-width:260px;">
-          <label>
-            Födelsedatum (År • Månad • Dag)
-            <div class="scroll-date-row">
-              <select id="birthYearSelect"></select>
-              <select id="birthMonthSelect"></select>
-              <select id="birthDaySelect"></select>
-            </div>
-          </label>
-        </div>
-      </div>
-
-      <div class="grid-3" style="margin-bottom:0;">
-        <div class="proj-box">
-          <div style="display:flex; justify-content:space-between; font-size:0.84rem; font-weight:700; margin-bottom:4px;">
-            <span style="color:var(--accent);">🍼 Mat & Näringsbehov</span>
-            <span id="projFeedTarget">Riktvärde: –</span>
-          </div>
-          <div style="font-size:1.05rem; font-weight:700;" id="projFeedActual">Ert snitt (7d): –</div>
-          <div class="progress-bg" style="margin:8px 0;"><div class="progress-fill" id="projFeedBar" style="width:0%; background:var(--accent);"></div></div>
-          <div class="sub-value" style="font-size:0.78rem;" id="projFeedForecast">Välj födelsedatum ovan för åldersanalys och nästa steg.</div>
-        </div>
-
-        <div class="proj-box">
-          <div style="display:flex; justify-content:space-between; font-size:0.84rem; font-weight:700; margin-bottom:4px;">
-            <span style="color:var(--yellow);">🧷 Blöjor & Magfunktion</span>
-            <span id="projDiaperTarget">Riktvärde: –</span>
-          </div>
-          <div style="font-size:1.05rem; font-weight:700;" id="projDiaperActual">Ert snitt (7d): –</div>
-          <div class="progress-bg" style="margin:8px 0;"><div class="progress-fill" id="projDiaperBar" style="width:0%; background:var(--yellow);"></div></div>
-          <div class="sub-value" style="font-size:0.78rem;" id="projDiaperForecast">Välj födelsedatum ovan för normalintervall för kiss och avföring.</div>
-        </div>
-
-        <div class="proj-box">
-          <div style="display:flex; justify-content:space-between; font-size:0.84rem; font-weight:700; margin-bottom:4px;">
-            <span style="color:var(--purple);">🌙 Sömn & Dygnsrytm</span>
-            <span id="projSleepTarget">Riktvärde: –</span>
-          </div>
-          <div style="font-size:1.05rem; font-weight:700;" id="projSleepActual">Ert snitt (7d): –</div>
-          <div class="progress-bg" style="margin:8px 0;"><div class="progress-fill" id="projSleepBar" style="width:0%; background:var(--purple);"></div></div>
-          <div class="sub-value" style="font-size:0.78rem;" id="projSleepForecast">Välj födelsedatum ovan för sömnbehov och kommande sömnfaser.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- LÄNGD & VIKT + TILLVÄXTPROGNOS -->
-  <div class="card" id="card_growth">
-    <div class="collapsible-header" onclick="toggleDrawer('growth')">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <span class="chevron open" id="chev_growth">▶</span>
-        <div>
-          <div style="font-weight:700; font-size:0.95rem;">
-            📏 Längd & Vikt <span class="badge" style="background:rgba(244, 114, 182, 0.15); color:var(--pink);" id="growthHeaderBadge">Startvärden ej angivna</span>
-          </div>
-          <div class="sub-value" style="margin-top:2px;">Klicka för att fälla in/ut mätningar, procentuell ökning och tillväxtprognos till vuxen ålder.</div>
-        </div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:0.88rem; font-weight:700; color:var(--pink);" id="growthHeaderLatest">–</div>
-      </div>
-    </div>
-
-    <div class="drawer-body" id="body_growth">
-      <div class="grid-3" style="margin-bottom:14px;">
-        <label>
-          Startvikt vid födseln (kg)
-          <input type="number" id="startWeightInput" placeholder="t.ex. 3.55" step="0.01" min="0.5" max="10" />
-        </label>
-        <label>
-          Startlängd vid födseln (cm)
-          <input type="number" id="startLengthInput" placeholder="t.ex. 50.5" step="0.5" min="30" max="70" />
-        </label>
-        <label>
-          Referenskurva (WHO / BVC)
-          <select id="growthCurveSelect">
-            <option value="girl">Flicka (WHO / Svensk BVC)</option>
-            <option value="boy">Pojke (WHO / Svensk BVC)</option>
-            <option value="avg">Neutralt snitt</option>
-          </select>
-        </label>
-      </div>
-
-      <div class="grid-2" style="margin-bottom:14px;">
-        <div class="proj-box">
-          <div class="card-title" style="color:var(--pink);">📈 Sedan förra mätningen</div>
-          <div style="font-size:1.1rem; font-weight:700;" id="growthDiffPrevText">Lägg till en mätning nedan</div>
-          <div class="sub-value" id="growthDiffPrevSub">Visar vikt- och längdökning i % samt gram/cm jämfört med föregående mätning.</div>
-        </div>
-        <div class="proj-box">
-          <div class="card-title" style="color:var(--green);">🚀 Totalt sedan start (födseln)</div>
-          <div style="font-size:1.1rem; font-weight:700;" id="growthDiffStartText">Ange startvikt & startlängd ovan</div>
-          <div class="sub-value" id="growthDiffStartSub">Visar total tillväxt i % och kg/cm sedan födseln.</div>
-        </div>
-      </div>
-
-      <div class="proj-box" style="margin-bottom:14px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-          <div style="font-size:0.84rem; font-weight:700; color:var(--pink);">🔮 Tillväxtprognos (Om barnet följer sin nuvarande kurva)</div>
-          <div class="sub-value" style="margin-top:0; font-size:0.75rem;" id="growthCurveStatusText">Baseras på senaste mätning och ålder</div>
-        </div>
-        <div class="forecast-milestones-grid" id="growthForecastGrid"></div>
-      </div>
-
-      <div class="proj-box" style="margin-bottom:12px;">
-        <div class="card-title" style="color:var(--accent); margin-bottom:8px;">+ Registrera ny vikt & längd</div>
-        <div style="display:grid; grid-template-columns: 1.5fr 1fr 1fr auto; gap:8px; align-items:end;">
-          <label>
-            Datum (År • Månad • Dag)
-            <div class="scroll-date-row">
-              <select id="growthYearSel"></select>
-              <select id="growthMonthSel"></select>
-              <select id="growthDaySel"></select>
-            </div>
-          </label>
-          <label>
-            Vikt (kg)
-            <input type="number" id="newWeightInput" placeholder="t.ex. 6.85" step="0.01" min="0.5" max="150" />
-          </label>
-          <label>
-            Längd (cm)
-            <input type="number" id="newLengthInput" placeholder="t.ex. 64.5" step="0.1" min="30" max="220" />
-          </label>
-          <button class="btn btn-pink" id="addGrowthBtn" type="button" style="height:38px;">+ Spara mätning</button>
-        </div>
-      </div>
-
-      <div style="overflow-x:auto;">
-        <table>
-          <thead>
-            <tr>
-              <th>Datum</th>
-              <th>Ålder då</th>
-              <th>Vikt (kg)</th>
-              <th>Längd (cm)</th>
-              <th>Sedan förra</th>
-              <th>Sedan start</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="growthTableBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. IHOPFÄLLBARA INMATNINGSBLOCK MED SKROLLBAR TID, SMAKPORTIONER & LIVE-SÖMN -->
-  <div class="grid-3">
-    <!-- Block A: Logga Matning & Smakportioner -->
-    <div class="card" id="card_feed">
-      <div class="collapsible-header" onclick="toggleDrawer('feed')">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span class="chevron open" id="chev_feed">▶</span>
-          <span style="font-weight:700; color:var(--accent); font-size:0.95rem;">🍼 Logga Matning & Smakportion</span>
-        </div>
-        <span class="sub-value" style="margin-top:0;" id="feedHeaderMini">Bröst, flaska & mat</span>
-      </div>
-
-      <div class="drawer-body" id="body_feed">
-        <div style="display:flex; flex-direction:column; gap:12px;">
-          <label>
-            Tidpunkt (skrolla Dag • Tim • Min)
-            <div class="scroll-datetime-row">
-              <select id="feedDaySel"></select>
-              <select id="feedHourSel"></select>
-              <select id="feedMinSel"></select>
-              <button type="button" class="now-mini-btn" onclick="setScrollPickerNow('feed')">Nu</button>
-            </div>
-          </label>
-
-          <div class="form-grid-2">
-            <div>
-              <label>
-                Vänster bröst (min)
-                <input type="number" id="feedLeftMin" placeholder="0" min="0" step="1" />
-              </label>
-              <div class="quick-chips">
-                <button type="button" class="chip-btn" onclick="setVal('feedLeftMin', 5)">5m</button>
-                <button type="button" class="chip-btn" onclick="setVal('feedLeftMin', 10)">10m</button>
-                <button type="button" class="chip-btn" onclick="setVal('feedLeftMin', 15)">15m</button>
-                <button type="button" class="chip-btn" onclick="setVal('feedLeftMin', 20)">20m</button>
-              </div>
-            </div>
-
-            <div>
-              <label>
-                Höger bröst (min)
-                <input type="number" id="feedRightMin" placeholder="0" min="0" step="1" />
-              </label>
-              <div class="quick-chips">
-                <button type="button" class="chip-btn" onclick="setVal('feedRightMin', 5)">5m</button>
-                <button type="button" class="chip-btn" onclick="setVal('feedRightMin', 10)">10m</button>
-                <button type="button" class="chip-btn" onclick="setVal('feedRightMin', 15)">15m</button>
-                <button type="button" class="chip-btn" onclick="setVal('feedRightMin', 20)">20m</button>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label>
-              Flaska (antal ml)
-              <input type="number" id="feedBottleMl" placeholder="0" min="0" step="5" />
-            </label>
-            <div class="quick-chips">
-              <button type="button" class="chip-btn" onclick="setVal('feedBottleMl', 60)">60 ml</button>
-              <button type="button" class="chip-btn" onclick="setVal('feedBottleMl', 90)">90 ml</button>
-              <button type="button" class="chip-btn" onclick="setVal('feedBottleMl', 120)">120 ml</button>
-              <button type="button" class="chip-btn" onclick="setVal('feedBottleMl', 150)">150 ml</button>
-              <button type="button" class="chip-btn" onclick="addVal('feedBottleMl', 10)">+10</button>
-            </div>
-          </div>
-
-          <!-- Smakportioner & Fast föda -->
-          <div style="background:rgba(15,23,42,0.55); border:1px solid var(--card-border); border-radius:9px; padding:10px;">
-            <div style="font-size:0.75rem; font-weight:700; color:var(--orange); margin-bottom:6px;">🥄 Smakportion / Fast föda (valfritt)</div>
-            <div class="quick-chips" id="solidFoodChips" style="margin-bottom:8px;">
-              <button type="button" class="chip-btn" onclick="toggleSolidCategory(this, 'Gröt')">🥣 Gröt</button>
-              <button type="button" class="chip-btn" onclick="toggleSolidCategory(this, 'Grönsak/Puré')">🥕 Puré</button>
-              <button type="button" class="chip-btn" onclick="toggleSolidCategory(this, 'Frukt/Bär')">🍌 Frukt</button>
-              <button type="button" class="chip-btn" onclick="toggleSolidCategory(this, 'Protein/Ägg')">🥚 Protein</button>
-              <button type="button" class="chip-btn" onclick="toggleSolidCategory(this, 'Plockmat')">🥑 Plock</button>
-            </div>
-            <div style="display:flex; gap:8px; align-items:center;">
-              <input type="text" id="feedSolidDetail" placeholder="Vad åt barnet? (t.ex. Palsternacka, 3 tsk)" style="flex:1; font-size:0.85rem; padding:7px 9px;" />
-              <label style="flex-direction:row; align-items:center; gap:5px; white-space:nowrap; font-size:0.76rem; color:var(--text); cursor:pointer;">
-                <input type="checkbox" id="feedIsNewFood" style="width:16px; height:16px;" /> Ny råvara
-              </label>
-            </div>
-          </div>
-
-          <label>
-            Kommentar / Reaktion (valfritt)
-            <input type="text" id="feedComment" placeholder="t.ex. Spytt mycket / Gillade gröten / Inga prickar" />
-          </label>
-          <button class="btn btn-green" id="addFeedBtn" type="button">+ Spara matning</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Block B: Logga Blöjbyte -->
-    <div class="card" id="card_diaper">
-      <div class="collapsible-header" onclick="toggleDrawer('diaper')">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span class="chevron open" id="chev_diaper">▶</span>
-          <span style="font-weight:700; color:var(--yellow); font-size:0.95rem;">🧷 Logga Blöjbyte</span>
-        </div>
-        <span class="sub-value" style="margin-top:0;" id="diaperHeaderMini">Kiss / Bajs</span>
-      </div>
-
-      <div class="drawer-body" id="body_diaper">
-        <div style="display:flex; flex-direction:column; gap:12px;">
-          <label>
-            Tidpunkt (skrolla Dag • Tim • Min)
-            <div class="scroll-datetime-row">
-              <select id="diaperDaySel"></select>
-              <select id="diaperHourSel"></select>
-              <select id="diaperMinSel"></select>
-              <button type="button" class="now-mini-btn" onclick="setScrollPickerNow('diaper')">Nu</button>
-            </div>
-          </label>
-
-          <div>
-            <span style="font-size:0.78rem; color:var(--muted);">Innehåll</span>
-            <div class="diaper-radio-group" id="diaperTypeGroup">
-              <button type="button" class="diaper-btn active" data-val="kiss">💧 Kiss</button>
-              <button type="button" class="diaper-btn" data-val="bajs">💩 Bajs</button>
-              <button type="button" class="diaper-btn" data-val="bada">💧💩 Båda</button>
-            </div>
-          </div>
-
-          <label>
-            Kommentar (valfritt)
-            <input type="text" id="diaperComment" placeholder="t.ex. Löst / Röd rumpa / Mycket" />
-          </label>
-          <button class="btn btn-yellow" id="addDiaperBtn" type="button">+ Spara blöjbyte</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Block C: Logga Sömn (Med Live-timer "Sover nu") -->
-    <div class="card" id="card_sleep">
-      <div class="collapsible-header" onclick="toggleDrawer('sleep')">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span class="chevron open" id="chev_sleep">▶</span>
-          <span style="font-weight:700; color:var(--purple); font-size:0.95rem;">🌙 Logga Sömn</span>
-        </div>
-        <span class="sub-value" style="margin-top:0;" id="sleepHeaderMini">Tupplur & natt</span>
-      </div>
-
-      <div class="drawer-body" id="body_sleep">
-        <div class="live-sleep-banner" id="liveSleepBox">
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
-            <div>
-              <div style="font-size:0.75rem; font-weight:700; color:var(--purple); text-transform:uppercase;" id="liveSleepStatusLabel">Live-timer för tupplur/natt</div>
-              <div style="font-size:1.05rem; font-weight:700;" id="liveSleepTimerText">Tryck när barnet somnar</div>
-            </div>
-            <button type="button" class="btn btn-purple" id="toggleLiveSleepBtn" style="padding:8px 12px; font-size:0.82rem;">😴 Starta sömn nu</button>
-          </div>
-        </div>
-
-        <div style="display:flex; flex-direction:column; gap:12px;">
-          <div>
-            <label>
-              Somnade (Dag • Tim • Min)
-              <div class="scroll-datetime-row">
-                <select id="sleepStartDaySel" onchange="updateSleepDurationPreview()"></select>
-                <select id="sleepStartHourSel" onchange="updateSleepDurationPreview()"></select>
-                <select id="sleepStartMinSel" onchange="updateSleepDurationPreview()"></select>
-                <button type="button" class="now-mini-btn" onclick="setScrollPickerNow('sleepStart'); updateSleepDurationPreview();">Nu</button>
-              </div>
-            </label>
-            <div class="quick-chips">
-              <button type="button" class="chip-btn" onclick="setSleepOffsetMinutes(30)">-30m</button>
-              <button type="button" class="chip-btn" onclick="setSleepOffsetMinutes(60)">-1h</button>
-              <button type="button" class="chip-btn" onclick="setSleepOffsetMinutes(120)">-2h</button>
-              <button type="button" class="chip-btn" onclick="setSleepOffsetMinutes(180)">-3h</button>
-            </div>
-          </div>
-
-          <label>
-            Vaknade (Dag • Tim • Min)
-            <div class="scroll-datetime-row">
-              <select id="sleepEndDaySel" onchange="updateSleepDurationPreview()"></select>
-              <select id="sleepEndHourSel" onchange="updateSleepDurationPreview()"></select>
-              <select id="sleepEndMinSel" onchange="updateSleepDurationPreview()"></select>
-              <button type="button" class="now-mini-btn" onclick="setScrollPickerNow('sleepEnd'); updateSleepDurationPreview();">Nu</button>
-            </div>
-          </label>
-
-          <div class="sub-value" id="sleepDurationPreview" style="margin-top:0; color:var(--purple); font-weight:700;">
-            Längd: 1 h 0 min
-          </div>
-
-          <label>
-            Kommentar (valfritt)
-            <input type="text" id="sleepComment" placeholder="t.ex. Tupplur i vagnen / Vaknade 1 ggr" />
-          </label>
-          <button class="btn btn-purple" id="addSleepBtn" type="button">+ Spara manuellt sömnpass</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3B. BLOCK: HÄLSA, D-VITAMIN, FEBER & MEDICIN-NEDRÄKNING -->
-  <div class="card" id="card_health">
-    <div class="collapsible-header" onclick="toggleDrawer('health')">
-      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-        <span class="chevron" id="chev_health">▶</span>
-        <div>
-          <div style="font-weight:700; font-size:0.95rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-            <span>🌡️ Hälsa, D-vitamin, Feber & Medicin</span>
-            <span class="badge" style="background:rgba(251, 146, 60, 0.18); color:var(--orange);" id="vitaminDHeaderBadge">☀️ D-vitamin: Ej given idag</span>
-            <span class="badge" style="background:rgba(239, 68, 68, 0.15); color:var(--red);" id="healthHeaderBadge">Inga aktiva doser</span>
-          </div>
-          <div class="sub-value" style="margin-top:2px;">Separat snabbknapp för D-droppar samt logg för kroppstemperatur & medicin med 6h-nedräkning.</div>
-        </div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:0.88rem; font-weight:700; color:var(--red);" id="healthHeaderTimer">–</div>
-      </div>
-    </div>
-
-    <div class="drawer-body" id="body_health">
-      <!-- Separat D-vitamin-sektion -->
-      <div class="vitamind-banner">
-        <div>
-          <div style="font-size:0.86rem; font-weight:700; color:var(--orange);">☀️ D-vitamin (5 droppar dagligen)</div>
-          <div class="sub-value" style="margin-top:2px;" id="vitaminDStatusDetail">Ej registrerad idag ännu. Tryck på knappen för att logga direkt.</div>
-        </div>
-        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-          <button type="button" class="btn btn-orange" id="quickVitaminDBtn">☀️ Ge D-droppar nu (5 dr)</button>
-        </div>
-      </div>
-
-      <!-- Temperatur & Medicin -->
-      <div style="display:grid; grid-template-columns: 1.5fr 0.9fr 1.2fr 1.2fr auto; gap:10px; align-items:end;">
-        <label>
-          Tidpunkt (Dag • Tim • Min)
-          <div class="scroll-datetime-row">
-            <select id="healthDaySel"></select>
-            <select id="healthHourSel"></select>
-            <select id="healthMinSel"></select>
-            <button type="button" class="now-mini-btn" onclick="setScrollPickerNow('health')">Nu</button>
-          </div>
-        </label>
-
-        <label>
-          Temp (°C)
-          <input type="number" id="healthTempInput" placeholder="t.ex. 38.4" step="0.1" min="34" max="42" />
-        </label>
-
-        <label>
-          Medicin / Åtgärd
-          <select id="healthMedSelect">
-            <option value="">Endast temp / notering</option>
-            <option value="Alvedon (Paracetamol)">💊 Alvedon (Paracetamol)</option>
-            <option value="Ipren (Ibuprofen)">💊 Ipren (Ibuprofen)</option>
-            <option value="Nässpray / Koksalt">💧 Nässpray / Koksalt</option>
-          </select>
-        </label>
-
-        <label>
-          Dos / Kommentar
-          <input type="text" id="healthComment" placeholder="t.ex. 60 mg supp / Snorig" />
-        </label>
-
-        <button class="btn btn-red" id="addHealthBtn" type="button" style="height:38px;">+ Logga</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 4. IHOPFÄLLBARA STATISTIKGRAFER (7 SENASTE DAGARNA) -->
-  <div class="card" id="card_charts">
-    <div class="collapsible-header" onclick="toggleDrawer('charts')">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <span class="chevron open" id="chev_charts">▶</span>
-        <div>
-          <div style="font-weight:700; font-size:0.95rem;">Statistik & Trendgrafer (Senaste 7 dagarna)</div>
-          <div class="sub-value" style="margin-top:2px;">Klicka för att fälla in/ut stapeldiagram för mat, sömn och blöjbyten.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="drawer-body" id="body_charts">
-      <div class="grid-2">
-        <div>
-          <div class="card-title">Mat (ml) & Sömn (timmar) – Senaste 7 Dagarna</div>
-          <div class="chart-wrapper">
-            <canvas id="feedSleepChart"></canvas>
-          </div>
-        </div>
-        <div>
-          <div class="card-title">Blöjbyten Totalt (Endast kiss + Bajs) – Senaste 7 Dagarna</div>
-          <div class="chart-wrapper">
-            <canvas id="diaperChart"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 5. IHOPFÄLLBAR HÄNDELSELOGG & HISTORIK (MED REDIGERING) -->
+  <!-- 2. IHOPFÄLLBAR HÄNDELSELOGG (DIREKT UNDER ÖVERSIKTEN FÖR SNABB KOLL & ÄNDRING) -->
   <div class="card" id="card_history">
     <div class="collapsible-header" onclick="toggleDrawer('history')">
-      <div style="display:flex; align-items:center; gap:10px;">
+      <div style="display:flex; align-items:center; gap:8px;">
         <span class="chevron open" id="chev_history">▶</span>
-        <div>
-          <div style="font-weight:700; font-size:0.95rem;">
-            Händelselogg <span class="badge" id="historyCountBadge">0 händelser</span>
-          </div>
-          <div class="sub-value" style="margin-top:2px;" id="cloudSyncStatusText">Logga in med Google högst upp för att synka mellan era mobiler.</div>
-        </div>
+        <span style="font-weight:700; font-size:0.92rem;">📋 Händelselogg</span>
+        <span class="badge" id="historyCountBadge">0</span>
       </div>
-      <div style="display:flex; gap:8px; flex-wrap:wrap;" onclick="event.stopPropagation()">
-        <select id="logFilterSelect" style="width:165px; padding:6px 10px;">
-          <option value="all">Alla händelser</option>
-          <option value="feed">Endast mat & smakport.</option>
-          <option value="diaper">Endast blöjbyten</option>
-          <option value="sleep">Endast sömn</option>
-          <option value="vitamind">Endast D-vitamin</option>
-          <option value="health">Endast hälsa & temp</option>
+      <div style="display:flex; gap:6px; align-items:center;" onclick="event.stopPropagation()">
+        <select id="logFilterSelect" style="width:130px; padding:5px 8px; font-size:0.8rem;">
+          <option value="all">Alla</option>
+          <option value="feed">Mat</option>
+          <option value="diaper">Blöjor</option>
+          <option value="sleep">Sömn</option>
+          <option value="vitamind">D-vitamin</option>
+          <option value="health">Hälsa</option>
         </select>
-        <button class="btn btn-secondary" id="exportCsvBtn" type="button" style="padding:6px 12px;">📥 CSV</button>
+        <button class="btn btn-secondary btn-sm" id="exportCsvBtn" type="button">CSV</button>
       </div>
     </div>
 
@@ -1209,7 +705,7 @@
         <table>
           <thead>
             <tr>
-              <th>Tidpunkt</th>
+              <th>Tid</th>
               <th>Typ</th>
               <th>Detaljer</th>
               <th>Kommentar</th>
@@ -1222,11 +718,271 @@
     </div>
   </div>
 
-  <!-- MODAL FÖR ATT REDIGERA EN HÄNDELSE I LOGGEN -->
-  <div class="modal-backdrop" id="editEventModal">
+  <!-- 3. IHOPFÄLLBARA FÖRDJUPNINGSBLOCK (AVSKALAD FÖRSTASIDA) -->
+  <!-- Utveckling & Åldersprojektion -->
+  <div class="card" id="card_projection">
+    <div class="collapsible-header" onclick="toggleDrawer('projection')">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="chevron" id="chev_projection">▶</span>
+        <span style="font-weight:700; font-size:0.92rem;">🧠 Utvecklingsprojektion (WHO / 1177)</span>
+      </div>
+      <span class="badge" id="projHeaderPhaseBadge">Ålder</span>
+    </div>
+
+    <div class="drawer-body" id="body_projection" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <div class="sub-value" style="margin-top:0; max-width:660px;" id="projectionIntroText">
+          Välj barnets födelsedatum för att jämföra ert 7-dygnssnitt mot medicinska riktmärken.
+        </div>
+        <div style="min-width:240px;">
+          <label>Födelsedatum (År • Mån • Dag)
+            <div class="scroll-date-row">
+              <select id="birthYearSelect"></select>
+              <select id="birthMonthSelect"></select>
+              <select id="birthDaySelect"></select>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-bottom:0;">
+        <div class="proj-box">
+          <div style="display:flex; justify-content:space-between; font-size:0.82rem; font-weight:700; margin-bottom:4px;">
+            <span style="color:var(--accent);">🍼 Mat & Näring</span>
+            <span id="projFeedTarget">Riktvärde: –</span>
+          </div>
+          <div style="font-size:0.98rem; font-weight:700;" id="projFeedActual">Snitt: –</div>
+          <div class="progress-bg" style="margin:6px 0;"><div class="progress-fill" id="projFeedBar" style="width:0%; background:var(--accent);"></div></div>
+          <div class="sub-value" style="font-size:0.76rem;" id="projFeedForecast">–</div>
+        </div>
+
+        <div class="proj-box">
+          <div style="display:flex; justify-content:space-between; font-size:0.82rem; font-weight:700; margin-bottom:4px;">
+            <span style="color:var(--yellow);">🧷 Blöjor</span>
+            <span id="projDiaperTarget">Riktvärde: –</span>
+          </div>
+          <div style="font-size:0.98rem; font-weight:700;" id="projDiaperActual">Snitt: –</div>
+          <div class="progress-bg" style="margin:6px 0;"><div class="progress-fill" id="projDiaperBar" style="width:0%; background:var(--yellow);"></div></div>
+          <div class="sub-value" style="font-size:0.76rem;" id="projDiaperForecast">–</div>
+        </div>
+
+        <div class="proj-box">
+          <div style="display:flex; justify-content:space-between; font-size:0.82rem; font-weight:700; margin-bottom:4px;">
+            <span style="color:var(--purple);">🌙 Sömn</span>
+            <span id="projSleepTarget">Riktvärde: –</span>
+          </div>
+          <div style="font-size:0.98rem; font-weight:700;" id="projSleepActual">Snitt: –</div>
+          <div class="progress-bg" style="margin:6px 0;"><div class="progress-fill" id="projSleepBar" style="width:0%; background:var(--purple);"></div></div>
+          <div class="sub-value" style="font-size:0.76rem;" id="projSleepForecast">–</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Längd & Vikt + Tillväxtprognos -->
+  <div class="card" id="card_growth">
+    <div class="collapsible-header" onclick="toggleDrawer('growth')">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="chevron" id="chev_growth">▶</span>
+        <span style="font-weight:700; font-size:0.92rem;">📏 Längd & Vikt + Tillväxtprognos</span>
+      </div>
+      <span class="badge" style="background:rgba(244, 114, 182, 0.15); color:var(--pink);" id="growthHeaderBadge">–</span>
+    </div>
+
+    <div class="drawer-body" id="body_growth" style="display:none;">
+      <div class="grid-3" style="margin-bottom:12px;">
+        <label>Startvikt vid födseln (kg)
+          <input type="number" id="startWeightInput" placeholder="t.ex. 3.55" step="0.01" min="0.5" max="10" />
+        </label>
+        <label>Startlängd vid födseln (cm)
+          <input type="number" id="startLengthInput" placeholder="t.ex. 50.5" step="0.5" min="30" max="70" />
+        </label>
+        <label>Referenskurva (WHO / BVC)
+          <select id="growthCurveSelect">
+            <option value="girl">Flicka (WHO / Svensk BVC)</option>
+            <option value="boy">Pojke (WHO / Svensk BVC)</option>
+            <option value="avg">Neutralt snitt</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="proj-box">
+          <div class="card-title" style="color:var(--pink);">📈 Sedan förra mätningen</div>
+          <div style="font-size:1rem; font-weight:700;" id="growthDiffPrevText">Lägg till en mätning nedan</div>
+          <div class="sub-value" id="growthDiffPrevSub">–</div>
+        </div>
+        <div class="proj-box">
+          <div class="card-title" style="color:var(--green);">🚀 Totalt sedan start</div>
+          <div style="font-size:1rem; font-weight:700;" id="growthDiffStartText">Ange startvärden ovan</div>
+          <div class="sub-value" id="growthDiffStartSub">–</div>
+        </div>
+      </div>
+
+      <div class="proj-box" style="margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+          <div style="font-size:0.82rem; font-weight:700; color:var(--pink);">🔮 Tillväxtprognos till vuxen ålder</div>
+          <div class="sub-value" style="margin-top:0; font-size:0.74rem;" id="growthCurveStatusText">–</div>
+        </div>
+        <div class="forecast-milestones-grid" id="growthForecastGrid"></div>
+      </div>
+
+      <div class="proj-box" style="margin-bottom:10px;">
+        <div class="card-title" style="color:var(--accent); margin-bottom:6px;">+ Ny mätning</div>
+        <div style="display:grid; grid-template-columns: 1.5fr 1fr 1fr auto; gap:8px; align-items:end;">
+          <label>Datum
+            <div class="scroll-date-row">
+              <select id="growthYearSel"></select>
+              <select id="growthMonthSel"></select>
+              <select id="growthDaySel"></select>
+            </div>
+          </label>
+          <label>Vikt (kg)
+            <input type="number" id="newWeightInput" placeholder="6.85" step="0.01" />
+          </label>
+          <label>Längd (cm)
+            <input type="number" id="newLengthInput" placeholder="64.5" step="0.1" />
+          </label>
+          <button class="btn btn-pink" id="addGrowthBtn" type="button" style="height:38px;">+ Spara</button>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Ålder</th>
+              <th>Vikt</th>
+              <th>Längd</th>
+              <th>Förra</th>
+              <th>Start</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="growthTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hälsa, D-vitamin, Feber & Medicin -->
+  <div class="card" id="card_health">
+    <div class="collapsible-header" onclick="toggleDrawer('health')">
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span class="chevron" id="chev_health">▶</span>
+        <span style="font-weight:700; font-size:0.92rem;">🌡️ Hälsa, D-vitamin & Medicin</span>
+        <span class="badge" style="background:rgba(251, 146, 60, 0.18); color:var(--orange);" id="vitaminDHeaderBadge">☀️ Ej given</span>
+      </div>
+      <span style="font-size:0.78rem; font-weight:700; color:var(--red);" id="healthHeaderTimer">–</span>
+    </div>
+
+    <div class="drawer-body" id="body_health" style="display:none;">
+      <div class="vitamind-banner">
+        <div>
+          <div style="font-size:0.84rem; font-weight:700; color:var(--orange);">☀️ D-vitamin (5 droppar dagligen)</div>
+          <div class="sub-value" style="margin-top:2px;" id="vitaminDStatusDetail">Ej registrerad idag ännu.</div>
+        </div>
+        <button type="button" class="btn btn-orange btn-sm" id="quickVitaminDBtn">☀️ Ge D-droppar nu</button>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1.5fr 0.9fr 1.2fr 1.2fr auto; gap:8px; align-items:end;">
+        <label>Tidpunkt
+          <div class="scroll-datetime-row">
+            <select id="healthDaySel"></select>
+            <select id="healthHourSel"></select>
+            <select id="healthMinSel"></select>
+            <button type="button" class="now-mini-btn" onclick="setPickerNow('health')">Nu</button>
+          </div>
+        </label>
+        <label>Temp (°C)
+          <input type="number" id="healthTempInput" placeholder="38.4" step="0.1" />
+        </label>
+        <label>Medicin
+          <select id="healthMedSelect">
+            <option value="">Endast temp</option>
+            <option value="Alvedon (Paracetamol)">💊 Alvedon</option>
+            <option value="Ipren (Ibuprofen)">💊 Ipren</option>
+            <option value="Nässpray / Koksalt">💧 Nässpray</option>
+          </select>
+        </label>
+        <label>Dos / Kommentar
+          <input type="text" id="healthComment" placeholder="60 mg supp" />
+        </label>
+        <button class="btn btn-red" id="addHealthBtn" type="button" style="height:38px;">+ Logga</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistikgrafer (7 dagar) -->
+  <div class="card" id="card_charts">
+    <div class="collapsible-header" onclick="toggleDrawer('charts')">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="chevron" id="chev_charts">▶</span>
+        <span style="font-weight:700; font-size:0.92rem;">📊 Grafer (Senaste 7 dagarna)</span>
+      </div>
+      <span class="sub-value" style="margin-top:0;">Mat, sömn & blöjor</span>
+    </div>
+
+    <div class="drawer-body" id="body_charts" style="display:none;">
+      <div class="grid-2">
+        <div>
+          <div class="card-title">Mat (ml) & Sömn (timmar)</div>
+          <div class="chart-wrapper"><canvas id="feedSleepChart"></canvas></div>
+        </div>
+        <div>
+          <div class="card-title">Blöjbyten (Endast kiss + Bajs)</div>
+          <div class="chart-wrapper"><canvas id="diaperChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILHANTERING & KONTO FLYTTAT TILL SLUTET -->
+  <div class="card" id="card_profiles" style="margin-top:18px;">
+    <div class="collapsible-header" onclick="toggleDrawer('profiles')">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="chevron" id="chev_profiles">▶</span>
+        <span style="font-weight:700; font-size:0.9rem; color:var(--muted);">⚙️ Barnprofiler & Molnsynk</span>
+      </div>
+      <span class="sub-value" style="margin-top:0;" id="footerProfileLabel">Barn 1</span>
+    </div>
+
+    <div class="drawer-body" id="body_profiles" style="display:none;">
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
+        <select id="footerProfileSelect" style="max-width:190px;"></select>
+        <button type="button" class="btn btn-secondary btn-sm" id="renameProfileBtn">✏️ Byt namn</button>
+        <button type="button" class="btn btn-green btn-sm" id="addProfileBtn">+ Lägg till barn</button>
+        <button type="button" class="btn btn-danger" id="deleteProfileBtn" style="display:none;">Ta bort profil</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; padding-top:10px; border-top:1px solid var(--card-border);">
+        <div class="sub-value" style="margin-top:0;" id="cloudSyncStatusText">Ej inloggad (Lokal lagring)</div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-sm" id="googleLoginBtn" type="button">Logga in med Google</button>
+          <button class="btn btn-secondary btn-sm" id="googleLogoutBtn" type="button" style="display:none;">Logga ut</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AVSKALAD SNABB-POPUP FÖR ENHETS- & NATTLOGGNING -->
+  <div class="modal-backdrop" id="quickLogModal" onclick="if(event.target===this) closeQuickLogModal()">
     <div class="modal-card">
-      <div style="font-weight:700; font-size:1.05rem; margin-bottom:4px;" id="editModalTitle">Redigera händelse</div>
-      <div class="sub-value" style="margin-top:0; margin-bottom:12px;">Justera värden (t.ex. kvarlämnad flaska eller tidpunkt) och spara.</div>
+      <div class="modal-header-row">
+        <div style="font-weight:700; font-size:1.1rem;" id="quickModalTitle">Logga</div>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeQuickLogModal()">✕</button>
+      </div>
+      <div id="quickModalBody"></div>
+    </div>
+  </div>
+
+  <!-- MODAL FÖR ATT REDIGERA EN HÄNDELSE I LOGGEN -->
+  <div class="modal-backdrop" id="editEventModal" onclick="if(event.target===this) closeEditModal()">
+    <div class="modal-card">
+      <div class="modal-header-row">
+        <div style="font-weight:700; font-size:1.05rem;" id="editModalTitle">Redigera händelse</div>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeEditModal()">✕</button>
+      </div>
       <div id="editModalFields" style="display:flex; flex-direction:column; gap:10px;"></div>
       <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:16px;">
         <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Avbryt</button>
@@ -1236,7 +992,6 @@
   </div>
 
   <script>
-    // --- FÄRDIGKOPPLAD FIREBASE-KONFIGURATION FÖR BEBISKOLLEN ---
     const FIREBASE_CONFIG = {
       apiKey: "AIzaSyAecb30dHRYYa2-Vxn0z2OYHYLT8Bw8U3I",
       authDomain: "bebiskollen-cadac.firebaseapp.com",
@@ -1249,84 +1004,12 @@
     };
 
     const AGE_BENCHMARKS = [
-      {
-        maxMonths: 1,
-        label: "0–1 månad (Nyfödd)",
-        feedMlPerDay: 550,
-        feedIntervalHours: 2.5,
-        wakeWindowMin: 45,
-        wakeWindowMax: 60,
-        feedsPerDay: "8–12 ggr/dygn",
-        diapersPerDay: 7,
-        poopNote: "1–5 bajsblöjor/dygn (ofta efter varje mål)",
-        sleepHours: 16.5,
-        nextPhase: "Vid 1–2 månader ökar magsäckens volym så måltiderna blir något glesare men större (ca 100–130 ml/mål)."
-      },
-      {
-        maxMonths: 3,
-        label: "1–3 månader",
-        feedMlPerDay: 750,
-        feedIntervalHours: 3.0,
-        wakeWindowMin: 60,
-        wakeWindowMax: 90,
-        feedsPerDay: "6–8 ggr/dygn",
-        diapersPerDay: 6,
-        poopNote: "Från flera ggr/dag till varannan dag (helammat)",
-        sleepHours: 15.0,
-        nextPhase: "Runt 3–4 månader blir sömnen mer uppdelad i längre nattpass och 3–4 dagstupplurar."
-      },
-      {
-        maxMonths: 6,
-        label: "3–6 månader",
-        feedMlPerDay: 850,
-        feedIntervalHours: 3.5,
-        wakeWindowMin: 105,
-        wakeWindowMax: 150,
-        feedsPerDay: "5–7 ggr/dygn",
-        diapersPerDay: 6,
-        poopNote: "6+ våta kissblöjor/dygn; bajs varierar kraftigt",
-        sleepHours: 14.5,
-        nextPhase: "Från 4–6 månader börjar nyfikenheten på fast föda (smaksensationer). Vid 6 månader rekommenderas järnrik mat/gröt utöver mjölk."
-      },
-      {
-        maxMonths: 9,
-        label: "6–9 månader",
-        feedMlPerDay: 750,
-        feedIntervalHours: 4.0,
-        wakeWindowMin: 150,
-        wakeWindowMax: 210,
-        feedsPerDay: "4–5 mjölkmål + 2–3 smakportioner/mål",
-        diapersPerDay: 6,
-        poopNote: "Fastare avföring i takt med mer vanlig mat",
-        sleepHours: 14.0,
-        nextPhase: "Mellan 8–10 månader går de flesta barn ner från 3 till 2 dagstupplurar och äter allt mer familjemat med plockbitar."
-      },
-      {
-        maxMonths: 12,
-        label: "9–12 månader",
-        feedMlPerDay: 600,
-        feedIntervalHours: 4.5,
-        wakeWindowMin: 180,
-        wakeWindowMax: 240,
-        feedsPerDay: "3–4 mjölkmål + 3 huvudmål & mellanmål",
-        diapersPerDay: 5,
-        poopNote: "1–2 bajsblöjor/dygn och 5–6 kissblöjor",
-        sleepHours: 13.5,
-        nextPhase: "Runt 12–15 månader övergår många barn till en enda längre dagstupplur efter lunch."
-      },
-      {
-        maxMonths: 36,
-        label: "12+ månader (Småbarn)",
-        feedMlPerDay: 400,
-        feedIntervalHours: 4.5,
-        wakeWindowMin: 240,
-        wakeWindowMax: 330,
-        feedsPerDay: "3 huvudmål + 2 mellanmål (ev. välling/amning)",
-        diapersPerDay: 5,
-        poopNote: "1–2 bajsblöjor/dygn",
-        sleepHours: 12.5,
-        nextPhase: "Stabil dygnsrytm med 10–11,5 timmars nattsömn och 1,5–2 timmars vila mitt på dagen."
-      }
+      { maxMonths: 1, label: "0–1 mån", feedMlPerDay: 550, feedIntervalHours: 2.5, wakeWindowMin: 45, wakeWindowMax: 60, feedsPerDay: "8–12 ggr/dygn", diapersPerDay: 7, poopNote: "1–5 bajsblöjor/dygn", sleepHours: 16.5, nextPhase: "Vid 1–2 månader blir måltiderna något glesare men större (ca 100–130 ml/mål)." },
+      { maxMonths: 3, label: "1–3 mån", feedMlPerDay: 750, feedIntervalHours: 3.0, wakeWindowMin: 60, wakeWindowMax: 90, feedsPerDay: "6–8 ggr/dygn", diapersPerDay: 6, poopNote: "Från flera ggr/dag till varannan dag", sleepHours: 15.0, nextPhase: "Runt 3–4 månader blir sömnen mer uppdelad i längre nattpass och 3–4 dagstupplurar." },
+      { maxMonths: 6, label: "3–6 mån", feedMlPerDay: 850, feedIntervalHours: 3.5, wakeWindowMin: 105, wakeWindowMax: 150, feedsPerDay: "5–7 ggr/dygn", diapersPerDay: 6, poopNote: "6+ våta blöjor/dygn", sleepHours: 14.5, nextPhase: "Från 4–6 månader börjar nyfikenheten på fast föda (smaksensationer)." },
+      { maxMonths: 9, label: "6–9 mån", feedMlPerDay: 750, feedIntervalHours: 4.0, wakeWindowMin: 150, wakeWindowMax: 210, feedsPerDay: "4–5 mjölkmål + smakport.", diapersPerDay: 6, poopNote: "Fastare avföring med vanlig mat", sleepHours: 14.0, nextPhase: "Mellan 8–10 månader går de flesta barn ner från 3 till 2 dagstupplurar." },
+      { maxMonths: 12, label: "9–12 mån", feedMlPerDay: 600, feedIntervalHours: 4.5, wakeWindowMin: 180, wakeWindowMax: 240, feedsPerDay: "3–4 mjölkmål + huvudmål", diapersPerDay: 5, poopNote: "1–2 bajsblöjor/dygn", sleepHours: 13.5, nextPhase: "Runt 12–15 månader övergår många barn till en enda dagstupplur efter lunch." },
+      { maxMonths: 36, label: "12+ mån", feedMlPerDay: 400, feedIntervalHours: 4.5, wakeWindowMin: 240, wakeWindowMax: 330, feedsPerDay: "3 huvudmål + 2 mellanmål", diapersPerDay: 5, poopNote: "1–2 bajsblöjor/dygn", sleepHours: 12.5, nextPhase: "Stabil dygnsrytm med 10–11,5 timmars nattsömn." }
     ];
 
     const WHO_GROWTH_REF = {
@@ -1382,7 +1065,6 @@
         const first = createEmptyChildProfile('child_1', 'Barn 1');
         return { activeChildId: first.id, children: { [first.id]: first } };
       }
-
       if (raw.children && typeof raw.children === 'object' && Object.keys(raw.children).length > 0) {
         const normalizedChildren = {};
         Object.keys(raw.children).forEach((cid, idx) => {
@@ -1403,7 +1085,6 @@
         const activeId = (raw.activeChildId && normalizedChildren[raw.activeChildId]) ? raw.activeChildId : firstKey;
         return { activeChildId: activeId, children: normalizedChildren };
       }
-
       const migrated = {
         id: 'child_1',
         label: 'Barn 1',
@@ -1415,10 +1096,7 @@
         growthRecords: Array.isArray(raw.growthRecords) ? raw.growthRecords : [],
         events: Array.isArray(raw.events) ? raw.events : []
       };
-      return {
-        activeChildId: 'child_1',
-        children: { child_1: migrated }
-      };
+      return { activeChildId: 'child_1', children: { child_1: migrated } };
     }
 
     let storeData = normalizeStoreData(JSON.parse(localStorage.getItem('bebiskollen_data') || 'null'));
@@ -1436,55 +1114,26 @@
       return storeData.children[storeData.activeChildId];
     }
 
-    let drawerStates = JSON.parse(localStorage.getItem('bebiskollen_drawers') || 'null') || {
+    let drawerStates = JSON.parse(localStorage.getItem('bebiskollen_drawers_v2') || 'null') || {
+      history: true,
       projection: false,
       growth: false,
-      feed: true,
-      diaper: true,
-      sleep: true,
       health: false,
-      charts: true,
-      history: true
+      charts: false,
+      profiles: false
     };
 
-    let selectedDiaperType = 'kiss';
-    let selectedSolidCategory = '';
+    let popupDiaperType = 'kiss';
+    let popupSolidCat = '';
     let editingEventId = null;
     let currentUser = null;
     let dbRef = null;
     let feedSleepChartInst = null;
     let diaperChartInst = null;
 
-    window.jumpToSection = function(drawerKey, cardId) {
-      if (!drawerStates[drawerKey]) {
-        drawerStates[drawerKey] = true;
-        localStorage.setItem('bebiskollen_drawers', JSON.stringify(drawerStates));
-        applyDrawerStates();
-      }
-      const el = document.getElementById(cardId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        el.classList.remove('highlight-pulse');
-        void el.offsetWidth;
-        el.classList.add('highlight-pulse');
-        setTimeout(() => el.classList.remove('highlight-pulse'), 1400);
-      }
-    };
-
-    function renderProfileSelector() {
-      const sel = document.getElementById('profileSelect');
-      const delBtn = document.getElementById('deleteProfileBtn');
-      const ids = Object.keys(storeData.children);
-      sel.innerHTML = ids.map(cid => {
-        const child = storeData.children[cid];
-        return `<option value="${cid}" ${cid === storeData.activeChildId ? 'selected' : ''}>${child.label}</option>`;
-      }).join('');
-      delBtn.style.display = ids.length > 1 ? 'inline-block' : 'none';
-    }
-
     window.toggleDrawer = function(key) {
       drawerStates[key] = !drawerStates[key];
-      localStorage.setItem('bebiskollen_drawers', JSON.stringify(drawerStates));
+      localStorage.setItem('bebiskollen_drawers_v2', JSON.stringify(drawerStates));
       applyDrawerStates();
     };
 
@@ -1497,31 +1146,356 @@
       });
     }
 
-    window.setVal = function(id, val) {
-      const el = document.getElementById(id);
-      if (el) el.value = val;
+    const MONTHS_SV = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
+
+    function buildScrollTimeHtml(prefix, dateObj = new Date()) {
+      const dayOptions = [];
+      const now = new Date();
+      for (let i = 0; i < 15; i++) {
+        const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        const isoDate = `${yyyy}-${mm}-${dd}`;
+        let label = `${d.getDate()} ${MONTHS_SV[d.getMonth()]}`;
+        if (i === 0) label = `Idag (${label})`;
+        else if (i === 1) label = `Igår (${label})`;
+        const sel = (yyyy === dateObj.getFullYear() && d.getMonth() === dateObj.getMonth() && d.getDate() === dateObj.getDate()) ? 'selected' : '';
+        dayOptions.push(`<option value="${isoDate}" ${sel}>${label}</option>`);
+      }
+
+      const hourOptions = [];
+      for (let h = 0; h < 24; h++) {
+        const hh = String(h).padStart(2, '0');
+        const sel = h === dateObj.getHours() ? 'selected' : '';
+        hourOptions.push(`<option value="${hh}" ${sel}>${hh} h</option>`);
+      }
+
+      const minOptions = [];
+      for (let m = 0; m < 60; m++) {
+        const mm = String(m).padStart(2, '0');
+        const sel = m === dateObj.getMinutes() ? 'selected' : '';
+        minOptions.push(`<option value="${mm}" ${sel}>${mm} m</option>`);
+      }
+
+      return `
+        <div class="scroll-datetime-row">
+          <select id="${prefix}DaySel">${dayOptions.join('')}</select>
+          <select id="${prefix}HourSel">${hourOptions.join('')}</select>
+          <select id="${prefix}MinSel">${minOptions.join('')}</select>
+          <button type="button" class="now-mini-btn" onclick="setPickerNow('${prefix}')">Nu</button>
+        </div>
+      `;
+    }
+
+    window.setPickerNow = function(prefix) {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const dEl = document.getElementById(`${prefix}DaySel`);
+      if (dEl) dEl.value = `${yyyy}-${mm}-${dd}`;
+      const hEl = document.getElementById(`${prefix}HourSel`);
+      const mEl = document.getElementById(`${prefix}MinSel`);
+      if (hEl) hEl.value = String(now.getHours()).padStart(2, '0');
+      if (mEl) mEl.value = String(now.getMinutes()).padStart(2, '0');
     };
 
-    window.addVal = function(id, delta) {
-      const el = document.getElementById(id);
-      if (el) el.value = (Number(el.value) || 0) + delta;
+    function getPickerIso(prefix) {
+      const d = document.getElementById(`${prefix}DaySel`).value;
+      const h = document.getElementById(`${prefix}HourSel`).value;
+      const m = document.getElementById(`${prefix}MinSel`).value;
+      return `${d}T${h}:${m}`;
+    }
+
+    function toLocalIsoString(dateObj) {
+      const pad = n => String(n).padStart(2, '0');
+      return `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}T${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}`;
+    }
+
+    // --- AVSKALAD SNABB-POPUP ---
+    window.openQuickLogModal = function(mode) {
+      const modal = document.getElementById('quickLogModal');
+      const titleEl = document.getElementById('quickModalTitle');
+      const bodyEl = document.getElementById('quickModalBody');
+      const now = new Date();
+      const child = getActiveChild();
+
+      if (mode === 'feed') {
+        popupSolidCat = '';
+        titleEl.textContent = '🍼 Logga matning';
+        bodyEl.innerHTML = `
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <label>Tidpunkt
+              ${buildScrollTimeHtml('popFeed', now)}
+            </label>
+
+            <div>
+              <label>Flaska (ml)
+                <input type="number" id="popFeedMl" placeholder="0" min="0" step="5" />
+              </label>
+              <div class="quick-chips">
+                <button type="button" class="chip-btn" onclick="document.getElementById('popFeedMl').value=90">90 ml</button>
+                <button type="button" class="chip-btn" onclick="document.getElementById('popFeedMl').value=120">120 ml</button>
+                <button type="button" class="chip-btn" onclick="document.getElementById('popFeedMl').value=150">150 ml</button>
+                <button type="button" class="chip-btn" onclick="document.getElementById('popFeedMl').value=180">180 ml</button>
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div>
+                <label>Vänster bröst (min)
+                  <input type="number" id="popFeedLeft" placeholder="0" min="0" />
+                </label>
+                <div class="quick-chips">
+                  <button type="button" class="chip-btn" onclick="document.getElementById('popFeedLeft').value=10">10m</button>
+                  <button type="button" class="chip-btn" onclick="document.getElementById('popFeedLeft').value=15">15m</button>
+                </div>
+              </div>
+              <div>
+                <label>Höger bröst (min)
+                  <input type="number" id="popFeedRight" placeholder="0" min="0" />
+                </label>
+                <div class="quick-chips">
+                  <button type="button" class="chip-btn" onclick="document.getElementById('popFeedRight').value=10">10m</button>
+                  <button type="button" class="chip-btn" onclick="document.getElementById('popFeedRight').value=15">15m</button>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <span style="font-size:0.76rem; color:var(--muted);">Smakportion (valfritt)</span>
+              <div class="quick-chips" id="popSolidChips">
+                <button type="button" class="chip-btn" onclick="selectPopSolid(this, 'Gröt')">🥣 Gröt</button>
+                <button type="button" class="chip-btn" onclick="selectPopSolid(this, 'Puré')">🥕 Puré</button>
+                <button type="button" class="chip-btn" onclick="selectPopSolid(this, 'Frukt')">🍌 Frukt</button>
+                <button type="button" class="chip-btn" onclick="selectPopSolid(this, 'Plock')">🥑 Plock</button>
+              </div>
+            </div>
+
+            <label>Kommentar (valfritt)
+              <input type="text" id="popFeedComment" placeholder="t.ex. Spytt / Palsternacka" />
+            </label>
+
+            <button type="button" class="btn btn-green" style="padding:13px; font-size:0.95rem;" onclick="saveQuickFeed()">💾 Spara matning</button>
+          </div>
+        `;
+      } else if (mode === 'diaper') {
+        popupDiaperType = 'kiss';
+        titleEl.textContent = '🧷 Logga blöjbyte';
+        bodyEl.innerHTML = `
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <label>Tidpunkt
+              ${buildScrollTimeHtml('popDiaper', now)}
+            </label>
+
+            <div>
+              <span style="font-size:0.78rem; color:var(--muted);">Innehåll</span>
+              <div class="diaper-radio-group" id="popDiaperGroup">
+                <button type="button" class="diaper-btn active" onclick="selectPopDiaper(this, 'kiss')">💧 Kiss</button>
+                <button type="button" class="diaper-btn" onclick="selectPopDiaper(this, 'bajs')">💩 Bajs</button>
+                <button type="button" class="diaper-btn" onclick="selectPopDiaper(this, 'bada')">💧💩 Båda</button>
+              </div>
+            </div>
+
+            <label>Kommentar (valfritt)
+              <input type="text" id="popDiaperComment" placeholder="t.ex. Löst / Mycket" />
+            </label>
+
+            <button type="button" class="btn btn-yellow" style="padding:13px; font-size:0.95rem;" onclick="saveQuickDiaper()">💾 Spara blöjbyte</button>
+          </div>
+        `;
+      } else if (mode === 'sleep') {
+        titleEl.textContent = '🌙 Logga sömn';
+        const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+        const liveHtml = child.activeSleepStart
+          ? `<div class="live-sleep-banner">
+              <div style="font-size:0.8rem; color:var(--purple); font-weight:700;">😴 Sover just nu (sedan ${child.activeSleepStart.slice(11, 16)})</div>
+              <button type="button" class="btn btn-green" style="width:100%; margin-top:8px; padding:12px;" onclick="toggleLiveSleepFromPopup()">☀️ Vaknade nu & spara</button>
+            </div>`
+          : `<div class="live-sleep-banner">
+              <button type="button" class="btn btn-purple" style="width:100%; padding:12px;" onclick="toggleLiveSleepFromPopup()">😴 Starta live-timer (Somnade nu)</button>
+            </div>`;
+
+        bodyEl.innerHTML = `
+          ${liveHtml}
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <label>Eller logga avslutat pass – Somnade:
+              ${buildScrollTimeHtml('popSleepStart', oneHourAgo)}
+            </label>
+            <div class="quick-chips">
+              <button type="button" class="chip-btn" onclick="offsetPopSleep(30)">-30m</button>
+              <button type="button" class="chip-btn" onclick="offsetPopSleep(60)">-1h</button>
+              <button type="button" class="chip-btn" onclick="offsetPopSleep(120)">-2h</button>
+              <button type="button" class="chip-btn" onclick="offsetPopSleep(180)">-3h</button>
+            </div>
+            <label>Vaknade:
+              ${buildScrollTimeHtml('popSleepEnd', now)}
+            </label>
+            <label>Kommentar (valfritt)
+              <input type="text" id="popSleepComment" placeholder="t.ex. Tupplur i vagnen" />
+            </label>
+            <button type="button" class="btn btn-purple" style="padding:13px; font-size:0.95rem;" onclick="saveQuickSleep()">💾 Spara sömnpass</button>
+          </div>
+        `;
+      } else if (mode === 'vitamind') {
+        titleEl.textContent = '☀️ Logga D-vitamin';
+        bodyEl.innerHTML = `
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <label>Tidpunkt
+              ${buildScrollTimeHtml('popVitD', now)}
+            </label>
+            <label>Dosering
+              <input type="text" id="popVitDDose" value="5 droppar" />
+            </label>
+            <button type="button" class="btn btn-orange" style="padding:13px; font-size:0.95rem;" onclick="saveQuickVitD()">☀️ Spara D-droppar</button>
+          </div>
+        `;
+      }
+
+      modal.style.display = 'flex';
     };
 
-    window.toggleSolidCategory = function(btnEl, category) {
-      const allBtns = document.querySelectorAll('#solidFoodChips .chip-btn');
-      if (selectedSolidCategory === category) {
-        selectedSolidCategory = '';
-        btnEl.classList.remove('active-chip');
+    window.closeQuickLogModal = function() {
+      document.getElementById('quickLogModal').style.display = 'none';
+    };
+
+    window.selectPopSolid = function(btn, cat) {
+      const btns = document.querySelectorAll('#popSolidChips .chip-btn');
+      if (popupSolidCat === cat) {
+        popupSolidCat = '';
+        btn.classList.remove('active-chip');
       } else {
-        allBtns.forEach(b => b.classList.remove('active-chip'));
-        selectedSolidCategory = category;
-        btnEl.classList.add('active-chip');
+        btns.forEach(b => b.classList.remove('active-chip'));
+        popupSolidCat = cat;
+        btn.classList.add('active-chip');
       }
     };
 
-    const MONTHS_SV = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
+    window.selectPopDiaper = function(btn, val) {
+      document.querySelectorAll('#popDiaperGroup .diaper-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      popupDiaperType = val;
+    };
 
-    function populateScrollPickers() {
+    window.offsetPopSleep = function(mins) {
+      const endIso = getPickerIso('popSleepEnd');
+      const endDt = new Date(endIso);
+      if (isNaN(endDt)) return;
+      const startDt = new Date(endDt.getTime() - mins * 60000);
+      const yyyy = startDt.getFullYear();
+      const mm = String(startDt.getMonth() + 1).padStart(2, '0');
+      const dd = String(startDt.getDate()).padStart(2, '0');
+      document.getElementById('popSleepStartDaySel').value = `${yyyy}-${mm}-${dd}`;
+      document.getElementById('popSleepStartHourSel').value = String(startDt.getHours()).padStart(2, '0');
+      document.getElementById('popSleepStartMinSel').value = String(startDt.getMinutes()).padStart(2, '0');
+    };
+
+    window.saveQuickFeed = function() {
+      const time = getPickerIso('popFeed');
+      const bottleMl = Number(document.getElementById('popFeedMl').value) || 0;
+      const leftMin = Number(document.getElementById('popFeedLeft').value) || 0;
+      const rightMin = Number(document.getElementById('popFeedRight').value) || 0;
+      const comment = document.getElementById('popFeedComment').value.trim();
+      if (bottleMl === 0 && leftMin === 0 && rightMin === 0 && !popupSolidCat && !comment) return;
+
+      getActiveChild().events.push({
+        id: Date.now().toString(),
+        type: 'feed',
+        time,
+        leftMin,
+        rightMin,
+        bottleMl,
+        solidCategory: popupSolidCat,
+        solidDetail: '',
+        isNewFood: false,
+        comment
+      });
+      closeQuickLogModal();
+      persistData();
+      renderAll();
+    };
+
+    window.saveQuickDiaper = function() {
+      const time = getPickerIso('popDiaper');
+      const comment = document.getElementById('popDiaperComment').value.trim();
+      getActiveChild().events.push({
+        id: Date.now().toString(),
+        type: 'diaper',
+        time,
+        diaperType: popupDiaperType,
+        comment
+      });
+      closeQuickLogModal();
+      persistData();
+      renderAll();
+    };
+
+    window.toggleLiveSleepFromPopup = function() {
+      const child = getActiveChild();
+      const now = new Date();
+      if (!child.activeSleepStart) {
+        child.activeSleepStart = toLocalIsoString(now);
+      } else {
+        const startStr = child.activeSleepStart;
+        const endStr = toLocalIsoString(now);
+        const durationMin = Math.max(1, Math.round((now - new Date(startStr)) / 60000));
+        child.events.push({
+          id: Date.now().toString(),
+          type: 'sleep',
+          time: startStr,
+          endTime: endStr,
+          durationMin,
+          comment: ''
+        });
+        child.activeSleepStart = null;
+      }
+      closeQuickLogModal();
+      persistData();
+      renderAll();
+    };
+
+    window.saveQuickSleep = function() {
+      const start = getPickerIso('popSleepStart');
+      const end = getPickerIso('popSleepEnd');
+      const comment = document.getElementById('popSleepComment').value.trim();
+      const sDt = new Date(start);
+      const eDt = new Date(end);
+      if (isNaN(sDt) || isNaN(eDt) || eDt <= sDt) {
+        alert('Sluttiden måste vara efter starttiden.');
+        return;
+      }
+      const durationMin = Math.round((eDt - sDt) / 60000);
+      getActiveChild().events.push({
+        id: Date.now().toString(),
+        type: 'sleep',
+        time: start,
+        endTime: end,
+        durationMin,
+        comment
+      });
+      closeQuickLogModal();
+      persistData();
+      renderAll();
+    };
+
+    window.saveQuickVitD = function() {
+      const time = getPickerIso('popVitD');
+      const dose = document.getElementById('popVitDDose').value.trim() || '5 droppar';
+      getActiveChild().events.push({
+        id: Date.now().toString(),
+        type: 'vitamind',
+        time,
+        dose,
+        comment: ''
+      });
+      closeQuickLogModal();
+      persistData();
+      renderAll();
+    };
+
+    // --- INIT RULLGARDINER FÖR ÖVRIGA SEKTIONER ---
+    function populateStaticScrollPickers() {
       const dayOptions = [];
       const now = new Date();
       for (let i = 0; i < 15; i++) {
@@ -1548,27 +1522,20 @@
         minOptions.push(`<option value="${mm}">${mm} m</option>`);
       }
 
-      ['feed', 'diaper', 'sleepStart', 'sleepEnd', 'health'].forEach(prefix => {
-        document.getElementById(`${prefix}DaySel`).innerHTML = dayOptions.join('');
-        document.getElementById(`${prefix}HourSel`).innerHTML = hourOptions.join('');
-        document.getElementById(`${prefix}MinSel`).innerHTML = minOptions.join('');
-      });
+      document.getElementById('healthDaySel').innerHTML = dayOptions.join('');
+      document.getElementById('healthHourSel').innerHTML = hourOptions.join('');
+      document.getElementById('healthMinSel').innerHTML = minOptions.join('');
+      setPickerNow('health');
 
       const curYear = now.getFullYear();
       const years = [`<option value="">År</option>`];
-      for (let y = curYear; y >= curYear - 10; y--) {
-        years.push(`<option value="${y}">${y}</option>`);
-      }
+      for (let y = curYear; y >= curYear - 10; y--) years.push(`<option value="${y}">${y}</option>`);
 
-      const months = [`<option value="">Månad</option>`];
-      MONTHS_SV.forEach((name, idx) => {
-        months.push(`<option value="${String(idx + 1).padStart(2, '0')}">${name}</option>`);
-      });
+      const months = [`<option value="">Mån</option>`];
+      MONTHS_SV.forEach((name, idx) => months.push(`<option value="${String(idx + 1).padStart(2, '0')}">${name}</option>`));
 
       const days = [`<option value="">Dag</option>`];
-      for (let d = 1; d <= 31; d++) {
-        days.push(`<option value="${String(d).padStart(2, '0')}">${d}</option>`);
-      }
+      for (let d = 1; d <= 31; d++) days.push(`<option value="${String(d).padStart(2, '0')}">${d}</option>`);
 
       document.getElementById('birthYearSelect').innerHTML = years.join('');
       document.getElementById('birthMonthSelect').innerHTML = months.join('');
@@ -1583,73 +1550,18 @@
       document.getElementById('growthDaySel').value = String(now.getDate()).padStart(2, '0');
     }
 
-    function setScrollPickerFromDate(prefix, dateObj) {
-      const yyyy = dateObj.getFullYear();
-      const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
-      const dd = String(dateObj.getDate()).padStart(2, '0');
-      const isoDate = `${yyyy}-${mm}-${dd}`;
+    function renderProfileSelectors() {
+      const ids = Object.keys(storeData.children);
+      const optsHtml = ids.map(cid => {
+        const c = storeData.children[cid];
+        return `<option value="${cid}" ${cid === storeData.activeChildId ? 'selected' : ''}>${c.label}</option>`;
+      }).join('');
 
-      const daySel = document.getElementById(`${prefix}DaySel`);
-      if (daySel && [...daySel.options].some(o => o.value === isoDate)) {
-        daySel.value = isoDate;
-      }
-      const hSel = document.getElementById(`${prefix}HourSel`);
-      const mSel = document.getElementById(`${prefix}MinSel`);
-      if (hSel) hSel.value = String(dateObj.getHours()).padStart(2, '0');
-      if (mSel) mSel.value = String(dateObj.getMinutes()).padStart(2, '0');
+      document.getElementById('headerProfileSelect').innerHTML = optsHtml;
+      document.getElementById('footerProfileSelect').innerHTML = optsHtml;
+      document.getElementById('footerProfileLabel').textContent = getActiveChild().label;
+      document.getElementById('deleteProfileBtn').style.display = ids.length > 1 ? 'inline-block' : 'none';
     }
-
-    window.setScrollPickerNow = function(prefix) {
-      setScrollPickerFromDate(prefix, new Date());
-    };
-
-    function getScrollPickerIsoString(prefix) {
-      const d = document.getElementById(`${prefix}DaySel`).value;
-      const h = document.getElementById(`${prefix}HourSel`).value;
-      const m = document.getElementById(`${prefix}MinSel`).value;
-      return `${d}T${h}:${m}`;
-    }
-
-    function toLocalIsoString(dateObj) {
-      const pad = n => String(n).padStart(2, '0');
-      return `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}T${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}`;
-    }
-
-    window.setSleepOffsetMinutes = function(offsetMins) {
-      const endIso = getScrollPickerIsoString('sleepEnd');
-      const endDate = new Date(endIso);
-      if (isNaN(endDate)) return;
-      const startDate = new Date(endDate.getTime() - offsetMins * 60000);
-      setScrollPickerFromDate('sleepStart', startDate);
-      updateSleepDurationPreview();
-    };
-
-    function setDefaultFormTimes() {
-      const now = new Date();
-      setScrollPickerFromDate('feed', now);
-      setScrollPickerFromDate('diaper', now);
-      setScrollPickerFromDate('health', now);
-      setScrollPickerFromDate('sleepEnd', now);
-      const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-      setScrollPickerFromDate('sleepStart', oneHourAgo);
-      updateSleepDurationPreview();
-    }
-
-    window.updateSleepDurationPreview = function() {
-      const s = new Date(getScrollPickerIsoString('sleepStart'));
-      const e = new Date(getScrollPickerIsoString('sleepEnd'));
-      const el = document.getElementById('sleepDurationPreview');
-      if (isNaN(s) || isNaN(e) || e <= s) {
-        el.textContent = 'Längd: Sluttid måste vara efter starttid';
-        el.style.color = 'var(--red)';
-        return;
-      }
-      el.style.color = 'var(--purple)';
-      const mins = Math.round((e - s) / 60000);
-      const h = Math.floor(mins / 60);
-      const m = mins % 60;
-      el.textContent = `Längd: ${h > 0 ? h + ' h ' : ''}${m} min (${(mins / 60).toFixed(1).replace('.', ',')} h)`;
-    };
 
     function syncBirthDateDropdowns(child) {
       if (!child.birthDate || child.birthDate.length < 10) {
@@ -1687,14 +1599,8 @@
       const fullMonths = Math.floor(monthsExact);
       const remDays = Math.round(diffDays - fullMonths * 30.4375);
 
-      const text = fullMonths < 2
-        ? `${weeks} veckor (${diffDays} dagar)`
-        : `${fullMonths} mån, ${Math.max(0, remDays)} dagar (${weeks} v)`;
-
-      const shortAge = fullMonths < 2
-        ? `${weeks} v (${diffDays} d)`
-        : `${fullMonths} mån ${Math.max(0, remDays)} d`;
-
+      const text = fullMonths < 2 ? `${weeks} v (${diffDays} d)` : `${fullMonths} mån, ${Math.max(0, remDays)} d`;
+      const shortAge = fullMonths < 2 ? `${weeks} v` : `${fullMonths} mån ${Math.max(0, remDays)} d`;
       const benchmark = AGE_BENCHMARKS.find(b => monthsExact <= b.maxMonths) || AGE_BENCHMARKS[AGE_BENCHMARKS.length - 1];
       return { diffDays, weeks, monthsExact, text, shortAge, benchmark };
     }
@@ -1702,9 +1608,7 @@
     function getWhoStatsAtMonth(curveKey, targetMonths) {
       const ref = WHO_GROWTH_REF[curveKey] || WHO_GROWTH_REF.girl;
       const ages = ref.ages;
-      if (targetMonths <= ages[0]) {
-        return { wMed: ref.wMed[0], wSd: ref.wSd[0], lMed: ref.lMed[0], lSd: ref.lSd[0] };
-      }
+      if (targetMonths <= ages[0]) return { wMed: ref.wMed[0], wSd: ref.wSd[0], lMed: ref.lMed[0], lSd: ref.lSd[0] };
       if (targetMonths >= ages[ages.length - 1]) {
         const last = ages.length - 1;
         return { wMed: ref.wMed[last], wSd: ref.wSd[last], lMed: ref.lMed[last], lSd: ref.lSd[last] };
@@ -1738,152 +1642,106 @@
 
       if (latestRec) {
         document.getElementById('growthHeaderBadge').textContent = `${latestRec.weight.toFixed(2).replace('.', ',')} kg • ${latestRec.length.toFixed(1).replace('.', ',')} cm`;
-        document.getElementById('growthHeaderLatest').textContent = `Mätt ${latestRec.date}`;
       } else if (startW > 0 || startL > 0) {
-        document.getElementById('growthHeaderBadge').textContent = `Start: ${startW ? startW + ' kg' : '–'} • ${startL ? startL + ' cm' : '–'}`;
-        document.getElementById('growthHeaderLatest').textContent = 'Väntar på första mätningen';
+        document.getElementById('growthHeaderBadge').textContent = `Start: ${startW || '–'} kg • ${startL || '–'} cm`;
       } else {
-        document.getElementById('growthHeaderBadge').textContent = 'Startvärden ej angivna';
-        document.getElementById('growthHeaderLatest').textContent = '–';
+        document.getElementById('growthHeaderBadge').textContent = 'Ej angivet';
       }
 
       const diffPrevTextEl = document.getElementById('growthDiffPrevText');
       const diffPrevSubEl = document.getElementById('growthDiffPrevSub');
-
       if (latestRec && (prevRec || (startW > 0 && startL > 0))) {
         const baseW = prevRec ? prevRec.weight : startW;
         const baseL = prevRec ? prevRec.length : startL;
-        const baseLabel = prevRec ? `förra mätningen (${prevRec.date})` : 'startvärdet (födseln)';
-
+        const baseLabel = prevRec ? `förra (${prevRec.date})` : 'födseln';
         const wDiff = latestRec.weight - baseW;
         const wPct = baseW > 0 ? ((wDiff / baseW) * 100) : 0;
         const lDiff = latestRec.length - baseL;
         const lPct = baseL > 0 ? ((lDiff / baseL) * 100) : 0;
-
-        diffPrevTextEl.innerHTML =
-          `<span style="color:var(--green);">${wDiff >= 0 ? '+' : ''}${wPct.toFixed(1).replace('.', ',')} %</span> vikt (${wDiff >= 0 ? '+' : ''}${Math.round(wDiff * 1000)} g) • ` +
-          `<span style="color:var(--accent);">${lDiff >= 0 ? '+' : ''}${lPct.toFixed(1).replace('.', ',')} %</span> längd (${lDiff >= 0 ? '+' : ''}${lDiff.toFixed(1).replace('.', ',')} cm)`;
-        diffPrevSubEl.textContent = `Jämfört med ${baseLabel}: ${baseW.toFixed(2).replace('.', ',')} kg / ${baseL.toFixed(1).replace('.', ',')} cm.`;
+        diffPrevTextEl.innerHTML = `<span style="color:var(--green);">${wDiff >= 0 ? '+' : ''}${wPct.toFixed(1).replace('.', ',')} %</span> (${Math.round(wDiff * 1000)} g) • <span style="color:var(--accent);">${lDiff >= 0 ? '+' : ''}${lPct.toFixed(1).replace('.', ',')} %</span> (${lDiff.toFixed(1).replace('.', ',')} cm)`;
+        diffPrevSubEl.textContent = `Jämfört med ${baseLabel}`;
       } else {
-        diffPrevTextEl.textContent = 'Lägg till mätning för jämförelse';
-        diffPrevSubEl.textContent = 'Behöver startvärden eller minst två loggade mätningar.';
+        diffPrevTextEl.textContent = 'Lägg till mätning nedan';
+        diffPrevSubEl.textContent = '–';
       }
 
       const diffStartTextEl = document.getElementById('growthDiffStartText');
       const diffStartSubEl = document.getElementById('growthDiffStartSub');
-
       if (latestRec && (startW > 0 || startL > 0)) {
         const parts = [];
         if (startW > 0) {
           const wDiff = latestRec.weight - startW;
-          const wPct = (wDiff / startW) * 100;
-          parts.push(`<span style="color:var(--green);">${wDiff >= 0 ? '+' : ''}${wPct.toFixed(1).replace('.', ',')} %</span> (${wDiff >= 0 ? '+' : ''}${wDiff.toFixed(2).replace('.', ',')} kg)`);
+          parts.push(`<span style="color:var(--green);">${wDiff >= 0 ? '+' : ''}${((wDiff / startW) * 100).toFixed(1).replace('.', ',')} %</span> (+${wDiff.toFixed(2).replace('.', ',')} kg)`);
         }
         if (startL > 0) {
           const lDiff = latestRec.length - startL;
-          const lPct = (lDiff / startL) * 100;
-          parts.push(`<span style="color:var(--accent);">${lDiff >= 0 ? '+' : ''}${lPct.toFixed(1).replace('.', ',')} %</span> (${lDiff >= 0 ? '+' : ''}${lDiff.toFixed(1).replace('.', ',')} cm)`);
+          parts.push(`<span style="color:var(--accent);">${lDiff >= 0 ? '+' : ''}${((lDiff / startL) * 100).toFixed(1).replace('.', ',')} %</span> (+${lDiff.toFixed(1).replace('.', ',')} cm)`);
         }
         diffStartTextEl.innerHTML = parts.join(' • ');
-        diffStartSubEl.textContent = `Från start (${startW || '–'} kg / ${startL || '–'} cm) till ${latestRec.weight.toFixed(2).replace('.', ',')} kg / ${latestRec.length.toFixed(1).replace('.', ',')} cm.`;
+        diffStartSubEl.textContent = `Från ${startW || '–'} kg / ${startL || '–'} cm`;
       } else {
-        diffStartTextEl.textContent = 'Ange startvikt, startlängd & mätning';
-        diffStartSubEl.textContent = 'Visar total procentuell ökning sedan födseln.';
+        diffStartTextEl.textContent = 'Ange startvärden ovan';
+        diffStartSubEl.textContent = '–';
       }
 
       const forecastGrid = document.getElementById('growthForecastGrid');
       const statusTextEl = document.getElementById('growthCurveStatusText');
-
-      let refMonths = 0;
-      let refW = startW;
-      let refL = startL;
-
+      let refMonths = 0, refW = startW, refL = startL;
       if (latestRec && child.birthDate) {
         const ageAtLatest = getBabyAgeInfo(child.birthDate, latestRec.date);
-        if (ageAtLatest) {
-          refMonths = ageAtLatest.monthsExact;
-          refW = latestRec.weight;
-          refL = latestRec.length;
-        }
+        if (ageAtLatest) { refMonths = ageAtLatest.monthsExact; refW = latestRec.weight; refL = latestRec.length; }
       }
-
       const currentAgeMonths = ageInfo ? ageInfo.monthsExact : 0;
 
       if (refW > 0 || refL > 0) {
         const refStats = getWhoStatsAtMonth(curveKey, refMonths);
-        const zWeight = refW > 0 ? (refW - refStats.wMed) / refStats.wSd : 0;
-        const zLength = refL > 0 ? (refL - refStats.lMed) / refStats.lSd : 0;
-
         const clampZ = (z) => Math.max(-2.5, Math.min(2.5, z));
-        const zWClamped = clampZ(zWeight);
-        const zLClamped = clampZ(zLength);
-
-        const wSdLabel = `${zWClamped >= 0 ? '+' : ''}${zWClamped.toFixed(1).replace('.', ',')} SD`;
-        const lSdLabel = `${zLClamped >= 0 ? '+' : ''}${zLClamped.toFixed(1).replace('.', ',')} SD`;
-        statusTextEl.textContent = `Nuvarande kurvläge: Vikt ${wSdLabel} • Längd ${lSdLabel}`;
+        const zW = refW > 0 ? clampZ((refW - refStats.wMed) / refStats.wSd) : 0;
+        const zL = refL > 0 ? clampZ((refL - refStats.lMed) / refStats.lSd) : 0;
+        statusTextEl.textContent = `Kurvläge: Vikt ${zW >= 0 ? '+' : ''}${zW.toFixed(1).replace('.', ',')} SD • Längd ${zL >= 0 ? '+' : ''}${zL.toFixed(1).replace('.', ',')} SD`;
 
         forecastGrid.innerHTML = PROJECTION_MILESTONES.map(ms => {
           const msStats = getWhoStatsAtMonth(curveKey, ms.months);
           const damping = ms.months >= 120 ? 0.85 : 1.0;
-          const predW = refW > 0 ? Math.max(2, msStats.wMed + zWClamped * damping * msStats.wSd) : null;
-          const predL = refL > 0 ? Math.max(45, msStats.lMed + zLClamped * damping * msStats.lSd) : null;
+          const predW = refW > 0 ? Math.max(2, msStats.wMed + zW * damping * msStats.wSd) : null;
+          const predL = refL > 0 ? Math.max(45, msStats.lMed + zL * damping * msStats.lSd) : null;
           const isPassed = currentAgeMonths > ms.months;
-
           return `
             <div class="milestone-tile ${isPassed ? 'passed' : ''}">
               <div class="milestone-age">${ms.label}${isPassed ? ' ✓' : ''}</div>
-              <div class="milestone-val">
-                ${predW ? `${predW.toFixed(1).replace('.', ',')} kg` : '–'}<br/>
-                <span style="color:var(--accent); font-size:0.82rem;">${predL ? `${Math.round(predL)} cm` : '–'}</span>
-              </div>
+              <div class="milestone-val">${predW ? predW.toFixed(1).replace('.', ',') + ' kg' : '–'}<br/><span style="color:var(--accent); font-size:0.78rem;">${predL ? Math.round(predL) + ' cm' : '–'}</span></div>
             </div>
           `;
         }).join('');
       } else {
-        statusTextEl.textContent = 'Ange födelsedatum samt startvikt/startlängd för prognos';
-        forecastGrid.innerHTML = PROJECTION_MILESTONES.map(ms => `
-          <div class="milestone-tile">
-            <div class="milestone-age">${ms.label}</div>
-            <div class="milestone-val" style="color:var(--muted);">– kg<br/>– cm</div>
-          </div>
-        `).join('');
+        statusTextEl.textContent = 'Ange födelsedatum & startvärden';
+        forecastGrid.innerHTML = PROJECTION_MILESTONES.map(ms => `<div class="milestone-tile"><div class="milestone-age">${ms.label}</div><div class="milestone-val" style="color:var(--muted);">–</div></div>`).join('');
       }
 
       const tbody = document.getElementById('growthTableBody');
       if (!records.length) {
-        tbody.innerHTML = `<tr><td colspan="7" style="color:var(--muted); text-align:center; padding:14px;">Inga mätningar loggade ännu.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="color:var(--muted); text-align:center;">Inga mätningar ännu.</td></tr>`;
         return;
       }
-
       const descRecords = records.slice().reverse();
       tbody.innerHTML = descRecords.map((rec, idx) => {
         const olderRec = descRecords[idx + 1] || null;
         const ageAtRec = child.birthDate ? getBabyAgeInfo(child.birthDate, rec.date) : null;
-
         let prevCell = '–';
         if (olderRec) {
-          const wP = ((rec.weight - olderRec.weight) / olderRec.weight) * 100;
-          const lP = ((rec.length - olderRec.length) / olderRec.length) * 100;
-          prevCell = `${wP >= 0 ? '+' : ''}${wP.toFixed(1).replace('.', ',')}% / ${lP >= 0 ? '+' : ''}${lP.toFixed(1).replace('.', ',')}%`;
+          prevCell = `${(((rec.weight - olderRec.weight) / olderRec.weight) * 100).toFixed(1).replace('.', ',')}% / ${(((rec.length - olderRec.length) / olderRec.length) * 100).toFixed(1).replace('.', ',')}%`;
         } else if (startW > 0 && startL > 0) {
-          const wP = ((rec.weight - startW) / startW) * 100;
-          const lP = ((rec.length - startL) / startL) * 100;
-          prevCell = `${wP >= 0 ? '+' : ''}${wP.toFixed(1).replace('.', ',')}% / ${lP >= 0 ? '+' : ''}${lP.toFixed(1).replace('.', ',')}% (vs start)`;
+          prevCell = `${(((rec.weight - startW) / startW) * 100).toFixed(1).replace('.', ',')}% / ${(((rec.length - startL) / startL) * 100).toFixed(1).replace('.', ',')}%`;
         }
-
-        let startCell = '–';
-        if (startW > 0 && startL > 0) {
-          const wS = ((rec.weight - startW) / startW) * 100;
-          const lS = ((rec.length - startL) / startL) * 100;
-          startCell = `${wS >= 0 ? '+' : ''}${wS.toFixed(1).replace('.', ',')}% / ${lS >= 0 ? '+' : ''}${lS.toFixed(1).replace('.', ',')}%`;
-        }
-
+        let startCell = (startW > 0 && startL > 0)
+          ? `${(((rec.weight - startW) / startW) * 100).toFixed(1).replace('.', ',')}% / ${(((rec.length - startL) / startL) * 100).toFixed(1).replace('.', ',')}%`
+          : '–';
         return `
           <tr>
             <td><strong>${rec.date}</strong></td>
             <td style="color:var(--muted);">${ageAtRec ? ageAtRec.shortAge : '–'}</td>
-            <td style="color:var(--green); font-weight:700;">${rec.weight.toFixed(2).replace('.', ',')} kg</td>
-            <td style="color:var(--accent); font-weight:700;">${rec.length.toFixed(1).replace('.', ',')} cm</td>
+            <td style="color:var(--green); font-weight:700;">${rec.weight.toFixed(2).replace('.', ',')}</td>
+            <td style="color:var(--accent); font-weight:700;">${rec.length.toFixed(1).replace('.', ',')}</td>
             <td>${prevCell}</td>
             <td>${startCell}</td>
             <td><button class="btn btn-danger" type="button" onclick="deleteGrowthRecord('${rec.id}')">✕</button></td>
@@ -1905,10 +1763,10 @@
         try {
           await dbRef.set(storeData);
           document.getElementById('cloudSyncStatusText').style.color = 'var(--green)';
-          document.getElementById('cloudSyncStatusText').textContent = `Synkat med Firebase kl. ${new Date().toLocaleTimeString('sv-SE')}`;
+          document.getElementById('cloudSyncStatusText').textContent = `Synkat kl. ${new Date().toLocaleTimeString('sv-SE')}`;
         } catch (err) {
           document.getElementById('cloudSyncStatusText').style.color = 'var(--red)';
-          document.getElementById('cloudSyncStatusText').textContent = `Kunde inte synka: ${err.message}`;
+          document.getElementById('cloudSyncStatusText').textContent = `Synkfel: ${err.message}`;
         }
       }
     }
@@ -1928,53 +1786,33 @@
       const ageInfo = getBabyAgeInfo(child.birthDate);
       const benchmark = ageInfo ? ageInfo.benchmark : null;
 
-      // A. Live-sömn & Vakenfönster
-      const liveBtn = document.getElementById('toggleLiveSleepBtn');
-      const liveLabel = document.getElementById('liveSleepStatusLabel');
-      const liveTimerText = document.getElementById('liveSleepTimerText');
       const wakeBadge = document.getElementById('kpiWakeWindowBadge');
       const wakeText = document.getElementById('kpiWakeWindowText');
       const wakePctText = document.getElementById('kpiWakeWindowPctText');
       const wakeBar = document.getElementById('kpiWakeWindowBar');
 
       if (child.activeSleepStart) {
-        const startDt = new Date(child.activeSleepStart);
-        const sleptMins = Math.max(0, Math.round((now - startDt) / 60000));
-        liveLabel.textContent = `😴 Sover just nu (somnade ${child.activeSleepStart.slice(11, 16)})`;
-        liveTimerText.textContent = `Sovit: ${formatMinutes(sleptMins)}`;
-        liveBtn.textContent = '☀️ Vaknade nu & spara';
-        liveBtn.className = 'btn btn-green';
-
-        wakeBadge.textContent = `😴 Sover just nu (${formatMinutes(sleptMins)})`;
+        const sleptMins = Math.max(0, Math.round((now - new Date(child.activeSleepStart)) / 60000));
+        wakeBadge.textContent = `😴 Sover nu (${formatMinutes(sleptMins)})`;
         wakeBadge.style.color = 'var(--purple)';
         wakeText.innerHTML = `Somnade kl. <strong>${child.activeSleepStart.slice(11, 16)}</strong>`;
         wakePctText.textContent = 'Sover';
         wakeBar.style.width = '100%';
         wakeBar.style.background = 'var(--green)';
       } else {
-        liveLabel.textContent = 'Live-timer för tupplur/natt';
-        liveTimerText.textContent = 'Tryck när barnet somnar';
-        liveBtn.textContent = '😴 Starta sömn nu';
-        liveBtn.className = 'btn btn-purple';
-
         const sleeps = events.filter(e => e.type === 'sleep');
         if (sleeps.length > 0) {
           const lastWakeStr = sleeps[0].endTime || sleeps[0].time;
           const awakeMins = Math.max(0, Math.round((now - new Date(lastWakeStr)) / 60000));
           wakeBadge.textContent = `👀 Vaken nu: ${formatMinutes(awakeMins)}`;
           wakeBadge.style.color = 'var(--accent)';
-
           if (benchmark) {
-            const targetMax = benchmark.wakeWindowMax;
-            const targetMin = benchmark.wakeWindowMin;
-            const pct = Math.min(100, Math.round((awakeMins / targetMax) * 100));
-            const remToSleep = Math.max(0, targetMax - awakeMins);
-            wakeText.innerHTML = remToSleep > 0
-              ? `Vakenfönster (${formatMinutes(targetMin)}–${formatMinutes(targetMax)}): <strong>~${formatMinutes(remToSleep)} kvar</strong>`
-              : `Vakenfönster (${formatMinutes(targetMin)}–${formatMinutes(targetMax)}): <strong>Dags att sova</strong>`;
+            const pct = Math.min(100, Math.round((awakeMins / benchmark.wakeWindowMax) * 100));
+            const rem = Math.max(0, benchmark.wakeWindowMax - awakeMins);
+            wakeText.innerHTML = rem > 0 ? `Vakenfönster: <strong>~${formatMinutes(rem)} kvar</strong>` : `Vakenfönster: <strong>Dags att sova</strong>`;
             wakePctText.textContent = `${pct} %`;
             wakeBar.style.width = `${pct}%`;
-            wakeBar.style.background = awakeMins >= targetMax ? 'var(--yellow)' : 'var(--purple)';
+            wakeBar.style.background = awakeMins >= benchmark.wakeWindowMax ? 'var(--yellow)' : 'var(--purple)';
           } else {
             wakeText.textContent = `Vaknade kl. ${lastWakeStr.slice(11, 16)}`;
             wakePctText.textContent = '–';
@@ -1988,63 +1826,59 @@
         }
       }
 
-      // B. Separat D-vitamin status idag
-      const vitDEventsToday = events.filter(e =>
-        e.time.startsWith(todayStr) &&
-        (e.type === 'vitamind' || (e.type === 'health' && e.med && e.med.includes('D-droppar')))
-      );
+      // D-vitamin status (både toppknapp med pulsering och Hälsa-kortet)
+      const vitDEventsToday = events.filter(e => e.time.startsWith(todayStr) && (e.type === 'vitamind' || (e.type === 'health' && e.med && e.med.includes('D-droppar'))));
       const vitDBadge = document.getElementById('vitaminDHeaderBadge');
       const vitDDetail = document.getElementById('vitaminDStatusDetail');
       const vitDBtn = document.getElementById('quickVitaminDBtn');
+      const topVitDBtn = document.getElementById('topQuickVitDBtn');
 
       if (vitDEventsToday.length > 0) {
-        const givenTime = vitDEventsToday[0].time.slice(11, 16);
-        vitDBadge.textContent = `☀️ D-vitamin: ✓ Given kl. ${givenTime}`;
+        const t = vitDEventsToday[0].time.slice(11, 16);
+        vitDBadge.textContent = `☀️ Given kl. ${t}`;
         vitDBadge.style.background = 'rgba(34, 197, 94, 0.18)';
         vitDBadge.style.color = 'var(--green)';
-        vitDDetail.innerHTML = `<strong style="color:var(--green);">✓ Given idag kl. ${givenTime}</strong> (5 droppar).`;
-        vitDBtn.textContent = '✓ Given idag (+ logga igen)';
-        vitDBtn.className = 'btn btn-secondary btn-sm';
+        vitDDetail.innerHTML = `<strong style="color:var(--green);">✓ Given idag kl. ${t}</strong>`;
+        vitDBtn.textContent = '✓ Given idag';
+
+        if (topVitDBtn) {
+          topVitDBtn.textContent = '☀️ D-vitamin ✓';
+          topVitDBtn.classList.remove('vitd-alert-pulse');
+          topVitDBtn.classList.add('vitd-done');
+        }
       } else {
-        vitDBadge.textContent = '☀️ D-vitamin: Ej given idag';
+        vitDBadge.textContent = '☀️ Ej given';
         vitDBadge.style.background = 'rgba(251, 146, 60, 0.18)';
         vitDBadge.style.color = 'var(--orange)';
-        vitDDetail.textContent = 'Ej registrerad idag ännu. Tryck på knappen för att logga direkt.';
-        vitDBtn.textContent = '☀️ Ge D-droppar nu (5 dr)';
-        vitDBtn.className = 'btn btn-orange';
+        vitDDetail.textContent = 'Ej registrerad idag ännu.';
+        vitDBtn.textContent = '☀️ Ge D-droppar nu';
+
+        if (topVitDBtn) {
+          topVitDBtn.textContent = '☀️ D-vitamin';
+          topVitDBtn.classList.remove('vitd-done');
+          topVitDBtn.classList.add('vitd-alert-pulse');
+        }
       }
 
-      // C. Hälsa & Medicin-nedräkning (6 timmar efter Alvedon/Ipren)
-      const healthEvents = events.filter(e => e.type === 'health');
-      const medEvents = healthEvents.filter(e => e.med && (e.med.includes('Alvedon') || e.med.includes('Ipren')));
-      const healthBadge = document.getElementById('healthHeaderBadge');
+      // Medicin-nedräkning
+      const medEvents = events.filter(e => e.type === 'health' && e.med && (e.med.includes('Alvedon') || e.med.includes('Ipren')));
       const healthTimer = document.getElementById('healthHeaderTimer');
-
       if (medEvents.length > 0) {
-        const lastMed = medEvents[0];
-        const minsSinceMed = Math.max(0, Math.round((now - new Date(lastMed.time)) / 60000));
-        const cooldownMin = 360;
-        if (minsSinceMed < cooldownMin) {
-          const leftMin = cooldownMin - minsSinceMed;
-          healthBadge.textContent = `Senaste dos: ${lastMed.med.split(' ')[0]} kl. ${lastMed.time.slice(11, 16)}`;
-          healthTimer.textContent = `Nästa dos tidigast om ${formatMinutes(leftMin)}`;
+        const minsSince = Math.max(0, Math.round((now - new Date(medEvents[0].time)) / 60000));
+        if (minsSince < 360) {
+          healthTimer.textContent = `Nästa dos om ${formatMinutes(360 - minsSince)}`;
           healthTimer.style.color = 'var(--yellow)';
         } else {
-          healthBadge.textContent = `Senaste dos: ${lastMed.med.split(' ')[0]} (${formatMinutes(minsSinceMed)} sedan)`;
-          healthTimer.textContent = '✓ >6h sedan senaste dos';
+          healthTimer.textContent = '✓ >6h sedan dos';
           healthTimer.style.color = 'var(--green)';
         }
-      } else if (healthEvents.length > 0 && healthEvents[0].temp) {
-        healthBadge.textContent = `Senaste temp: ${healthEvents[0].temp} °C (${healthEvents[0].time.slice(11, 16)})`;
-        healthTimer.textContent = '–';
       } else {
-        healthBadge.textContent = 'Inga aktiva doser';
         healthTimer.textContent = '–';
       }
     }
 
     function renderAll() {
-      renderProfileSelector();
+      renderProfileSelectors();
       const child = getActiveChild();
       const events = (child.events || []).slice().sort((a, b) => new Date(b.time) - new Date(a.time));
       const now = new Date();
@@ -2052,8 +1886,7 @@
       const last24hMs = now.getTime() - 24 * 60 * 60 * 1000;
       const last7dMs = now.getTime() - 7 * 24 * 60 * 60 * 1000;
 
-      document.getElementById('historyCountBadge').textContent = `${events.length} händelser`;
-
+      document.getElementById('historyCountBadge').textContent = `${events.length}`;
       const ageInfo = getBabyAgeInfo(child.birthDate);
       const benchmark = ageInfo ? ageInfo.benchmark : null;
 
@@ -2078,32 +1911,30 @@
       const sleepsAvgSrc = sleeps.filter(e => avgSourceEvents.includes(e));
       const avgSleepH7d = sleepsAvgSrc.reduce((s, e) => s + (Number(e.durationMin) || 0), 0) / 60 / activeDays;
 
-      // 1. Senaste matning & nästa bröst
+      // 1. Senaste matning
       if (feeds.length > 0) {
         const last = feeds[0];
         const diffMins = Math.max(0, Math.round((now - new Date(last.time)) / 60000));
         const h = Math.floor(diffMins / 60);
         const m = diffMins % 60;
-        const agoText = `${h > 0 ? h + 'h ' : ''}${m}m sedan`;
-        document.getElementById('kpiLastFeedTime').textContent = agoText;
-        document.getElementById('feedHeaderMini').textContent = `Senast: ${agoText}`;
+        document.getElementById('kpiLastFeedTime').textContent = `${h > 0 ? h + 'h ' : ''}${m}m sedan`;
 
         const parts = [];
-        if (last.leftMin > 0) parts.push(`Vänster ${last.leftMin} min`);
-        if (last.rightMin > 0) parts.push(`Höger ${last.rightMin} min`);
-        if (last.bottleMl > 0) parts.push(`Flaska ${last.bottleMl} ml`);
-        if (last.solidCategory) parts.push(`Smakport: ${last.solidCategory}`);
+        if (last.leftMin > 0) parts.push(`Vänster ${last.leftMin}m`);
+        if (last.rightMin > 0) parts.push(`Höger ${last.rightMin}m`);
+        if (last.bottleMl > 0) parts.push(`Flaska ${last.bottleMl}ml`);
+        if (last.solidCategory) parts.push(last.solidCategory);
         document.getElementById('kpiLastFeedDetail').textContent = `Kl. ${last.time.slice(11, 16)} (${parts.join(', ') || 'loggad'})`;
 
         const nextEl = document.getElementById('kpiNextBreast');
         if (last.leftMin > 0 && (!last.rightMin || last.leftMin > last.rightMin)) {
-          nextEl.textContent = '👉 Börja med: Höger bröst';
+          nextEl.textContent = '👉 Börja: Höger bröst';
           nextEl.style.color = 'var(--green)';
         } else if (last.rightMin > 0 && (!last.leftMin || last.rightMin > last.leftMin)) {
-          nextEl.textContent = '👉 Börja med: Vänster bröst';
+          nextEl.textContent = '👉 Börja: Vänster bröst';
           nextEl.style.color = 'var(--green)';
         } else {
-          nextEl.textContent = 'Flaska/mat senast – valfritt bröst';
+          nextEl.textContent = 'Flaska senast – valfritt';
           nextEl.style.color = 'var(--accent)';
         }
 
@@ -2111,29 +1942,24 @@
           const intervalGoalMin = Math.round(benchmark.feedIntervalHours * 60);
           const remMin = Math.max(0, intervalGoalMin - diffMins);
           const intervalPct = Math.min(100, Math.round((diffMins / intervalGoalMin) * 100));
-          document.getElementById('kpiNextFeedLeftText').innerHTML = remMin > 0
-            ? `Rek. intervall (${benchmark.feedIntervalHours.toString().replace('.', ',')}h): <strong>~${formatMinutes(remMin)} kvar</strong>`
-            : `Rek. intervall (${benchmark.feedIntervalHours.toString().replace('.', ',')}h): <strong>Dags snart</strong>`;
+          document.getElementById('kpiNextFeedLeftText').innerHTML = remMin > 0 ? `Intervall: <strong>~${formatMinutes(remMin)} kvar</strong>` : `Intervall: <strong>Dags snart</strong>`;
           document.getElementById('kpiNextFeedPctText').textContent = `${intervalPct} %`;
           document.getElementById('kpiNextFeedBar').style.width = `${intervalPct}%`;
         } else {
-          document.getElementById('kpiNextFeedLeftText').textContent = 'Ange födelsedatum för rek. intervall';
+          document.getElementById('kpiNextFeedLeftText').textContent = 'Ange ålder för intervall';
           document.getElementById('kpiNextFeedPctText').textContent = '–';
           document.getElementById('kpiNextFeedBar').style.width = '0%';
         }
       } else {
         document.getElementById('kpiLastFeedTime').textContent = '–';
-        document.getElementById('kpiNextBreast').textContent = 'Nästa förslag: Vänster eller Höger';
-        document.getElementById('kpiLastFeedDetail').textContent = 'Ingen matning loggad ännu';
-        document.getElementById('feedHeaderMini').textContent = 'Bröst, flaska & mat';
-        document.getElementById('kpiNextFeedLeftText').textContent = benchmark
-          ? `Rek. intervall: ca ${benchmark.feedIntervalHours.toString().replace('.', ',')} h`
-          : 'Ange födelsedatum för rek. intervall';
+        document.getElementById('kpiNextBreast').textContent = 'Nästa: Vänster / Höger';
+        document.getElementById('kpiLastFeedDetail').textContent = 'Ingen matning ännu';
+        document.getElementById('kpiNextFeedLeftText').textContent = 'Intervall: –';
         document.getElementById('kpiNextFeedPctText').textContent = '0 %';
         document.getElementById('kpiNextFeedBar').style.width = '0%';
       }
 
-      // 2. Mat idag (inkl. smakportioner)
+      // 2. Mat idag
       const todayFeeds = feeds.filter(e => e.time.startsWith(todayStr));
       const todayMl = todayFeeds.reduce((s, e) => s + (Number(e.bottleMl) || 0), 0);
       const todayLeft = todayFeeds.reduce((s, e) => s + (Number(e.leftMin) || 0), 0);
@@ -2142,95 +1968,77 @@
       const todayEquivMl = todayMl + (todayLeft + todayRight) * 10;
 
       document.getElementById('kpiTodayFeed').textContent = `${todayMl} ml • ${todayLeft + todayRight} min`;
-      document.getElementById('kpiTodayFeedCount').textContent = todaySolids > 0
-        ? `${todayFeeds.length} mål idag (varav ${todaySolids} smakport.)`
-        : `${todayFeeds.length} matningar idag`;
-      document.getElementById('kpiTodayBreastSplit').textContent = `Vänster: ${todayLeft} min • Höger: ${todayRight} min`;
+      document.getElementById('kpiTodayFeedCount').textContent = todaySolids > 0 ? `${todayFeeds.length} mål (${todaySolids} smakport.)` : `${todayFeeds.length} matningar idag`;
+      document.getElementById('kpiTodayBreastSplit').textContent = `Vänster: ${todayLeft}m • Höger: ${todayRight}m`;
 
       const snittFeedLabel = hasPastDays ? `${Math.max(0, avgTotalFeedEquiv7d - todayEquivMl)} ml` : '–';
       if (benchmark) {
         const remFeedRec = Math.max(0, benchmark.feedMlPerDay - todayEquivMl);
         const feedProgressPct = Math.min(100, Math.round((todayEquivMl / benchmark.feedMlPerDay) * 100));
-        document.getElementById('kpiFeedRemText').innerHTML =
-          `Kvar snitt: <strong>${snittFeedLabel}</strong> • Kvar rek (${benchmark.feedMlPerDay} ml): <strong>${remFeedRec} ml</strong>`;
+        document.getElementById('kpiFeedRemText').innerHTML = `Snitt: <strong>${snittFeedLabel}</strong> • Rek: <strong>${remFeedRec} ml</strong>`;
         document.getElementById('kpiFeedPctText').textContent = `${feedProgressPct} %`;
         document.getElementById('kpiFeedBar').style.width = `${feedProgressPct}%`;
       } else {
-        document.getElementById('kpiFeedRemText').innerHTML = `Kvar snitt: <strong>${snittFeedLabel}</strong> • Ange födelsedatum för rek.`;
+        document.getElementById('kpiFeedRemText').innerHTML = `Kvar snitt: <strong>${snittFeedLabel}</strong>`;
         document.getElementById('kpiFeedPctText').textContent = '–';
         document.getElementById('kpiFeedBar').style.width = '0%';
       }
 
-      // 3. Blöjor idag (Totalt = Endast kiss + Bajs med kiss underförstått)
+      // 3. Blöjor idag
       const todayDiapers = diapers.filter(e => e.time.startsWith(todayStr));
       const onlyKissCount = todayDiapers.filter(e => e.diaperType === 'kiss').length;
       const bajsCount = todayDiapers.filter(e => e.diaperType === 'bajs' || e.diaperType === 'bada').length;
       document.getElementById('kpiTodayDiapers').textContent = `${todayDiapers.length} st`;
       document.getElementById('kpiTodayDiaperSplit').textContent = `${onlyKissCount} endast kiss • ${bajsCount} bajs`;
-      if (diapers.length > 0) {
-        const dTime = diapers[0].time.slice(11, 16);
-        const dLabel = diapers[0].diaperType === 'bada' ? 'Bajs (kiss & bajs)' : (diapers[0].diaperType === 'bajs' ? 'Bajs' : 'Endast kiss');
-        document.getElementById('kpiLastDiaperTime').textContent = `Senaste byte: kl. ${dTime} (${dLabel})`;
-        document.getElementById('diaperHeaderMini').textContent = `Senast: ${dTime}`;
-      } else {
-        document.getElementById('kpiLastDiaperTime').textContent = 'Senaste byte: –';
-        document.getElementById('diaperHeaderMini').textContent = 'Kiss / Bajs';
-      }
+      document.getElementById('kpiLastDiaperTime').textContent = diapers.length > 0
+        ? `Senast: kl. ${diapers[0].time.slice(11, 16)} (${diapers[0].diaperType === 'kiss' ? 'Kiss' : 'Bajs'})`
+        : 'Senaste byte: –';
 
       const snittDiaperLabel = hasPastDays ? `${Math.max(0, Math.round(avgDiapers7d) - todayDiapers.length)} st` : '–';
       if (benchmark) {
         const remDiaperRec = Math.max(0, benchmark.diapersPerDay - todayDiapers.length);
         const diaperProgressPct = Math.min(100, Math.round((todayDiapers.length / benchmark.diapersPerDay) * 100));
-        document.getElementById('kpiDiaperRemText').innerHTML =
-          `Kvar snitt: <strong>${snittDiaperLabel}</strong> • Kvar rek (${benchmark.diapersPerDay} st): <strong>${remDiaperRec} st</strong>`;
+        document.getElementById('kpiDiaperRemText').innerHTML = `Snitt: <strong>${snittDiaperLabel}</strong> • Rek: <strong>${remDiaperRec} st</strong>`;
         document.getElementById('kpiDiaperPctText').textContent = `${diaperProgressPct} %`;
         document.getElementById('kpiDiaperBar').style.width = `${diaperProgressPct}%`;
       } else {
-        document.getElementById('kpiDiaperRemText').innerHTML = `Kvar snitt: <strong>${snittDiaperLabel}</strong> • Ange födelsedatum för rek.`;
+        document.getElementById('kpiDiaperRemText').innerHTML = `Kvar snitt: <strong>${snittDiaperLabel}</strong>`;
         document.getElementById('kpiDiaperPctText').textContent = '–';
         document.getElementById('kpiDiaperBar').style.width = '0%';
       }
 
-      // 4. Sömn senaste 24h
+      // 4. Sömn 24h
       const sleeps24h = sleeps.filter(e => new Date(e.endTime || e.time).getTime() >= last24hMs);
       const sleepMins24h = sleeps24h.reduce((s, e) => s + (Number(e.durationMin) || 0), 0);
-      const sleepHours24h = sleepMins24h / 60;
       const longestMin = sleeps24h.reduce((max, e) => Math.max(max, Number(e.durationMin) || 0), 0);
-      const sleepHText = `${sleepHours24h.toFixed(1).replace('.', ',')} h`;
-      document.getElementById('kpiSleep24h').textContent = sleepHText;
-      document.getElementById('kpiLongestSleep').textContent = `${sleeps24h.length} pass (24h) • Längst: ${(longestMin / 60).toFixed(1).replace('.', ',')} h`;
-      document.getElementById('sleepHeaderMini').textContent = child.activeSleepStart ? '😴 Sover nu' : `24h: ${sleepHText}`;
+      document.getElementById('kpiSleep24h').textContent = `${(sleepMins24h / 60).toFixed(1).replace('.', ',')} h`;
+      document.getElementById('kpiLongestSleep').textContent = `${sleeps24h.length} pass • Längst: ${(longestMin / 60).toFixed(1).replace('.', ',')} h`;
 
       // 5. Åldersprojektion
       syncBirthDateDropdowns(child);
       if (ageInfo && benchmark) {
-        document.getElementById('ageHeaderBadge').textContent = `${child.label} • ${ageInfo.text}`;
+        document.getElementById('ageHeaderBadge').textContent = ageInfo.text;
         const b = benchmark;
         document.getElementById('projHeaderPhaseBadge').textContent = b.label;
-        document.getElementById('projHeaderShort').textContent = `Mål: ~${b.feedMlPerDay} ml • ${b.sleepHours.toFixed(1).replace('.', ',')} h sömn`;
-        document.getElementById('projectionIntroText').innerHTML =
-          `Fas: <strong>${b.label}</strong> • ${b.nextPhase}`;
-
+        document.getElementById('projectionIntroText').innerHTML = `Fas: <strong>${b.label}</strong> • ${b.nextPhase}`;
         const avgFeedsCount7d = (feedsAvgSrc.length / activeDays).toFixed(1).replace('.', ',');
-        document.getElementById('projFeedTarget').textContent = `Riktvärde: ~${b.feedMlPerDay} ml (${b.feedsPerDay})`;
-        document.getElementById('projFeedActual').textContent = `Snitt (${activeDays}d): ${avgMl7d} ml + ${avgBreastMin7d} min bröst (${avgFeedsCount7d} ggr/dygn)`;
-        const feedPct = Math.min(100, Math.round((avgTotalFeedEquiv7d / b.feedMlPerDay) * 100));
-        document.getElementById('projFeedBar').style.width = `${feedPct}%`;
-        document.getElementById('projFeedForecast').textContent = `Riktvärdet avser total dygnsmängd (bröstmjölk + ersättning). ${b.feedsPerDay} är normalt i denna ålder.`;
+        document.getElementById('projFeedTarget').textContent = `Rek: ~${b.feedMlPerDay} ml`;
+        document.getElementById('projFeedActual').textContent = `${avgMl7d} ml + ${avgBreastMin7d}m (${avgFeedsCount7d} ggr)`;
+        document.getElementById('projFeedBar').style.width = `${Math.min(100, Math.round((avgTotalFeedEquiv7d / b.feedMlPerDay) * 100))}%`;
+        document.getElementById('projFeedForecast').textContent = b.feedsPerDay;
 
-        document.getElementById('projDiaperTarget').textContent = `Riktvärde: ${b.diapersPerDay}+ blöjor/dygn`;
-        document.getElementById('projDiaperActual').textContent = `Snitt (${activeDays}d): ${avgDiapers7d.toFixed(1).replace('.', ',')} blöjor/dygn`;
+        document.getElementById('projDiaperTarget').textContent = `Rek: ${b.diapersPerDay}+ st`;
+        document.getElementById('projDiaperActual').textContent = `${avgDiapers7d.toFixed(1).replace('.', ',')} st/dygn`;
         document.getElementById('projDiaperBar').style.width = `${Math.min(100, Math.round((avgDiapers7d / b.diapersPerDay) * 100))}%`;
-        document.getElementById('projDiaperForecast').textContent = `Normalt nu: ${b.poopNote}. Minst 6 tunga kissblöjor/dygn visar gott vätskeintag.`;
+        document.getElementById('projDiaperForecast').textContent = b.poopNote;
 
-        document.getElementById('projSleepTarget').textContent = `Riktvärde: ~${b.sleepHours.toFixed(1).replace('.', ',')} h/dygn`;
-        document.getElementById('projSleepActual').textContent = `Snitt (${activeDays}d): ${avgSleepH7d.toFixed(1).replace('.', ',')} h/dygn`;
+        document.getElementById('projSleepTarget').textContent = `Rek: ~${b.sleepHours.toFixed(1).replace('.', ',')} h`;
+        document.getElementById('projSleepActual').textContent = `${avgSleepH7d.toFixed(1).replace('.', ',')} h/dygn`;
         document.getElementById('projSleepBar').style.width = `${Math.min(100, Math.round((avgSleepH7d / b.sleepHours) * 100))}%`;
-        document.getElementById('projSleepForecast').textContent = `Inkluderar både nattsömn och dagstupplurar. Individuell variation på ±2 timmar är helt normalt.`;
+        document.getElementById('projSleepForecast').textContent = `Inkl. tupplurar (±2h normalt)`;
       } else {
-        document.getElementById('ageHeaderBadge').textContent = `${child.label} • Ange födelsedatum`;
-        document.getElementById('projHeaderPhaseBadge').textContent = 'Ange födelsedatum';
-        document.getElementById('projHeaderShort').textContent = 'Riktvärden per ålder';
+        document.getElementById('ageHeaderBadge').textContent = 'Ange ålder';
+        document.getElementById('projHeaderPhaseBadge').textContent = 'Ange ålder';
       }
 
       updateLiveTimersAndHealth();
@@ -2244,17 +2052,11 @@
       for (let i = 6; i >= 0; i--) {
         const d = new Date();
         d.setDate(d.getDate() - i);
-        const yyyy = d.getFullYear();
-        const mm = String(d.getMonth() + 1).padStart(2, '0');
-        const dd = String(d.getDate()).padStart(2, '0');
-        days.push(`${yyyy}-${mm}-${dd}`);
+        days.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
       }
-
       const shortLabels = days.map(d => d.slice(5));
       const mlData = days.map(d => feeds.filter(e => e.time.startsWith(d)).reduce((s, e) => s + (Number(e.bottleMl) || 0), 0));
       const sleepData = days.map(d => +(sleeps.filter(e => (e.endTime || e.time).startsWith(d)).reduce((s, e) => s + (Number(e.durationMin) || 0), 0) / 60).toFixed(1));
-
-      // Staplade staplar: Endast kiss + Bajs (kiss underförstått) = Totalt antal blöjor
       const onlyKissData = days.map(d => diapers.filter(e => e.time.startsWith(d) && e.diaperType === 'kiss').length);
       const bajsData = days.map(d => diapers.filter(e => e.time.startsWith(d) && (e.diaperType === 'bajs' || e.diaperType === 'bada')).length);
 
@@ -2265,8 +2067,8 @@
         data: {
           labels: shortLabels,
           datasets: [
-            { label: 'Flaska (ml)', data: mlData, backgroundColor: '#38bdf8', borderRadius: 5, yAxisID: 'y' },
-            { label: 'Sömn (timmar)', data: sleepData, backgroundColor: '#a855f7', borderRadius: 5, yAxisID: 'y1' }
+            { label: 'Flaska (ml)', data: mlData, backgroundColor: '#38bdf8', borderRadius: 4, yAxisID: 'y' },
+            { label: 'Sömn (h)', data: sleepData, backgroundColor: '#a855f7', borderRadius: 4, yAxisID: 'y1' }
           ]
         },
         options: {
@@ -2299,10 +2101,7 @@
             legend: { labels: { color: '#94a3b8' } },
             tooltip: {
               callbacks: {
-                footer: (items) => {
-                  const sum = items.reduce((a, b) => a + (b.parsed.y || 0), 0);
-                  return `Totalt: ${sum} blöjor`;
-                }
+                footer: (items) => `Totalt: ${items.reduce((a, b) => a + (b.parsed.y || 0), 0)} blöjor`
               }
             }
           },
@@ -2320,36 +2119,29 @@
       const tbody = document.getElementById('eventsTableBody');
 
       if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="5" style="color:var(--muted); text-align:center; padding:18px;">Inga händelser loggade ännu.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="color:var(--muted); text-align:center; padding:14px;">Inga händelser ännu.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = filtered.slice(0, 60).map(ev => {
-        let badge = '';
-        let detail = '';
+        let badge = '', detail = '';
         if (ev.type === 'feed') {
-          badge = `<span class="tag-pill tag-feed">🍼 Matning</span>`;
+          badge = `<span class="tag-pill tag-feed">🍼 Mat</span>`;
           const p = [];
-          if (ev.leftMin > 0) p.push(`Vänster: ${ev.leftMin} min`);
-          if (ev.rightMin > 0) p.push(`Höger: ${ev.rightMin} min`);
-          if (ev.bottleMl > 0) p.push(`Flaska: ${ev.bottleMl} ml`);
-          if (ev.solidCategory || ev.solidDetail) {
-            const solidTxt = [ev.solidCategory, ev.solidDetail].filter(Boolean).join(': ');
-            p.push(`🥄 ${solidTxt}${ev.isNewFood ? ' (NY RÅVARA)' : ''}`);
-          }
+          if (ev.leftMin > 0) p.push(`V: ${ev.leftMin}m`);
+          if (ev.rightMin > 0) p.push(`H: ${ev.rightMin}m`);
+          if (ev.bottleMl > 0) p.push(`${ev.bottleMl} ml`);
+          if (ev.solidCategory || ev.solidDetail) p.push(`🥄 ${[ev.solidCategory, ev.solidDetail].filter(Boolean).join(': ')}`);
           detail = p.join(' • ') || 'Matning';
         } else if (ev.type === 'diaper') {
-          badge = `<span class="tag-pill tag-diaper">🧷 Blöjbyte</span>`;
-          detail = ev.diaperType === 'bada' ? '💩 Bajs (kiss & bajs)' : (ev.diaperType === 'bajs' ? '💩 Bajs' : '💧 Endast kiss');
+          badge = `<span class="tag-pill tag-diaper">🧷 Blöja</span>`;
+          detail = ev.diaperType === 'kiss' ? '💧 Endast kiss' : '💩 Bajs';
         } else if (ev.type === 'vitamind') {
-          badge = `<span class="tag-pill tag-vitamind">☀️ D-vitamin</span>`;
+          badge = `<span class="tag-pill tag-vitamind">☀️ D-vit</span>`;
           detail = ev.dose || '5 droppar';
         } else if (ev.type === 'health') {
           badge = `<span class="tag-pill tag-health">🌡️ Hälsa</span>`;
-          const hp = [];
-          if (ev.temp) hp.push(`${ev.temp} °C`);
-          if (ev.med) hp.push(ev.med);
-          detail = hp.join(' • ') || 'Notering';
+          detail = [ev.temp ? `${ev.temp} °C` : '', ev.med].filter(Boolean).join(' • ') || 'Notering';
         } else {
           badge = `<span class="tag-pill tag-sleep">🌙 Sömn</span>`;
           detail = `${formatMinutes(ev.durationMin)} (${ev.time.slice(11, 16)}–${(ev.endTime || '').slice(11, 16)})`;
@@ -2357,20 +2149,20 @@
 
         return `
           <tr>
-            <td><strong>${ev.time.replace('T', ' ')}</strong></td>
+            <td style="white-space:nowrap;"><strong>${ev.time.slice(5).replace('T', ' ')}</strong></td>
             <td>${badge}</td>
             <td>${detail}</td>
             <td style="color:var(--muted);">${ev.comment || '–'}</td>
             <td style="white-space:nowrap; text-align:right;">
-              <button class="btn btn-edit" type="button" onclick="openEditModal('${ev.id}')" title="Ändra värden">✏️</button>
-              <button class="btn btn-danger" type="button" onclick="deleteEvent('${ev.id}')" title="Ta bort">✕</button>
+              <button class="btn btn-edit" type="button" onclick="openEditModal('${ev.id}')">✏️</button>
+              <button class="btn btn-danger" type="button" onclick="deleteEvent('${ev.id}')">✕</button>
             </td>
           </tr>
         `;
       }).join('');
     }
 
-    // --- REDIGERA BEFINTLIG HÄNDELSE I LOGGEN ---
+    // --- REDIGERING I LOGGEN ---
     window.openEditModal = function(id) {
       const child = getActiveChild();
       const ev = (child.events || []).find(e => e.id === id);
@@ -2383,43 +2175,32 @@
 
       let html = `
         <div class="form-grid-2">
-          <label>Datum (ÅÅÅÅ-MM-DD)
-            <input type="text" id="edit_date" value="${datePart || ''}" />
-          </label>
-          <label>Klockslag (TT:MM)
-            <input type="text" id="edit_time" value="${(timePart || '').slice(0, 5)}" />
-          </label>
+          <label>Datum (ÅÅÅÅ-MM-DD)<input type="text" id="edit_date" value="${datePart || ''}" /></label>
+          <label>Klockslag (TT:MM)<input type="text" id="edit_time" value="${(timePart || '').slice(0, 5)}" /></label>
         </div>
       `;
 
       if (ev.type === 'feed') {
         titleEl.textContent = '✏️ Ändra matning';
         html += `
-          <div class="form-grid-2">
-            <label>Vänster bröst (min)
-              <input type="number" id="edit_leftMin" value="${ev.leftMin || 0}" min="0" step="1" />
-            </label>
-            <label>Höger bröst (min)
-              <input type="number" id="edit_rightMin" value="${ev.rightMin || 0}" min="0" step="1" />
-            </label>
-          </div>
           <label>Flaska (ml) – justera om det blev kvar i flaskan
             <input type="number" id="edit_bottleMl" value="${ev.bottleMl || 0}" min="0" step="5" />
           </label>
           <div class="form-grid-2">
-            <label>Smakportion kategori
+            <label>Vänster bröst (min)<input type="number" id="edit_leftMin" value="${ev.leftMin || 0}" min="0" /></label>
+            <label>Höger bröst (min)<input type="number" id="edit_rightMin" value="${ev.rightMin || 0}" min="0" /></label>
+          </div>
+          <div class="form-grid-2">
+            <label>Smakportion
               <select id="edit_solidCategory">
                 <option value="">Ingen</option>
                 <option value="Gröt" ${ev.solidCategory === 'Gröt' ? 'selected' : ''}>Gröt</option>
-                <option value="Grönsak/Puré" ${ev.solidCategory === 'Grönsak/Puré' ? 'selected' : ''}>Grönsak/Puré</option>
-                <option value="Frukt/Bär" ${ev.solidCategory === 'Frukt/Bär' ? 'selected' : ''}>Frukt/Bär</option>
-                <option value="Protein/Ägg" ${ev.solidCategory === 'Protein/Ägg' ? 'selected' : ''}>Protein/Ägg</option>
-                <option value="Plockmat" ${ev.solidCategory === 'Plockmat' ? 'selected' : ''}>Plockmat</option>
+                <option value="Puré" ${ev.solidCategory === 'Puré' ? 'selected' : ''}>Puré</option>
+                <option value="Frukt" ${ev.solidCategory === 'Frukt' ? 'selected' : ''}>Frukt</option>
+                <option value="Plock" ${ev.solidCategory === 'Plock' ? 'selected' : ''}>Plock</option>
               </select>
             </label>
-            <label>Smakportion detalj
-              <input type="text" id="edit_solidDetail" value="${ev.solidDetail || ''}" />
-            </label>
+            <label>Detalj<input type="text" id="edit_solidDetail" value="${ev.solidDetail || ''}" /></label>
           </div>
         `;
       } else if (ev.type === 'diaper') {
@@ -2438,41 +2219,24 @@
         const [endD, endT] = (ev.endTime || ev.time || '2026-01-01T13:00').split('T');
         html += `
           <div class="form-grid-2">
-            <label>Vaknade datum
-              <input type="text" id="edit_endDate" value="${endD || ''}" />
-            </label>
-            <label>Vaknade klockslag
-              <input type="text" id="edit_endTime" value="${(endT || '').slice(0, 5)}" />
-            </label>
+            <label>Vaknade datum<input type="text" id="edit_endDate" value="${endD || ''}" /></label>
+            <label>Vaknade klockslag<input type="text" id="edit_endTime" value="${(endT || '').slice(0, 5)}" /></label>
           </div>
         `;
       } else if (ev.type === 'vitamind') {
         titleEl.textContent = '✏️ Ändra D-vitamin';
-        html += `
-          <label>Dosering
-            <input type="text" id="edit_dose" value="${ev.dose || '5 droppar'}" />
-          </label>
-        `;
+        html += `<label>Dosering<input type="text" id="edit_dose" value="${ev.dose || '5 droppar'}" /></label>`;
       } else if (ev.type === 'health') {
         titleEl.textContent = '✏️ Ändra hälsopost';
         html += `
           <div class="form-grid-2">
-            <label>Temp (°C)
-              <input type="number" id="edit_temp" value="${ev.temp || ''}" step="0.1" />
-            </label>
-            <label>Medicin
-              <input type="text" id="edit_med" value="${ev.med || ''}" />
-            </label>
+            <label>Temp (°C)<input type="number" id="edit_temp" value="${ev.temp || ''}" step="0.1" /></label>
+            <label>Medicin<input type="text" id="edit_med" value="${ev.med || ''}" /></label>
           </div>
         `;
       }
 
-      html += `
-        <label>Kommentar
-          <input type="text" id="edit_comment" value="${ev.comment || ''}" />
-        </label>
-      `;
-
+      html += `<label>Kommentar<input type="text" id="edit_comment" value="${ev.comment || ''}" /></label>`;
       fieldsDiv.innerHTML = html;
       document.getElementById('editEventModal').style.display = 'flex';
     };
@@ -2490,9 +2254,7 @@
 
       const dVal = document.getElementById('edit_date').value.trim();
       const tVal = document.getElementById('edit_time').value.trim();
-      if (dVal && tVal) {
-        ev.time = `${dVal}T${tVal}`;
-      }
+      if (dVal && tVal) ev.time = `${dVal}T${tVal}`;
       ev.comment = document.getElementById('edit_comment').value.trim();
 
       if (ev.type === 'feed') {
@@ -2508,11 +2270,8 @@
         const endT = document.getElementById('edit_endTime').value.trim();
         if (endD && endT) {
           ev.endTime = `${endD}T${endT}`;
-          const sDt = new Date(ev.time);
-          const eDt = new Date(ev.endTime);
-          if (!isNaN(sDt) && !isNaN(eDt) && eDt > sDt) {
-            ev.durationMin = Math.round((eDt - sDt) / 60000);
-          }
+          const sDt = new Date(ev.time), eDt = new Date(ev.endTime);
+          if (!isNaN(sDt) && !isNaN(eDt) && eDt > sDt) ev.durationMin = Math.round((eDt - sDt) / 60000);
         }
       } else if (ev.type === 'vitamind') {
         ev.dose = document.getElementById('edit_dose').value.trim() || '5 droppar';
@@ -2534,11 +2293,25 @@
       renderAll();
     };
 
-    // --- PROFILHANTERING ---
-    document.getElementById('profileSelect').addEventListener('change', (e) => {
-      storeData.activeChildId = e.target.value;
+    // --- EVENT LISTENERS ---
+    function switchProfile(newId) {
+      storeData.activeChildId = newId;
       persistData();
       renderAll();
+    }
+
+    document.getElementById('headerProfileSelect').addEventListener('change', (e) => switchProfile(e.target.value));
+    document.getElementById('footerProfileSelect').addEventListener('change', (e) => switchProfile(e.target.value));
+
+    document.getElementById('headerAuthBtn').addEventListener('click', () => {
+      if (!currentUser) {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider).catch(err => alert('Inloggning misslyckades: ' + err.message));
+      } else {
+        drawerStates.profiles = true;
+        applyDrawerStates();
+        document.getElementById('card_profiles').scrollIntoView({ behavior: 'smooth' });
+      }
     });
 
     document.getElementById('addProfileBtn').addEventListener('click', () => {
@@ -2565,20 +2338,11 @@
       const ids = Object.keys(storeData.children);
       if (ids.length <= 1) return;
       const child = getActiveChild();
-      if (!confirm(`Vill du ta bort profilen "${child.label}" och dess loggar?`)) return;
+      if (!confirm(`Vill du ta bort profilen "${child.label}"?`)) return;
       delete storeData.children[child.id];
       storeData.activeChildId = Object.keys(storeData.children)[0];
       persistData();
       renderAll();
-    });
-
-    // --- EVENT LISTENERS ---
-    document.querySelectorAll('#diaperTypeGroup .diaper-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('#diaperTypeGroup .diaper-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedDiaperType = btn.dataset.val;
-      });
     });
 
     ['birthYearSelect', 'birthMonthSelect', 'birthDaySelect'].forEach(id => {
@@ -2609,185 +2373,40 @@
       const d = document.getElementById('growthDaySel').value;
       const weight = parseFloat(document.getElementById('newWeightInput').value);
       const length = parseFloat(document.getElementById('newLengthInput').value);
-
-      if (!y || !m || !d) {
-        alert('Välj datum i rullgardinerna.');
+      if (!y || !m || !d || isNaN(weight) || weight <= 0 || isNaN(length) || length <= 0) {
+        alert('Ange datum, vikt (kg) och längd (cm).');
         return;
       }
-      if (isNaN(weight) || weight <= 0 || isNaN(length) || length <= 0) {
-        alert('Ange både vikt (kg) och längd (cm).');
-        return;
-      }
-
-      const child = getActiveChild();
-      child.growthRecords.push({
-        id: Date.now().toString(),
-        date: `${y}-${m}-${d}`,
-        weight,
-        length
-      });
-
+      getActiveChild().growthRecords.push({ id: Date.now().toString(), date: `${y}-${m}-${d}`, weight, length });
       document.getElementById('newWeightInput').value = '';
       document.getElementById('newLengthInput').value = '';
       persistData();
       renderAll();
     });
 
-    document.getElementById('toggleLiveSleepBtn').addEventListener('click', () => {
-      const child = getActiveChild();
-      const now = new Date();
-      if (!child.activeSleepStart) {
-        child.activeSleepStart = toLocalIsoString(now);
-        persistData();
-        renderAll();
-      } else {
-        const startStr = child.activeSleepStart;
-        const endStr = toLocalIsoString(now);
-        const sDate = new Date(startStr);
-        const durationMin = Math.max(1, Math.round((now - sDate) / 60000));
-        const comment = document.getElementById('sleepComment').value.trim();
-
-        child.events.push({
-          id: Date.now().toString(),
-          type: 'sleep',
-          time: startStr,
-          endTime: endStr,
-          durationMin,
-          comment
-        });
-        child.activeSleepStart = null;
-        document.getElementById('sleepComment').value = '';
-        setDefaultFormTimes();
-        persistData();
-        renderAll();
-      }
-    });
-
-    // Snabbknapp för D-vitamin under Hälsa
     document.getElementById('quickVitaminDBtn').addEventListener('click', () => {
-      const nowStr = toLocalIsoString(new Date());
-      getActiveChild().events.push({
-        id: Date.now().toString(),
-        type: 'vitamind',
-        time: nowStr,
-        dose: '5 droppar',
-        comment: ''
-      });
-      persistData();
-      renderAll();
-    });
-
-    document.getElementById('logFilterSelect').addEventListener('change', renderAll);
-
-    document.getElementById('addFeedBtn').addEventListener('click', () => {
-      const time = getScrollPickerIsoString('feed');
-      const leftMin = Number(document.getElementById('feedLeftMin').value) || 0;
-      const rightMin = Number(document.getElementById('feedRightMin').value) || 0;
-      const bottleMl = Number(document.getElementById('feedBottleMl').value) || 0;
-      const solidDetail = document.getElementById('feedSolidDetail').value.trim();
-      const isNewFood = document.getElementById('feedIsNewFood').checked;
-      const comment = document.getElementById('feedComment').value.trim();
-
-      if (leftMin === 0 && rightMin === 0 && bottleMl === 0 && !selectedSolidCategory && !solidDetail && !comment) return;
-
-      getActiveChild().events.push({
-        id: Date.now().toString(),
-        type: 'feed',
-        time,
-        leftMin,
-        rightMin,
-        bottleMl,
-        solidCategory: selectedSolidCategory,
-        solidDetail,
-        isNewFood,
-        comment
-      });
-
-      document.getElementById('feedLeftMin').value = '';
-      document.getElementById('feedRightMin').value = '';
-      document.getElementById('feedBottleMl').value = '';
-      document.getElementById('feedSolidDetail').value = '';
-      document.getElementById('feedIsNewFood').checked = false;
-      document.getElementById('feedComment').value = '';
-      selectedSolidCategory = '';
-      document.querySelectorAll('#solidFoodChips .chip-btn').forEach(b => b.classList.remove('active-chip'));
-
-      setDefaultFormTimes();
-      persistData();
-      renderAll();
-    });
-
-    document.getElementById('addDiaperBtn').addEventListener('click', () => {
-      const time = getScrollPickerIsoString('diaper');
-      const comment = document.getElementById('diaperComment').value.trim();
-
-      getActiveChild().events.push({
-        id: Date.now().toString(),
-        type: 'diaper',
-        time,
-        diaperType: selectedDiaperType,
-        comment
-      });
-
-      document.getElementById('diaperComment').value = '';
-      setDefaultFormTimes();
-      persistData();
-      renderAll();
-    });
-
-    document.getElementById('addSleepBtn').addEventListener('click', () => {
-      const start = getScrollPickerIsoString('sleepStart');
-      const end = getScrollPickerIsoString('sleepEnd');
-      const comment = document.getElementById('sleepComment').value.trim();
-      const sDate = new Date(start);
-      const eDate = new Date(end);
-
-      if (isNaN(sDate) || isNaN(eDate) || eDate <= sDate) {
-        alert('Sluttiden måste vara efter starttiden.');
-        return;
-      }
-
-      const durationMin = Math.round((eDate - sDate) / 60000);
-      getActiveChild().events.push({
-        id: Date.now().toString(),
-        type: 'sleep',
-        time: start,
-        endTime: end,
-        durationMin,
-        comment
-      });
-
-      document.getElementById('sleepComment').value = '';
-      setDefaultFormTimes();
+      getActiveChild().events.push({ id: Date.now().toString(), type: 'vitamind', time: toLocalIsoString(new Date()), dose: '5 droppar', comment: '' });
       persistData();
       renderAll();
     });
 
     document.getElementById('addHealthBtn').addEventListener('click', () => {
-      const time = getScrollPickerIsoString('health');
+      const time = getPickerIso('health');
       const tempVal = parseFloat(document.getElementById('healthTempInput').value);
       const temp = !isNaN(tempVal) && tempVal > 0 ? tempVal.toFixed(1) : '';
       const med = document.getElementById('healthMedSelect').value;
       const comment = document.getElementById('healthComment').value.trim();
-
       if (!temp && !med && !comment) return;
-
-      getActiveChild().events.push({
-        id: Date.now().toString(),
-        type: 'health',
-        time,
-        temp,
-        med,
-        comment
-      });
-
+      getActiveChild().events.push({ id: Date.now().toString(), type: 'health', time, temp, med, comment });
       document.getElementById('healthTempInput').value = '';
       document.getElementById('healthMedSelect').value = '';
       document.getElementById('healthComment').value = '';
-      setDefaultFormTimes();
+      setPickerNow('health');
       persistData();
       renderAll();
     });
+
+    document.getElementById('logFilterSelect').addEventListener('change', renderAll);
 
     document.getElementById('exportCsvBtn').addEventListener('click', () => {
       const child = getActiveChild();
@@ -2805,16 +2424,14 @@
       a.click();
     });
 
-    // --- FIREBASE INIT ---
     function initFirebase() {
-      if (!firebase.apps.length) {
-        firebase.initializeApp(FIREBASE_CONFIG);
-      }
+      if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
 
       firebase.auth().onAuthStateChanged(user => {
         currentUser = user;
         if (user) {
-          document.getElementById('authStatusBadge').innerHTML = `<span class="status-dot" style="background:var(--green);"></span>${user.email}`;
+          document.getElementById('headerAuthDot').style.background = 'var(--green)';
+          document.getElementById('headerAuthText').textContent = 'Synkad';
           document.getElementById('googleLoginBtn').style.display = 'none';
           document.getElementById('googleLogoutBtn').style.display = 'inline-block';
 
@@ -2825,19 +2442,15 @@
               const wasLegacy = !cloud.children;
               storeData = normalizeStoreData(cloud);
               localStorage.setItem('bebiskollen_data', JSON.stringify(storeData));
-              if (wasLegacy) {
-                dbRef.set(storeData);
-              }
+              if (wasLegacy) dbRef.set(storeData);
               renderAll();
             }
             document.getElementById('cloudSyncStatusText').style.color = 'var(--green)';
-            document.getElementById('cloudSyncStatusText').textContent = `Inloggad som ${user.email} • Realtidssynk aktiv mellan era mobiler.`;
-          }, err => {
-            document.getElementById('cloudSyncStatusText').style.color = 'var(--red)';
-            document.getElementById('cloudSyncStatusText').textContent = `Åtkomst nekad av databasregler (${err.message}).`;
+            document.getElementById('cloudSyncStatusText').textContent = `Inloggad som ${user.email}`;
           });
         } else {
-          document.getElementById('authStatusBadge').innerHTML = `<span class="status-dot" style="background:var(--yellow);"></span>Ej inloggad (Lokal lagring)`;
+          document.getElementById('headerAuthDot').style.background = 'var(--yellow)';
+          document.getElementById('headerAuthText').textContent = 'Logga in';
           document.getElementById('googleLoginBtn').style.display = 'inline-block';
           document.getElementById('googleLogoutBtn').style.display = 'none';
           dbRef = null;
@@ -2850,12 +2463,9 @@
       firebase.auth().signInWithPopup(provider).catch(err => alert('Inloggning misslyckades: ' + err.message));
     });
 
-    document.getElementById('googleLogoutBtn').addEventListener('click', () => {
-      firebase.auth().signOut();
-    });
+    document.getElementById('googleLogoutBtn').addEventListener('click', () => firebase.auth().signOut());
 
-    populateScrollPickers();
-    setDefaultFormTimes();
+    populateStaticScrollPickers();
     applyDrawerStates();
     renderAll();
     initFirebase();
